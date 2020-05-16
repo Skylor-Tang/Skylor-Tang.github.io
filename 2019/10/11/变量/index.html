@@ -275,7 +275,7 @@
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hp := <span class="number">100</span></span><br></pre></td></tr></table></figure>
 <p>该写法为推导写法，编译器会自动根据右值类型推断出左值得对应类型</p>
 <ul>
-<li><font color='red'>注意：由于使用类”:=”，而不是赋值的”=”，因此推导式左边的变量必须是没有定义过的变量。若是定义过得或报错。如：</font></li>
+<li><font color="red">注意：由于使用类”:=”，而不是赋值的”=”，因此推导式左边的变量必须是没有定义过的变量。若是定义过得或报错。如：</font></li>
 </ul>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">"fmt"</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">	<span class="keyword">var</span> hp <span class="keyword">int</span></span><br><span class="line">	hp := <span class="number">100</span></span><br><span class="line">	fmt.Println(hp)</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 此时会报错：no new variables on left side of :=</span></span><br></pre></td></tr></table></figure>
 <ul>
@@ -423,20 +423,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">14</span>
+          <span class="site-state-item-count">15</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-count">5</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-count">6</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>

@@ -320,7 +320,7 @@
 <li>由于值传递的关系，必须接受append的返回值 — 因为，slice 的三个指标 ptr指针，len长度， cap容量都可能发生变化，而一旦cap容量超过之后，系统就会重新分配新的更大的内存去存储该slice，所以必须要设置参数用来接受append的返回值。</li>
 <li>S = append(s, val)</li>
 </ul>
-<p><font  color="red">Slice底层是对array的一个view,所以对Slice的修改会影响到底层的array,以及有关联的Slice（如同一个array的切片）</font></p>
+<p><font color="red">Slice底层是对array的一个view,所以对Slice的修改会影响到底层的array,以及有关联的Slice（如同一个array的切片）</font></p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">slicea := arr[:<span class="number">2</span>]</span><br><span class="line">sliceb := arr[:<span class="number">1</span>]</span><br><span class="line">fmt.Print(slicea)</span><br><span class="line">slice[<span class="number">0</span>] = <span class="number">8</span></span><br><span class="line">fmt.Print(arr)</span><br><span class="line">fmt.Print(sliceb)</span><br><span class="line"><span class="comment">// 结果</span></span><br><span class="line">[<span class="number">0</span> <span class="number">1</span>][<span class="number">8</span> <span class="number">1</span> <span class="number">2</span>][<span class="number">8</span>]</span><br></pre></td></tr></table></figure>
 
 
@@ -469,20 +469,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">14</span>
+          <span class="site-state-item-count">15</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-count">5</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-count">6</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>

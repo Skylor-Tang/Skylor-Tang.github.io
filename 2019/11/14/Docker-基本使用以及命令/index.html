@@ -338,7 +338,7 @@
 </li>
 <li><p>docker镜像命令</p>
 <ul>
-<li><p>docker images：列出<font color='red'>本地</font>主机上所有的镜像，通过在最后指定镜像的名字，可以查看相应镜像的名字</p>
+<li><p>docker images：列出<font color="red">本地</font>主机上所有的镜像，通过在最后指定镜像的名字，可以查看相应镜像的名字</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">REPOSITORY       TAG           IMAGE ID         CREATED           SIZE</span><br><span class="line">hello-world      latest        fce289e99eb9     11 months ago     1.84kB</span><br></pre></td></tr></table></figure>
 
 <p>各项的说明：</p>
@@ -349,7 +349,7 @@
 <li>CREATED：镜像创建的时间</li>
 <li>SIZE：镜像大小</li>
 </ul>
-<p>同一个仓库源下可以有多个TAG，代表这个仓库源的不同版本，我们可以使用<code>REPOSITORY:TAG</code>来定义不同的镜像。如果不指定一个镜像的版本标签，例如你只使用ubuntu，docker将默认使用ubuntu:latest镜像。</br></p>
+<p>同一个仓库源下可以有多个TAG，代表这个仓库源的不同版本，我们可以使用<code>REPOSITORY:TAG</code>来定义不同的镜像。如果不指定一个镜像的版本标签，例如你只使用ubuntu，docker将默认使用ubuntu:latest镜像。<br></p>
 <p>OPTIONS说明：</p>
 <ul>
 <li>-a：列出本地所有的镜像（含中间映像层）</li>
@@ -359,7 +359,7 @@
 <li>-qa：组合命令，显示所有的本地镜像的ID</li>
 </ul>
 </li>
-<li><p>docker search 镜像名： 从<a href="https://hub.docker.com" target="_blank" rel="noopener">Docker Hub</a>中查找某个镜像（尽管之前配置了阿里云镜像，但是这里查找镜像还是从Docker Hub上查找，拉取的时候从阿里云上拉）</br></p>
+<li><p>docker search 镜像名： 从<a href="https://hub.docker.com" target="_blank" rel="noopener">Docker Hub</a>中查找某个镜像（尽管之前配置了阿里云镜像，但是这里查找镜像还是从Docker Hub上查找，拉取的时候从阿里云上拉）<br></p>
 <p>OPTIONS说明：</p>
 <ul>
 <li>-s：指定显示STARTS数不小于某个值的镜像，如docker search -s 30 tomcat指定STARTS超过30的Tomcat镜像</li>
@@ -404,7 +404,7 @@
 <li><strong>每个镜像都设置了其容器默认执行的相应的COMMAND，使得容器在被创建的时候，如果没有手动执行COMMAND，则会自动调用相应的默认的COMMAND指令，如tomcat镜像设置了其容器的默认COMMAND为”catalina.sh run”，这样tomcat容器一创建完成就会调用这个命令，开始执行tomcat服务器。</strong></li>
 </ul>
 <p><strong>使用docker run [OPTIONS] IMAGES [COMMAND]时的 [OPTIONS] 很重要，像对于centos这种，由于其没有默认的前台进程，如果使用-d作为守护式进程启动的话，由于docker本身的问题，这个容器一被创建就会由于没有前台进程而会被自动kill，且使用docker start也无法启动该容器，所以除非有特殊需要，以后台运行时要指定一个前台进程，或者就使用-it以交互式的方式运行</strong></p>
-<p>疑问：为什么使用<code>docker run -d centos</code>创建的容器，没有添加COMMAD时，会被kill，但是使用docker ps查看时显示COMMADN为<code>/bin/bash</code>，自带的？，那为什么又会被kill呢？</br><em>这是docker本身的问题，Docker容器需要运行一个使其保持活动状态的进程。只要命令继续运行，容器将继续运行。而centos自带的/bin/bash会一执行玩就结束了，所以没有前台进程，该容器就被终止了，所以需要能使容器长时间挂起的方法，即所以可以：</em></p>
+<p>疑问：为什么使用<code>docker run -d centos</code>创建的容器，没有添加COMMAD时，会被kill，但是使用docker ps查看时显示COMMADN为<code>/bin/bash</code>，自带的？，那为什么又会被kill呢？<br><em>这是docker本身的问题，Docker容器需要运行一个使其保持活动状态的进程。只要命令继续运行，容器将继续运行。而centos自带的/bin/bash会一执行玩就结束了，所以没有前台进程，该容器就被终止了，所以需要能使容器长时间挂起的方法，即所以可以：</em></p>
 <ol>
 <li>执行一个死循环</li>
 <li>使用<code>docker run -dit centos</code>即使用-d启动守护式容器的同时，使用-it为其分配一个交互式伪终端即可</li>
@@ -429,7 +429,7 @@
 <li><p>启动容器：<code>docker start 容器ID或者容器名</code>（若没有使用docker run –name 设置别名，则使用的的是默认的容器名）</p>
 <ul>
 <li>启动成功后会返回对应的容器ID，启动的容器执行的COMMAND为使用docker run命令创建容器时执行的COMMAND。</li>
-<li><font color='red'>可以通过<code>docker exec -it 容器ID bashShell</code>命令以命令行形式进入容器进行交互，如/bin/bash就会打开一个终端。</font></li>
+<li><font color="red">可以通过<code>docker exec -it 容器ID bashShell</code>命令以命令行形式进入容器进行交互，如/bin/bash就会打开一个终端。</font></li>
 </ul>
 </li>
 <li><p>重启容器：<code>docker restart 容器ID或者容器名</code>，重启成功后会返回对应的容器ID</p>
@@ -459,7 +459,7 @@
 <ul>
 <li><p>启动守护式容器：<code>docker run -d 镜像名</code></p>
 <ul>
-<li>注意该命令没有指定创建容器要执行的命令COMMAND（且该镜像创建的容器默认的COMMAND不是一个长久的前台进程，如centos镜像的默认COMMAND为<code>&quot;/bin/bash&quot;</code>会在一执行完成就结束了，但是tomcat的COMMADN为<code>&quot;catalina.sh run&quot;</code>这个前台进程会一直执行并等待）</br><br>此时使用docker ps发现没有正在运行的容器，因为Docker容器后台运行<font color='red'>必须</font>有一个前台进程，容器如果运行的不是那些一直挂起的命令（如运行top，tail），就会自动退出。<font color='red'>所以最佳的解决方案是，将你要运行的程序以前台的形式运行。</font></li>
+<li>注意该命令没有指定创建容器要执行的命令COMMAND（且该镜像创建的容器默认的COMMAND不是一个长久的前台进程，如centos镜像的默认COMMAND为<code>&quot;/bin/bash&quot;</code>会在一执行完成就结束了，但是tomcat的COMMADN为<code>&quot;catalina.sh run&quot;</code>这个前台进程会一直执行并等待）<br><br>此时使用docker ps发现没有正在运行的容器，因为Docker容器后台运行<font color="red">必须</font>有一个前台进程，容器如果运行的不是那些一直挂起的命令（如运行top，tail），就会自动退出。<font color="red">所以最佳的解决方案是，将你要运行的程序以前台的形式运行。</font></li>
 </ul>
 </li>
 <li><p>查看容器日志：<code>docker logs -f -t --tail 容器ID</code></p>
@@ -468,7 +468,7 @@
 <li>-f：跟随最新的日志打印</li>
 <li>–tail 数字：显示最后的多少条</li>
 </ul>
-<p>所谓日志，就是docker容器终端的操作以及输出，直接使用<code>docker run 镜像</code>或者<code>docker run -d 镜像的</code>方式创建的容器会直接停止（即使用docker ps是无法查看的，即没有再运行），原因是因为docker在后台启动后，没有前台交互，无事可做，所以自动kill了，但是在创建时添加参数如<code>docker run -d centos /bin/sh -c &quot;while true;do echo hello skylor;sleep 2;done&quot;</code>这条命令的作用是创建centos的容器并且在容器中不断输出hello skylor，这样docker容器就一直有一个运行的前台进程，就不会自动kill了。</br><br>或者使用-d启动的容器，会后台打印日志，如tomcat容器，这种容器使用-d以后台启动的方式启动后就不会直接被kill掉。</br><br>另外，在使用<code>docker start 容器ID</code>方式启动后容器会继续运行这个命令。</p>
+<p>所谓日志，就是docker容器终端的操作以及输出，直接使用<code>docker run 镜像</code>或者<code>docker run -d 镜像的</code>方式创建的容器会直接停止（即使用docker ps是无法查看的，即没有再运行），原因是因为docker在后台启动后，没有前台交互，无事可做，所以自动kill了，但是在创建时添加参数如<code>docker run -d centos /bin/sh -c &quot;while true;do echo hello skylor;sleep 2;done&quot;</code>这条命令的作用是创建centos的容器并且在容器中不断输出hello skylor，这样docker容器就一直有一个运行的前台进程，就不会自动kill了。<br><br>或者使用-d启动的容器，会后台打印日志，如tomcat容器，这种容器使用-d以后台启动的方式启动后就不会直接被kill掉。<br><br>另外，在使用<code>docker start 容器ID</code>方式启动后容器会继续运行这个命令。</p>
 </li>
 <li><p>查看容器内运行的进程：<code>docker top 容器ID</code></p>
 <ul>
@@ -484,7 +484,7 @@
 <ul>
 <li>docker exec -it 容器ID bashShell， bashShell可以直接是操作命令，这样执行后，会直接返回命令的执行结果，而如果是/bon/bash，则会新开一个容器的终端并进入。</li>
 <li>docker attach 容器ID，此时重新进入容器执行的默认的COMMAND。</li>
-<li>以上两种方式的区别： attach直接进入容器启动命令的终端，不会启动新的进程，exec是在容器中打开新的终端，并且可以启动新的进程。</br><br><strong>推荐使用docker exec -it 容器ID bashShell的方式，因为这样会再新打开一个shell进行交互，使用exit退出时仅仅退出了新开启的shell，而不会由于退出原始的shell而导致容器被关闭</strong></li>
+<li>以上两种方式的区别： attach直接进入容器启动命令的终端，不会启动新的进程，exec是在容器中打开新的终端，并且可以启动新的进程。<br><br><strong>推荐使用docker exec -it 容器ID bashShell的方式，因为这样会再新打开一个shell进行交互，使用exit退出时仅仅退出了新开启的shell，而不会由于退出原始的shell而导致容器被关闭</strong></li>
 </ul>
 </li>
 <li><p>将容器内的文件拷贝到主机上，<code>docker cp 容器ID：容器的内路径 目的主机路径</code></p>
@@ -512,7 +512,7 @@
 </li>
 <li><p>Docker镜像commit操作补充</p>
 <ul>
-<li><p>docker commit 提交<font color='red'>容器</font>副本使之成为一个新的镜像</p>
+<li><p>docker commit 提交<font color="red">容器</font>副本使之成为一个新的镜像</p>
 </li>
 <li><p>docker commit -m=”提交的描述信息” -a=”作者” 容器ID 要创建的目标镜像名：[标签名]</p>
 </li>
@@ -554,7 +554,7 @@
 <li><p>可在Dockerfile中使用VOLUME指令来给镜像添加一个或者多个数据卷</p>
   <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">VOLUME[&quot;&#x2F;dataVolumeContainer&quot;,&quot;&#x2F;dataVolumeContainer2&quot;,&quot;&#x2F;dataVolumeContainer3&quot;]</span><br></pre></td></tr></table></figure>
 
-<p>  说明，出于可移植和分享考虑，用<code>-v 主机目录：容器目录</code>这种方法不能够直接在Dockerfile中实现。由于宿主机目录是依赖于特定宿主机的，并不能够保证在所有的宿主机上都存在这样特定的目录，所以VOLUME设置的都是<font color='red'>在容器上的目录</font>。</p>
+<p>  说明，出于可移植和分享考虑，用<code>-v 主机目录：容器目录</code>这种方法不能够直接在Dockerfile中实现。由于宿主机目录是依赖于特定宿主机的，并不能够保证在所有的宿主机上都存在这样特定的目录，所以VOLUME设置的都是<font color="red">在容器上的目录</font>。</p>
 </li>
 <li><p>File构建<br>  创建一个Dockerfile脚本</p>
   <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">FROM centos </span><br><span class="line">VOLUME [&quot;&#x2F;dataVolumeContainer&quot;,&quot;&#x2F;dataVolumeContainer2&quot;]</span><br><span class="line">CMD echo &quot;finished,-------success&quot;</span><br><span class="line">CMD &#x2F;bin&#x2F;bash</span><br></pre></td></tr></table></figure>
@@ -569,7 +569,7 @@
 <ol>
 <li>是在含有要创建的镜像的Dockerfile文件所在的目录下，此时不使用-f指定Dockerfile文件的所在路径，docker会自动识别找到Dockerfile文件（当然前提是Dockerfile文件的命名必须是Dockerfile，而不能是其他的名字，如果是其他的名字，则就需要使用-f指定Dockerfile的具体路径，包括Dockerfile文件名）</li>
 <li>是在任意的目录下，必须使用-f参数指定要创建的镜像的Dockerfile文件的所在路径（最好写全，也可以只要大致目录，docker会自动找到，同理，对于直接命名为Dockerfile的文件可以直接找到，但是对于命名为其他的Dockerfile文件，则需要写具体的路径，包括Dockerfile文件名）</li>
-<li>上下文参数为根据当前执行<code>docker build</code>命令的目录为准，这个目录就是所谓的上下文，而在Dockerfile文件中执行COPY等命令时，如<code>COPY ./package.json /app/</code>这里的<code>.</code>指的是上下文路径，这是个相对路径，以上下文为基础。</br><br><strong>一般都是新建一个文件夹，然后在其中添加Dockerfile文件，然后只要使用 <code>docker build -t 镜像名：版本号 .</code> 就完成了镜像的创建。</strong></li>
+<li>上下文参数为根据当前执行<code>docker build</code>命令的目录为准，这个目录就是所谓的上下文，而在Dockerfile文件中执行COPY等命令时，如<code>COPY ./package.json /app/</code>这里的<code>.</code>指的是上下文路径，这是个相对路径，以上下文为基础。<br><br><strong>一般都是新建一个文件夹，然后在其中添加Dockerfile文件，然后只要使用 <code>docker build -t 镜像名：版本号 .</code> 就完成了镜像的创建。</strong></li>
 </ol>
 </li>
 <li><p>run容器</p>
@@ -691,7 +691,7 @@
 <p>Dokcerfile内容：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">FROM centos</span><br><span class="line">MAINTAINER skylor&lt;tang1996mei@126.com&gt;</span><br><span class="line"></span><br><span class="line">ENV MYPATH &#x2F;usr&#x2F;local</span><br><span class="line">WORKDIR $MYPATH</span><br><span class="line"></span><br><span class="line">RUN yum -y install vim</span><br><span class="line">RUN yum -y install net-tools</span><br><span class="line"></span><br><span class="line">EXPOSE 80</span><br><span class="line"></span><br><span class="line">CMD echo $MYPATH</span><br><span class="line">CMD echo &quot;success-------------------ok&quot;</span><br><span class="line">CMD [&quot;&#x2F;bin&#x2F;bash&quot;]</span><br></pre></td></tr></table></figure>
 
-<p>docker引擎将Dockerfile文件分解为10个步骤，每执行一层会得到一个中间容器，但是在执行完该步骤之后会卸载这个生成的中间容器层，除此以外还有中间层镜像（很多镜像依赖这些中间层，所以中间层镜像是不能随意删除的）</br><br>使用<code>docker history 镜像名</code>查看镜像变更历史</p>
+<p>docker引擎将Dockerfile文件分解为10个步骤，每执行一层会得到一个中间容器，但是在执行完该步骤之后会卸载这个生成的中间容器层，除此以外还有中间层镜像（很多镜像依赖这些中间层，所以中间层镜像是不能随意删除的）<br><br>使用<code>docker history 镜像名</code>查看镜像变更历史</p>
 </li>
 <li><p>CMD/ENTRYPOINT 镜像案例</p>
 <ul>
@@ -741,7 +741,7 @@
 <h3 id="本地镜像发布到阿里云"><a href="#本地镜像发布到阿里云" class="headerlink" title="本地镜像发布到阿里云"></a>本地镜像发布到阿里云</h3><ul>
 <li><p>使用docker commit命令提交一个本地的修改容器为新的镜像</p>
 <ul>
-<li><p>docker commit 提交<font color='red'>容器</font>副本使之成为一个新的镜像</p>
+<li><p>docker commit 提交<font color="red">容器</font>副本使之成为一个新的镜像</p>
 </li>
 <li><p>docker commit -m=”提交的描述信息” -a=”作者” 容器ID 要创建的目标镜像名：[标签名]</p>
 </li>
@@ -772,8 +772,8 @@
       <i class="fa fa-chevron-left"></i> Go基础之面向“对象”
     </a></div>
       <div class="post-nav-item">
-    <a href="/2019/11/30/%E5%8C%85%E5%92%8C%E5%B0%81%E8%A3%85/" rel="next" title="Go基础之包和封装">
-      Go基础之包和封装 <i class="fa fa-chevron-right"></i>
+    <a href="/2019/11/20/reids-%E4%BD%BF%E7%94%A8/" rel="next" title="redis 使用">
+      redis 使用 <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
       </footer>
@@ -850,20 +850,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">14</span>
+          <span class="site-state-item-count">15</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-count">5</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-count">6</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
