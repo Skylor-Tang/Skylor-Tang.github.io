@@ -178,7 +178,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2020/05/16/redis-%E4%BD%BF%E7%94%A8%E4%B9%8B%E6%93%8D%E4%BD%9C%E7%AF%87/" class="post-title-link" itemprop="url">redis 使用之操作篇</a>
+            <a href="/2020/05/16/redis-%E4%BD%BF%E7%94%A8%E4%B9%8B%E6%93%8D%E4%BD%9C%E7%AF%87/" class="post-title-link" itemprop="url">Redis 使用之操作篇</a>
         </h2>
 
         <div class="post-meta">
@@ -190,6 +190,13 @@
 
               <time title="创建时间：2020-05-16 22:17:05" itemprop="dateCreated datePublished" datetime="2020-05-16T22:17:05+08:00">2020-05-16</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-05-17 12:24:01" itemprop="dateModified" datetime="2020-05-17T12:24:01+08:00">2020-05-17</time>
+              </span>
 
           
   
@@ -216,7 +223,66 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          
+          <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>redis的几种数据类型：STRING SET HASH LIST<br>redis的命令行操作模式会显示他的语法提示，基本使用采用的是k/v值的形式，即通过key设置value的方式。<br>对redis数据库的操作可分为两种方式，第一种采用redis-cli进行访问，第二种采用编程语言，如 Python、Java等。本文中使用 redis-cli 的方式进行数据的访问，首先需要启动redis，连接上 redis-server，这在上节已经进行了详细的讲解，此处不再赘述。</p>
+<p>redis-cli 在使用时提供了命令提示，方便我们操作。</p>
+<h2 id="使用redis-cli对redis进行字符串STRING操作"><a href="#使用redis-cli对redis进行字符串STRING操作" class="headerlink" title="使用redis-cli对redis进行字符串STRING操作"></a>使用redis-cli对redis进行字符串STRING操作</h2><h3 id="添加："><a href="#添加：" class="headerlink" title="添加："></a>添加：</h3><p><code>set key value</code> ，value 为string类型，可以不使用引号<br>示例：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ 127.0.0.1:6379&gt; <span class="built_in">set</span> username tmj</span><br><span class="line">OK</span><br></pre></td></tr></table></figure>
+<p>将字符串值 value 关联到 key ，如果 key 已经持有其他值，set 命令就覆写旧值，无视其类型。并且默认的过期时间是永久（即使之前的 key 快过期了），即永久不会过期。</p>
+<h3 id="删除"><a href="#删除" class="headerlink" title="删除"></a>删除</h3><p><code>del key</code><br>示例：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ 127.0.0.1:6379&gt; del username</span><br><span class="line">(<span class="built_in">integer</span>) 1</span><br></pre></td></tr></table></figure>
+
+<h3 id="设置过期时间"><a href="#设置过期时间" class="headerlink" title="设置过期时间"></a>设置过期时间</h3><p><code>expire key timeout</code> 时间单位为秒<br>示例：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ 127.0.0.1:6379&gt; expire username 60</span><br><span class="line">(<span class="built_in">integer</span>) 1</span><br></pre></td></tr></table></figure>
+<p>可以对已经设置过过期时间的 key 重新设置过期时间,将覆盖原值。也可以在设置 key 时，同时指定过期时间，使用 <code>EX</code> 参数</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ 127.0.0.1:6379&gt; <span class="built_in">set</span> age 18 EX 800</span><br><span class="line">OK</span><br></pre></td></tr></table></figure>
+<p>等价方式，使用 <code>setex key timeout value</code>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ 127.0.0.1:6379&gt; setex age 800 18</span><br><span class="line">OK</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>注意：<code>expire key timeout</code> 指令是通用的，适用于各种类型的key,下面的两中方式只适用于string类型。</p>
+</blockquote>
+<h3 id="查看过期时间"><a href="#查看过期时间" class="headerlink" title="查看过期时间"></a>查看过期时间</h3><p><code>ttl key</code><br>过期时间的查询结果有一下几种：</p>
+<ul>
+<li>大于0的正整数：此key存在，且还剩下正整数的时间过期</li>
+<li>-1 ： 此key存在，且没有设置过期时间，即永久不会过期</li>
+<li>-2 ： 此key不存在，或存在但是过期了，总之就是现在不存在了。</li>
+</ul>
+<p>示例：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ 127.0.0.1:6379&gt; ttl username</span><br><span class="line">(<span class="built_in">integer</span>) 796</span><br></pre></td></tr></table></figure>
+
+<h3 id="查看某个String类型key的值"><a href="#查看某个String类型key的值" class="headerlink" title="查看某个String类型key的值"></a>查看某个String类型key的值</h3><p><code>get key</code></p>
+<h3 id="查看当前redis中所有类型的key"><a href="#查看当前redis中所有类型的key" class="headerlink" title="查看当前redis中所有类型的key"></a>查看当前redis中所有类型的key</h3><p><code>keys *</code></p>
+<h3 id="查看key的类型"><a href="#查看key的类型" class="headerlink" title="查看key的类型"></a>查看key的类型</h3><p>因为redis中所有类型的key是存在一起的，但是每中类型的key的查看的方式都是不同的，一旦使用的查询命令不对就会报错，此时可以使用 <code>type key</code> 查看key的类型<br>示例：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ 127.0.0.1:6379&gt; <span class="built_in">type</span> username</span><br><span class="line">string</span><br></pre></td></tr></table></figure>
+
+<h2 id="使用redis-cli对redis进行列表list操作"><a href="#使用redis-cli对redis进行列表list操作" class="headerlink" title="使用redis-cli对redis进行列表list操作"></a>使用redis-cli对redis进行列表list操作</h2><p>Redis列表 是简单的字符串列表，按照插入顺序排序。你可以添加一个元素到列表的头部（左边）或者尾部（右边）。</p>
+<h3 id="添加"><a href="#添加" class="headerlink" title="添加"></a>添加</h3><p>添加到头部（左边）使用 <code>lpush key value</code>，添加到尾部（右边）使用 <code>rpush key value</code>。如果key不存在，一个空的列表会被创建并执行lpush（rpush）操作，当key存在，但不是列表类型时，返回错误。<br>示例：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ 127.0.0.1:6379&gt; lpush language python</span><br><span class="line">(<span class="built_in">integer</span>) 1    <span class="comment"># 返回值为当前列表中值的个数</span></span><br></pre></td></tr></table></figure>
+<p>列表中可以添加多个值，且可以是重复值</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ 127.0.0.1:6379&gt; lpush language python python</span><br><span class="line">(<span class="built_in">integer</span>) 3    <span class="comment"># 添加了两个重复的值，目前一共三个值</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>注意：当一次添加多个 value 的时候，最后一个 value 是第一个被添加的，如上面的例子中，最后一个 python 是第一被添加的。</p>
+</blockquote>
+<h3 id="查看列表中的的元素（是一个区间中的元素）"><a href="#查看列表中的的元素（是一个区间中的元素）" class="headerlink" title="查看列表中的的元素（是一个区间中的元素）"></a>查看列表中的的元素（是一个区间中的元素）</h3><p><code>lrange key start stop</code>，指令中的 l 代表的是列表list的意思，返回列表key中指定区间内的元素，区间以偏移量start和stop指定，如果要左边的第一个到最后的一个 <code>lrange key 0 -1</code>（列表的第一项下标是 0，左后一项为 -1）。若只想查看某个值，则start 和 stop 指定一样的下标即可。<br>示例：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ 127.0.0.1:6379&gt; lrange language 0 -1</span><br><span class="line">1) <span class="string">"python"</span></span><br><span class="line">2) <span class="string">"python"</span></span><br><span class="line">3) <span class="string">"python"</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="移除列表中的元素"><a href="#移除列表中的元素" class="headerlink" title="移除列表中的元素"></a>移除列表中的元素</h3><p>同理增加值的方式，使用<code>lpop key</code> 和 <code>rpop key</code> 移除列表头部或者尾部的元素，使用这两条命令移除列表元素的同时还会返回移除的值。<br>示例：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ 127.0.0.1:6379&gt; lpop language</span><br><span class="line"><span class="string">"python"</span>  <span class="comment"># 返回了被移除的头部元素</span></span><br></pre></td></tr></table></figure>
+<h4 id="移除指定个数的元素"><a href="#移除指定个数的元素" class="headerlink" title="移除指定个数的元素"></a>移除指定个数的元素</h4><p>使用 <code>lrem key count value</code>，指令中的 l 代表的是列表list的意思，删除列表key中count个值为value的元素。<br>示例：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ 127.0.0.1:6379&gt; lrem language 4 python</span><br><span class="line">(<span class="built_in">integer</span>) 1  <span class="comment"># 返回的值为 实际 删除的个数，若为0表示不存在该元素</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>注意：返回的是实际删除掉的 values的个数，使用的时候 count 的大小是可以超过实际个数大小的，但是删除时的返回值是实际删除掉的个数。</p>
+</blockquote>
+<h3 id="返回指定下标的元素"><a href="#返回指定下标的元素" class="headerlink" title="返回指定下标的元素"></a>返回指定下标的元素</h3><p>使用 <code>lindex key index</code>，指令中的 l 代表的是列表list的意思，将返回key这个列表中，索引为index的这个元素，若是请求的索引不存在，返回 (nil)。<br>示例：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ 127.0.0.1:6379&gt; lindex language 0</span><br><span class="line"><span class="string">"python"</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="获取列表中的元素的个数："><a href="#获取列表中的元素的个数：" class="headerlink" title="获取列表中的元素的个数："></a>获取列表中的元素的个数：</h3><p><code>llen key</code></p>
+<h3 id="只有单条的指令可以通过正负值来指定操作的方向"><a href="#只有单条的指令可以通过正负值来指定操作的方向" class="headerlink" title="只有单条的指令可以通过正负值来指定操作的方向"></a>只有单条的指令可以通过正负值来指定操作的方向</h3><p>命令中的 l 代表list的指令（即不使用通过l和r来区分操作方向的指令），都可以通过负值来表示反向操作。<br>如移除指定个数的元素 <code>lrem key count value</code> 命令根据参数count的值，移除列表中与参数value相等的元素。count的值可以是一下几种：</p>
+<ul>
+<li>count &gt; 0 ：从表头开始向表尾搜索，移除与value相等的元素，数量为count。</li>
+<li>count &lt; 0 ：从表尾开始向表头搜索，移除与value相等的元素，数量为count的绝对值。</li>
+<li>count = 0 : 移除表中所有与value相等的值。</li>
+</ul>
+
       
     </div>
 
