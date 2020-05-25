@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Monaco:300,300italic,400,400italic,700,700italic|Consolas:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-big-counter.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":true},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="在之前的 Django REST framework的token原理和验证登录 中，使用了drf自带的Token认证类rest_framework.authentication.TokenAuthentication 实现了Token认证，但是drf自带的Token认证有以下几个问题：  drf自带的token验证方式，token值是存储在生成的 authtoken_token 表中，是放在一台服">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Django REST framework之JWT用户验证">
+<meta property="og:url" content="http://yoursite.com/2020/05/25/Django%20REST%20framework%E4%B9%8BJWT%E7%94%A8%E6%88%B7%E9%AA%8C%E8%AF%81/index.html">
+<meta property="og:site_name" content="Skylor Blog">
+<meta property="og:description" content="在之前的 Django REST framework的token原理和验证登录 中，使用了drf自带的Token认证类rest_framework.authentication.TokenAuthentication 实现了Token认证，但是drf自带的Token认证有以下几个问题：  drf自带的token验证方式，token值是存储在生成的 authtoken_token 表中，是放在一台服">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://yoursite.com/2020/05/25/Django%20REST%20framework%E4%B9%8BJWT%E7%94%A8%E6%88%B7%E9%AA%8C%E8%AF%81/jwt.jpg">
+<meta property="article:published_time" content="2020-05-25T10:20:52.000Z">
+<meta property="article:modified_time" content="2020-05-25T13:11:58.199Z">
+<meta property="article:author" content="Skylor Tang">
+<meta property="article:tag" content="JWT用户验证">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/2020/05/25/Django%20REST%20framework%E4%B9%8BJWT%E7%94%A8%E6%88%B7%E9%AA%8C%E8%AF%81/jwt.jpg">
+
+<link rel="canonical" href="http://yoursite.com/2020/05/25/Django%20REST%20framework%E4%B9%8BJWT%E7%94%A8%E6%88%B7%E9%AA%8C%E8%AF%81/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Django REST framework之JWT用户验证 | Skylor Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Skylor Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/05/25/Django%20REST%20framework%E4%B9%8BJWT%E7%94%A8%E6%88%B7%E9%AA%8C%E8%AF%81/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Skylor Tang">
+      <meta itemprop="description" content="Your advantages today will be replaced by future trends, so keep learning.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Skylor Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Django REST framework之JWT用户验证
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-05-25 18:20:52 / 修改时间：21:11:58" itemprop="dateCreated datePublished" datetime="2020-05-25T18:20:52+08:00">2020-05-25</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/" itemprop="url" rel="index"><span itemprop="name">计算机</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/%E5%BC%80%E5%8F%91%E9%97%AE%E9%A2%98/" itemprop="url" rel="index"><span itemprop="name">开发问题</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/Django-REST-framework/" itemprop="url" rel="index"><span itemprop="name">Django REST framework</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2020/05/25/Django%20REST%20framework%E4%B9%8BJWT%E7%94%A8%E6%88%B7%E9%AA%8C%E8%AF%81/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2020/05/25/Django%20REST%20framework%E4%B9%8BJWT%E7%94%A8%E6%88%B7%E9%AA%8C%E8%AF%81/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>在之前的 <a href="/2020/05/24/Django-REST-framework%E7%9A%84token%E7%99%BB%E9%99%86%E5%92%8C%E5%8E%9F%E7%90%86/" title="Django REST framework的token原理和验证登录">Django REST framework的token原理和验证登录</a> 中，使用了drf自带的Token认证类<code>rest_framework.authentication.TokenAuthentication</code> 实现了Token认证，但是drf自带的Token认证有以下几个问题：</p>
+<ol>
+<li>drf自带的token验证方式，token值是存储在生成的 <code>authtoken_token</code> 表中，是放在一台服务器上的，若采用分布式的话，还需要做数据的同步操作。</li>
+<li>相比于 django_session 的设置，没有expire_date属性（过期时间），将是永久有效的，这样的话，一旦泄露将造成很大的安全问题。</li>
+<li>和django_session存储同样的问题，随着用户的增多，token值会占用服务器大量空间，同时也会加大数据库的查询压力，导致性能下降。</li>
+</ol>
+<p>为了解决以上的问题，将使用第三方的开源库<a href="https://github.com/jpadilla/django-rest-framework-jwt" target="_blank" rel="noopener">djangorestframework-jwt</a>完成这一功能。</p>
+<h2 id="JWT原理"><a href="#JWT原理" class="headerlink" title="JWT原理"></a>JWT原理</h2><p>参考文章：<a href="https://lion1ou.win/2017/01/18/" target="_blank" rel="noopener">前后端分离之JWT用户认证</a></p>
+<h3 id="摘要"><a href="#摘要" class="headerlink" title="摘要"></a>摘要</h3><ol>
+<li>HTTP协议的无状态存储，需要提供用户登录的验证功能。</li>
+<li>前后端分离系统的传统解决方式是：前端登录，后端根据用户信息生成一个<code>token</code>，并保存这个 <code>token</code> 和对应的用户id到数据库或Session中，接着把 <code>token</code> 传给用户，存入浏览器 cookie，之后浏览器请求带上这个cookie，后端根据这个cookie值来查询用户，验证是否过期。</li>
+</ol>
+<p>JWT 是一个开放标准(RFC 7519)，它定义了一种用于简洁，自包含的用于通信双方之间以 JSON 对象的形式安全传递信息的方法。JWT 可以使用 HMAC 算法或者是 RSA 的公钥密钥对进行签名。它具备两个特点：</p>
+<ul>
+<li>简洁(Compact)<br>  可以通过URL, POST 参数或者在 HTTP header 发送，因为数据量小，传输速度快</li>
+<li>自包含(Self-contained)<br>  负载中包含了所有用户所需要的信息，避免了多次查询数据库</li>
+</ul>
+<h3 id="组成"><a href="#组成" class="headerlink" title="组成"></a>组成</h3><p>JWT由三部分组成</p>
+<ul>
+<li>HEAD 头部： 包含了两部分，token 类型和采用的加密算法</li>
+<li>Payload 负载： 我们存放信息的地方了，你可以把用户 ID 等信息放在这里，JWT 规范里面对这部分有进行了比较详细的介绍，常用的由 iss（签发者），exp（过期时间），sub（面向的用户），aud（接收方），iat（签发时间）。<font color="red">默认情况下JWT是未加密的，任何人都可以解读其内容，因此不要构建隐私信息字段，存放保密信息，以防止信息泄露</font>。</li>
+<li>Signature 签名： 保证内容没有被篡改。Signature 需要使用编码后的 header 和 payload 以及我们提供的一个密钥（存放在服务端），然后使用 header 中指定的签名算法（HS256）进行签名。生成的方式：<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># python实现 </span></span><br><span class="line">HMACSHA256(base64UrlEncode(header) + <span class="string">"."</span> + base64UrlEncode(payload), secret)  <span class="comment"># secret密钥保存在服务器端，且不对外公布</span></span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<p>完整的JWT构成：<code>base64UrlEncode(header) + &quot;.&quot; + base64UrlEncode(payload) + &quot;.&quot; + Signature 签名</code></p>
+<h3 id="验证过程"><a href="#验证过程" class="headerlink" title="验证过程"></a>验证过程</h3><p>由前端和后端共同完成<br><img src="/2020/05/25/Django%20REST%20framework%E4%B9%8BJWT%E7%94%A8%E6%88%B7%E9%AA%8C%E8%AF%81/jwt.jpg" alt="jwt认证过程"></p>
+<ul>
+<li>前端进行登录，提供账号和密码在后端进行验证，后端对其验证通过后生成JWT，再发送给前端，前端保存在本地（一般是存储在本地的cookie中（推荐使用该种方式，只是使用cookie的存储机制），或者是保存在localStorage或sessionStorage上，退出登录时由前端删除保存的JWT即可）</li>
+<li>前端在跳转到登录页或者请求API的时候，会发送JWT，到达后端时被过滤器拦截进行JWT的验证（在Django可以交给中间件完成），验证通过之后请求被传送给view，未通过，返回错误信息（可以交给Django中间件中的process_exception函数处理），跳转到登录页面。（前面的所有的Django中间件的功能都将由即将使用到的 <code>rest_framework_jwt.authentication.JSONWebTokenAuthentication</code> 来完成）</li>
+</ul>
+<h3 id="JWT的优势"><a href="#JWT的优势" class="headerlink" title="JWT的优势"></a>JWT的优势</h3><ul>
+<li>完全使用算法进行验证，加密解密取得用户ID（相较于sessionid，后者还多了向服务器请求对应session_data的步骤），通过用户ID查询到用户信息，这意味着不需要存储token表，也不需要Django之中的session表，会减少服务器的存储压力</li>
+<li>适用于<a href="https://www.jianshu.com/p/75edcc05acfd" target="_blank" rel="noopener">单点登录</a></li>
+</ul>
+<p>JWT详细解读：<a href="https://www.cnblogs.com/DeadBoy/p/11481146.html" target="_blank" rel="noopener">https://www.cnblogs.com/DeadBoy/p/11481146.html</a></p>
+<h2 id="Django-REST-framework实现JWT的验证登录功能"><a href="#Django-REST-framework实现JWT的验证登录功能" class="headerlink" title="Django REST framework实现JWT的验证登录功能"></a>Django REST framework实现JWT的验证登录功能</h2><p>使用第三方库<code>djangorestframework-jwt</code>完成验证，使用方法详见<a href="https://jpadilla.github.io/django-rest-framework-jwt/" target="_blank" rel="noopener">官方文档</a></p>
+<h3 id="安装后的配置过程"><a href="#安装后的配置过程" class="headerlink" title="安装后的配置过程"></a>安装后的配置过程</h3><ol>
+<li><p>安装完成后，首先需要在REST_FRAMEWORK的<code>DEFAULT_AUTHENTICATION_CLASSES</code> 中配置</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">REST_FRAMEWORK = &#123;</span><br><span class="line">    <span class="string">'DEFAULT_AUTHENTICATION_CLASSES'</span>: [</span><br><span class="line">        ...</span><br><span class="line">        <span class="string">'rest_framework_jwt.authentication.JSONWebTokenAuthentication'</span>,</span><br><span class="line">    ], </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>和drf自带的token功能使用的<code>rest_framework.authentication.TokenAuthentication</code>作用一致，是将用户post过来的token进行验证，验证完成后返回user。该设置只有在需要用户访问view时发送token时进行验证功能的时候才需要设置，单纯的提供token值是不需要设置的（只需要完成步骤2）。<br>另外，这个值，最好不要在settings.py中进行设置，而只在需要使用的view中进行设置，因为有些页面属于公共资源，不需要验证token也可以进行访问。通过设置<code>authentication_classes</code>参数进行配置：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">authentication_classes = (JSONWebTokenAuthentication,)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在urls.py中添加url</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> rest_framework_jwt.views <span class="keyword">import</span> obtain_jwt_token</span><br><span class="line"></span><br><span class="line">url(<span class="string">r'^api-token-auth/'</span>, obtain_jwt_token) <span class="comment"># jwt的认证接口，是一个post请求。可以自定义url地址，如jwt-auth</span></span><br><span class="line"><span class="comment"># 这里注意区分url(r'^api-token-auth/', views.obtain_auth_token)，这是drf自带的认证模式</span></span><br></pre></td></tr></table></figure>
+<p>此时访问<code>http://xxx/jwt-auth</code>，使用post请求传递用户信息（用户名和密码），验证通过之后就会直接返回一个jwt，采用的返回方式是k/v形式的json对象：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">"token"</span>: <span class="string">"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoyLCJ1c2VybmFtZSI6ImFkbWluIiwiZXhwIjoxNTg3NjMyODgzLCJlbWFpbCI6IjEyMzRAcXEuY29tIn0.YIcAYZC3aY0AsoCyRDR78-1D-zdIGN3jHZHqgBWtjxo"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>当传递的用于验证用户的信息（username和password）错误的时候，返回以下JSON数据：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">"non_field_errors"</span>: [</span><br><span class="line">        <span class="string">"无法使用提供的认证信息登录。"</span></span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>验证方式（注意和drf自带的token验证方式的不同书写）</p>
+<ul>
+<li>在http Headers中通过 <code>Authorization: JWT &lt;your_token&gt;</code>格式传递获得的JWT</li>
+<li>打断点，请求设置了 <code>authentication_classes = (JSONWebTokenAuthentication,)</code> 的view，查看request属性，用户存储在request中的user属性中，JWT值存储在auth属性中</li>
+<li>JWT过期之后，返回的JSON格式数据<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">"non_field_errors"</span>: [</span><br><span class="line">        <span class="string">"无法使用提供的认证信息登录。"</span></span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+</li>
+</ol>
+<h3 id="和前端vue登录功能的集成"><a href="#和前端vue登录功能的集成" class="headerlink" title="和前端vue登录功能的集成"></a>和前端vue登录功能的集成</h3><p>直接将<code>url(r&#39;^api-token-auth/&#39;, obtain_jwt_token)</code>的url地址改为<code>url(r&#39;^login/&#39;, obtain_jwt_token)</code>，剩下的工作在vue中交给前端实现。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Django-REST-framework/" rel="tag"># Django REST framework</a>
+              <a href="/tags/token%E5%8E%9F%E7%90%86/" rel="tag"># token原理</a>
+              <a href="/tags/JWT%E7%94%A8%E6%88%B7%E9%AA%8C%E8%AF%81/" rel="tag"># JWT用户验证</a>
+              <a href="/tags/%E5%89%8D%E5%90%8E%E7%AB%AF%E5%88%86%E7%A6%BB/" rel="tag"># 前后端分离</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/05/24/Django-REST-framework%E7%9A%84token%E7%99%BB%E9%99%86%E5%92%8C%E5%8E%9F%E7%90%86/" rel="prev" title="Django REST framework的token原理和验证登录">
+      <i class="fa fa-chevron-left"></i> Django REST framework的token原理和验证登录
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#JWT原理"><span class="nav-number">1.</span> <span class="nav-text">JWT原理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#摘要"><span class="nav-number">1.1.</span> <span class="nav-text">摘要</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#组成"><span class="nav-number">1.2.</span> <span class="nav-text">组成</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#验证过程"><span class="nav-number">1.3.</span> <span class="nav-text">验证过程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JWT的优势"><span class="nav-number">1.4.</span> <span class="nav-text">JWT的优势</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Django-REST-framework实现JWT的验证登录功能"><span class="nav-number">2.</span> <span class="nav-text">Django REST framework实现JWT的验证登录功能</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#安装后的配置过程"><span class="nav-number">2.1.</span> <span class="nav-text">安装后的配置过程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#和前端vue登录功能的集成"><span class="nav-number">2.2.</span> <span class="nav-text">和前端vue登录功能的集成</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Skylor Tang"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Skylor Tang</p>
+  <div class="site-description" itemprop="description">Your advantages today will be replaced by future trends, so keep learning.</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">22</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2019 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Skylor Tang</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'bva4r4SJYiDLdhU1ALkqpbqw-gzGzoHsz',
+      appKey     : 'bWLTGKg8MzPrXsAvC3YDMehj',
+      placeholder: "欢迎留言",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>
