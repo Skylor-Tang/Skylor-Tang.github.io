@@ -25,17 +25,17 @@
   <meta name="description" content="drf的登陆验证功能drf自带的登陆功能（drf Api Root中使用），通过定义路径访问 rest_framework.urls 中设置的路由进行访问 1url(r&#39;^api-auth&#x2F;&#39;, include(&#39;rest_framework.urls&#39;, namespace&#x3D;&#39;rest_framework&#39;)), 从子路径的实现 12url(r&#39;^login&#x2F;$&#39;, views.LoginVie">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Django REST framework的token原理和验证登录">
-<meta property="og:url" content="http://yoursite.com/2020/05/24/Django-REST-framework%E7%9A%84token%E7%99%BB%E9%99%86%E5%92%8C%E5%8E%9F%E7%90%86/index.html">
+<meta property="og:url" content="http://yoursite.com/2020/03/24/Django-REST-framework%E7%9A%84token%E7%99%BB%E9%99%86%E5%92%8C%E5%8E%9F%E7%90%86/index.html">
 <meta property="og:site_name" content="Skylor Blog">
 <meta property="og:description" content="drf的登陆验证功能drf自带的登陆功能（drf Api Root中使用），通过定义路径访问 rest_framework.urls 中设置的路由进行访问 1url(r&#39;^api-auth&#x2F;&#39;, include(&#39;rest_framework.urls&#39;, namespace&#x3D;&#39;rest_framework&#39;)), 从子路径的实现 12url(r&#39;^login&#x2F;$&#39;, views.LoginVie">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2020-05-24T03:45:13.000Z">
-<meta property="article:modified_time" content="2020-05-28T13:03:30.683Z">
+<meta property="article:published_time" content="2020-03-24T03:45:13.000Z">
+<meta property="article:modified_time" content="2020-06-02T02:35:39.363Z">
 <meta property="article:author" content="Skylor Tang">
 <meta property="article:tag" content="Django REST framework的token原理和验证登录">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="http://yoursite.com/2020/05/24/Django-REST-framework%E7%9A%84token%E7%99%BB%E9%99%86%E5%92%8C%E5%8E%9F%E7%90%86/">
+<link rel="canonical" href="http://yoursite.com/2020/03/24/Django-REST-framework%E7%9A%84token%E7%99%BB%E9%99%86%E5%92%8C%E5%8E%9F%E7%90%86/">
 
 
 <script id="page-configurations">
@@ -168,7 +168,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/05/24/Django-REST-framework%E7%9A%84token%E7%99%BB%E9%99%86%E5%92%8C%E5%8E%9F%E7%90%86/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/03/24/Django-REST-framework%E7%9A%84token%E7%99%BB%E9%99%86%E5%92%8C%E5%8E%9F%E7%90%86/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.png">
@@ -191,14 +191,14 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2020-05-24 11:45:13" itemprop="dateCreated datePublished" datetime="2020-05-24T11:45:13+08:00">2020-05-24</time>
+              <time title="创建时间：2020-03-24 11:45:13" itemprop="dateCreated datePublished" datetime="2020-03-24T11:45:13+08:00">2020-03-24</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-05-28 21:03:30" itemprop="dateModified" datetime="2020-05-28T21:03:30+08:00">2020-05-28</time>
+                <time title="修改时间：2020-06-02 10:35:39" itemprop="dateModified" datetime="2020-06-02T10:35:39+08:00">2020-06-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -227,8 +227,8 @@
       </span>
       <span class="post-meta-item-text">Valine：</span>
     
-    <a title="valine" href="/2020/05/24/Django-REST-framework%E7%9A%84token%E7%99%BB%E9%99%86%E5%92%8C%E5%8E%9F%E7%90%86/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2020/05/24/Django-REST-framework%E7%9A%84token%E7%99%BB%E9%99%86%E5%92%8C%E5%8E%9F%E7%90%86/" itemprop="commentCount"></span>
+    <a title="valine" href="/2020/03/24/Django-REST-framework%E7%9A%84token%E7%99%BB%E9%99%86%E5%92%8C%E5%8E%9F%E7%90%86/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2020/03/24/Django-REST-framework%E7%9A%84token%E7%99%BB%E9%99%86%E5%92%8C%E5%8E%9F%E7%90%86/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -299,11 +299,11 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2020/05/24/Django-Vue-%E5%89%8D%E5%90%8E%E7%AB%AF%E5%88%86%E7%A6%BB%E9%A1%B9%E7%9B%AE%E7%9A%84%E8%B7%A8%E5%9F%9F%E8%AF%B7%E6%B1%82%E9%97%AE%E9%A2%98/" rel="prev" title="Django+Vue 前后端分离项目的跨域请求问题">
-      <i class="fa fa-chevron-left"></i> Django+Vue 前后端分离项目的跨域请求问题
+    <a href="/2020/03/20/Django%E8%87%AA%E5%AE%9A%E4%B9%89%E7%94%A8%E6%88%B7%E8%AE%A4%E8%AF%81%E7%B3%BB%E7%BB%9F/" rel="prev" title="Django自定义用户认证系统">
+      <i class="fa fa-chevron-left"></i> Django自定义用户认证系统
     </a></div>
       <div class="post-nav-item">
-    <a href="/2020/05/25/Django%20REST%20framework%E4%B9%8BJWT%E7%94%A8%E6%88%B7%E9%AA%8C%E8%AF%81/" rel="next" title="Django REST framework之JWT用户验证">
+    <a href="/2020/04/03/Django%20REST%20framework%E4%B9%8BJWT%E7%94%A8%E6%88%B7%E9%AA%8C%E8%AF%81/" rel="next" title="Django REST framework之JWT用户验证">
       Django REST framework之JWT用户验证 <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
@@ -381,14 +381,14 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">24</span>
+          <span class="site-state-item-count">25</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-count">14</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
