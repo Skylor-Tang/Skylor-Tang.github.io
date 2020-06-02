@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Monaco:300,300italic,400,400italic,700,700italic|Consolas:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-big-counter.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":true},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="使用 nginx + uwsgi 部署，nginx完成端口的转发，uwsgi负责启动 Django nginx、WSGI、uwsgi、uWSGI、django这几个关系WSGI，全称 Web Server Gateway Interface，或者 Python Web Server Gateway Interface ，是为 Python 语言定义的 Web 服务器和 Web 应用程序或框架之间的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="阿里云部署Django项目">
+<meta property="og:url" content="http://yoursite.com/2020/04/20/%E9%98%BF%E9%87%8C%E4%BA%91%E9%83%A8%E7%BD%B2Django%E9%A1%B9%E7%9B%AE/index.html">
+<meta property="og:site_name" content="Skylor Blog">
+<meta property="og:description" content="使用 nginx + uwsgi 部署，nginx完成端口的转发，uwsgi负责启动 Django nginx、WSGI、uwsgi、uWSGI、django这几个关系WSGI，全称 Web Server Gateway Interface，或者 Python Web Server Gateway Interface ，是为 Python 语言定义的 Web 服务器和 Web 应用程序或框架之间的">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-04-20T06:25:08.000Z">
+<meta property="article:modified_time" content="2020-06-02T13:24:17.962Z">
+<meta property="article:author" content="Skylor Tang">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://yoursite.com/2020/04/20/%E9%98%BF%E9%87%8C%E4%BA%91%E9%83%A8%E7%BD%B2Django%E9%A1%B9%E7%9B%AE/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>阿里云部署Django项目 | Skylor Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Skylor Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/04/20/%E9%98%BF%E9%87%8C%E4%BA%91%E9%83%A8%E7%BD%B2Django%E9%A1%B9%E7%9B%AE/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Skylor Tang">
+      <meta itemprop="description" content="Your advantages today will be replaced by future trends, so keep learning.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Skylor Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          阿里云部署Django项目
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-04-20 14:25:08" itemprop="dateCreated datePublished" datetime="2020-04-20T14:25:08+08:00">2020-04-20</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-06-02 21:24:17" itemprop="dateModified" datetime="2020-06-02T21:24:17+08:00">2020-06-02</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2020/04/20/%E9%98%BF%E9%87%8C%E4%BA%91%E9%83%A8%E7%BD%B2Django%E9%A1%B9%E7%9B%AE/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2020/04/20/%E9%98%BF%E9%87%8C%E4%BA%91%E9%83%A8%E7%BD%B2Django%E9%A1%B9%E7%9B%AE/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>使用 nginx + uwsgi 部署，nginx完成端口的转发，uwsgi负责启动 Django</p>
+<h2 id="nginx、WSGI、uwsgi、uWSGI、django这几个关系"><a href="#nginx、WSGI、uwsgi、uWSGI、django这几个关系" class="headerlink" title="nginx、WSGI、uwsgi、uWSGI、django这几个关系"></a>nginx、WSGI、uwsgi、uWSGI、django这几个关系</h2><p>WSGI，全称 Web Server Gateway Interface，或者 Python Web Server Gateway Interface ，是为 Python 语言定义的 Web 服务器和 Web 应用程序或框架之间的一种简单而通用的接口。描述的是Web服务器如何与Web应用间进行通信。它不是服务器、python模块、框架、API或者任何软件，只是一种描述web服务器（如nginx，uWSGI等服务器）如何与web应用程序（如用Django、Flask框架写的程序）通信的规范。</p>
+<p>uwsgi协议是一个uWSGI服务器自有的协议，它用于定义传输信息的类型（type of information），每一个uwsgi packet前4byte为传输信息类型描述，用于与nginx等代理服务器通信，它与WSGI相比是两样东西。</p>
+<p>uWSGI是实现了uwsgi和WSGI两种协议的Web服务器。</p>
+<blockquote>
+<p>为什么有了uWSGI为什么还需要nginx？因为nginx具备优秀的静态内容处理能力，然后将动态内容转发给uWSGI服务器，这样可以达到很好的客户端响应。</p>
+</blockquote>
+<h3 id="完整的访问过程"><a href="#完整的访问过程" class="headerlink" title="完整的访问过程"></a>完整的访问过程</h3><ol>
+<li>nginx接收到浏览器的http请求,将包进行解析,分析url,如果是静态文件直接访问用户给nginx配置静态文件目录,如果不是静态文件,是一个动态请求,nginx会转发给uwsgi。</li>
+<li>uwsgi接到请求会进行处理成wsgi可以接受的形式,并发给wsgi。</li>
+<li>wsgi根据请求调用应用程序的某个文件,某个文件的某个函数处理完会返回给wsgi,wsgi将返回值进行打包,打包成uwsgi能够接受的格式,uwsgi接受wsgi的发送请求,转发给nginx,nginx最终将返回值返回给浏览器。</li>
+</ol>
+<h3 id="为什么不用uWSGI作为唯一服务器"><a href="#为什么不用uWSGI作为唯一服务器" class="headerlink" title="为什么不用uWSGI作为唯一服务器"></a>为什么不用uWSGI作为唯一服务器</h3><p>1.安全问题，程序不能直接被浏览器访问到，而是通过nginx,nginx只开放某个接口，uwsgi本身是内网接口，这样运维人员在nginx上加上安全性的限制，可以达到保护程序的作用。</p>
+<p>2.负载均衡问题，一个uwsgi很可能不够用，即使开了多个work也是不行，毕竟一台机器的cpu和内存都是有限的，有了nginx做代理，一个nginx可以代理多台uwsgi完成uwsgi的负载均衡。</p>
+<p>3.静态文件问题，用django或是uwsgi这种东西来负责静态文件的处理是很浪费的行为，而且他们本身对文件的处理也不如nginx好，所以整个静态文件的处理都直接由nginx完成，静态文件的访问完全不去经过uwsgi以及其后面的东西。</p>
+<h2 id="工具安装（以CentOS7为例）"><a href="#工具安装（以CentOS7为例）" class="headerlink" title="工具安装（以CentOS7为例）"></a>工具安装（以CentOS7为例）</h2><h3 id="mysql"><a href="#mysql" class="headerlink" title="mysql"></a>mysql</h3><p>安装完成之后，需要使用进行如下配置</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">在/etc/my.cnf中需要设置</span><br><span class="line">在 [mysqld]:</span><br><span class="line">下面加一行</span><br><span class="line">bind-address = 0.0.0.0</span><br></pre></td></tr></table></figure>
+<p>数据库的迁移</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 将本地的数据库(music_db)导出为sql文件(music_db.sql)</span></span><br><span class="line">mysqldump -uroot -p db_name &gt; db_name.sql</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 用scp命令将sql文件发送到服务器</span></span><br><span class="line">scp music_db.sql  远程登录账号@服务器ip:服务器目录/db_name.sql </span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 在服务器上登录mysql</span></span><br><span class="line">mysql -uroot -p</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 在服务器的mysql中新建同名数据库(music_db),然后退出mysql</span></span><br><span class="line">create database new_db_name charset=utf8;</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 退出</span></span><br><span class="line">exit;</span><br><span class="line"> </span><br><span class="line"><span class="meta">#</span><span class="bash"> 将通过scp命令传输过来的db_name.sql文件导入到,刚刚建立的同名数据库中</span></span><br><span class="line">mysql -uroot -p new_db_name &lt; db_name.sql</span><br></pre></td></tr></table></figure>
+
+<h3 id="nginx"><a href="#nginx" class="headerlink" title="nginx"></a>nginx</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo yum install epel-release</span><br><span class="line">sudo yum install nginx</span><br></pre></td></tr></table></figure>
+
+<h3 id><a href="#" class="headerlink" title></a></h3><p>使用 pip install uwsgi 安装<br>在项目的根目录下，通过 uwsgi –http :8001 –module MxShop.uwsgi 运行项目<br>以http的方式，让uwsgi启动我们的项目<br>端口需要在 安全策略组 中进行了开放</p>
+<p>当输出以下时，说明项目启动成功</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">*** uWSGI is running in multiple interpreter mode ***</span><br><span class="line">spawned uWSGI worker 1 (and the only) (pid: 24712, cores: 1)</span><br></pre></td></tr></table></figure>
+
+<p>配置nginx文件，以 .conf 结尾</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"># the upstream component nginx needs to connect to</span><br><span class="line">upstream django &#123;</span><br><span class="line">  # server unix:&#x2F;&#x2F;&#x2F;path&#x2F;to&#x2F;your&#x2F;mysite&#x2F;mysite.sock; # for a file socket</span><br><span class="line">  server 127.0.0.1:8001; # for a web port socket (we&#39;ll use this first)</span><br><span class="line">  # 设置启动Django的端口，可以任意命名合法的端口号</span><br><span class="line">&#125;</span><br><span class="line"># configuration of the server</span><br><span class="line"></span><br><span class="line">server &#123;</span><br><span class="line">  # the port your site will be served on</span><br><span class="line">  listen      80;</span><br><span class="line">  # the domain name it will serve for</span><br><span class="line">  server_name 39.106.84.56 ; # substitute your machine&#39;s IP address or FQDN</span><br><span class="line">  # 配置服务器的IP地址</span><br><span class="line">  charset     utf-8;</span><br><span class="line"></span><br><span class="line">  # max upload size</span><br><span class="line">  client_max_body_size 75M;   # adjust to taste</span><br><span class="line"></span><br><span class="line">  # Django media</span><br><span class="line">  # 配置使用nginx来代理静态文件，而不使用Django自带的代理，得益与nginx底层的io多路复用，nginx的性能高</span><br><span class="line">  location &#x2F;media  &#123;</span><br><span class="line">    alias &#x2F;root&#x2F;projects&#x2F;MxShop&#x2F;media;  # 指向django的media目录</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  location &#x2F;static &#123;</span><br><span class="line">    alias &#x2F;root&#x2F;projects&#x2F;MxShop&#x2F;static; # 指向django的static目录</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  # Finally, send all non-media requests to the Django server.</span><br><span class="line">  location &#x2F; &#123;</span><br><span class="line">    uwsgi_pass  django;</span><br><span class="line">    include     uwsgi_params; # the uwsgi_params file you installed</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>使用nginx之后，项目中的静态文件就交给nginx代理了</p>
+<p>uwsgi -i uwsgi.ini</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">uWSGI running as root, you can use --uid/--gid/--chroot options</span><br><span class="line">*** WARNING: you are running uWSGI as root !!! (use the --uid flag) *** </span><br><span class="line">spawned uWSGI master process (pid: 25690)</span><br><span class="line">spawned uWSGI worker 1 (pid: 25693, cores: 1)</span><br><span class="line">spawned uWSGI worker 2 (pid: 25694, cores: 1)</span><br><span class="line">spawned uWSGI worker 3 (pid: 25695, cores: 1)</span><br><span class="line">spawned uWSGI worker 4 (pid: 25696, cores: 1)</span><br><span class="line">spawned uWSGI worker 5 (pid: 25697, cores: 1)</span><br><span class="line">spawned uWSGI worker 6 (pid: 25698, cores: 1)</span><br><span class="line">spawned uWSGI worker 7 (pid: 25699, cores: 1)</span><br><span class="line">spawned uWSGI worker 8 (pid: 25700, cores: 1)</span><br><span class="line">spawned uWSGI worker 9 (pid: 25701, cores: 1)</span><br><span class="line">spawned uWSGI worker 10 (pid: 25702, cores: 1)</span><br></pre></td></tr></table></figure>
+<p>出现多个进程，说明但前项目启动成功</p>
+<p>nginx: [emerg] duplicate upstream “django” in /etc/nginx/conf.d/uc_nginx.conf:2</p>
+<p>使用nginx 服务之前， 需要先运行 uwsgi服务</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/04/03/Django%20REST%20framework%E4%B9%8BJWT%E7%94%A8%E6%88%B7%E9%AA%8C%E8%AF%81/" rel="prev" title="Django REST framework之JWT用户验证">
+      <i class="fa fa-chevron-left"></i> Django REST framework之JWT用户验证
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/05/24/Django-Vue-%E5%89%8D%E5%90%8E%E7%AB%AF%E5%88%86%E7%A6%BB%E9%A1%B9%E7%9B%AE%E7%9A%84%E8%B7%A8%E5%9F%9F%E8%AF%B7%E6%B1%82%E9%97%AE%E9%A2%98/" rel="next" title="Django+Vue 前后端分离项目的跨域请求问题">
+      Django+Vue 前后端分离项目的跨域请求问题 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#nginx、WSGI、uwsgi、uWSGI、django这几个关系"><span class="nav-number">1.</span> <span class="nav-text">nginx、WSGI、uwsgi、uWSGI、django这几个关系</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#完整的访问过程"><span class="nav-number">1.1.</span> <span class="nav-text">完整的访问过程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#为什么不用uWSGI作为唯一服务器"><span class="nav-number">1.2.</span> <span class="nav-text">为什么不用uWSGI作为唯一服务器</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#工具安装（以CentOS7为例）"><span class="nav-number">2.</span> <span class="nav-text">工具安装（以CentOS7为例）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#mysql"><span class="nav-number">2.1.</span> <span class="nav-text">mysql</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#nginx"><span class="nav-number">2.2.</span> <span class="nav-text">nginx</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#"><span class="nav-number">2.3.</span> <span class="nav-text"></span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Skylor Tang"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Skylor Tang</p>
+  <div class="site-description" itemprop="description">Your advantages today will be replaced by future trends, so keep learning.</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">27</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">18</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2019 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Skylor Tang</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'bva4r4SJYiDLdhU1ALkqpbqw-gzGzoHsz',
+      appKey     : 'bWLTGKg8MzPrXsAvC3YDMehj',
+      placeholder: "欢迎留言",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>
