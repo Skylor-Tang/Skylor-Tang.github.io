@@ -354,6 +354,131 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/04/30/Django%E9%9D%99%E6%80%81%E8%B5%84%E6%BA%90%E9%85%8D%E7%BD%AE/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Skylor Tang">
+      <meta itemprop="description" content="Your advantages today will be replaced by future trends, so keep learning.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Skylor Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/04/30/Django%E9%9D%99%E6%80%81%E8%B5%84%E6%BA%90%E9%85%8D%E7%BD%AE/" class="post-title-link" itemprop="url">Django静态资源配置</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-04-30 18:54:25" itemprop="dateCreated datePublished" datetime="2020-04-30T18:54:25+08:00">2020-04-30</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-06-06 21:52:51" itemprop="dateModified" datetime="2020-06-06T21:52:51+08:00">2020-06-06</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/" itemprop="url" rel="index"><span itemprop="name">计算机</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/%E5%BC%80%E5%8F%91%E9%97%AE%E9%A2%98/" itemprop="url" rel="index"><span itemprop="name">开发问题</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/Django/" itemprop="url" rel="index"><span itemprop="name">Django</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2020/04/30/Django%E9%9D%99%E6%80%81%E8%B5%84%E6%BA%90%E9%85%8D%E7%BD%AE/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2020/04/30/Django%E9%9D%99%E6%80%81%E8%B5%84%E6%BA%90%E9%85%8D%E7%BD%AE/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="静态文件"><a href="#静态文件" class="headerlink" title="静态文件"></a>静态文件</h2><p>静态文件的配置，一般需要使用到以下几个参数</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">STATIC_URL</span><br><span class="line">STATIC_ROOT</span><br><span class="line">STATICFILES_DIRS</span><br></pre></td></tr></table></figure>
+
+<h3 id="STATIC-URL"><a href="#STATIC-URL" class="headerlink" title="STATIC_URL"></a>STATIC_URL</h3><p><code>STATIC_URL</code> 是必须设置的，提供了静态文件访问的映射关系，如设置 <code>STATIC_URL=&#39;/static/&#39;</code> 时（名字可以自定义，这个是访问所有的静态文件的根名），访问静态文件的路径就是 <code>127.0.0.1：8000/static/静态文件名</code>。在设置了该参数之后，Django实际上就有了访问静态文件的能力，所以说该参数是必须设置的。</p>
+<p>在开发模式下（DEBUG设置为True），Django提供了静态文件代理的功能，会自动识别每个 app下静态文件（前提是，这些静态文件夹必须设置在每个app之下，且使用的名字必须是static，这是因为Django内部做了相应的处理，只有名字 <code>static</code> 才会被Django自带的静态文件代理服务器识别），提供访问。</p>
+<p>设置app下的静态文件夹的时候，内部最好有一个用当前app名字命名的文件夹，并在该文件夹下放置相应的静态文件（这是因为不做区分，万一多个app之间有同名的静态文件，Django就会混淆），此时这些静态文件的访问地址就是： 127.0.0.1：8000/static/app命名的文件夹/相应的静态文件<br>例如，第三方插件xadmin这个app就是这样设计的：<br><img src="/2020/04/30/Django%E9%9D%99%E6%80%81%E8%B5%84%E6%BA%90%E9%85%8D%E7%BD%AE/xadmin.png" alt="xadmin的static设置"></p>
+<p>此外，设置了该参数之后，在模板层通过引入 <code>{\% load staticfiles \%}</code> 标签，可以在模板中使用 <code>href=&quot;{\% static &#39;css/reset.css&#39; \%}&quot;</code> 构建静态资源路径的构建，这样当对 <code>STATIC_URL</code> 指定的静态文件的根名方法改变的时候，不需要修改模板中的访问路径，依然能够访问，效果和<code>{\% url &#39;&#39; \%}</code>类似。</p>
+<h3 id="STATICFILES-DIRS"><a href="#STATICFILES-DIRS" class="headerlink" title="STATICFILES_DIRS"></a>STATICFILES_DIRS</h3><p>只在开发模式下有效，对于一些公共的静态文件，或者在项目中自建app的时候不想为每个app单独设置静态文件夹，为了方便管理，可以单独在项目的根目录下设置一个文件夹统一管理所有的静态文件（但是这个文件夹无法被开发模式下Django自带的静态文件代理服务定位到，所以必须使用STATICFILES_DIRS进行设置），设置如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 全局静态文件访问配置</span></span><br><span class="line">STATICFILES_DIRS = [</span><br><span class="line">    os.path.join(BASE_DIR, <span class="string">'集中管理的文件名'</span>)</span><br><span class="line">]</span><br><span class="line"><span class="comment"># 也可以设置多个静态文件夹</span></span><br><span class="line">STATICFILES_DIRS = [</span><br><span class="line">    os.path.join(BASE_DIR, <span class="string">'static'</span>),</span><br><span class="line">    os.path.join(BASE_DIR,  <span class="string">'xxx/static'</span>)  <span class="comment"># 可以设置多个静态文件查找路径</span></span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+<p>这样在项目根目录下创建 <code>集中管理的文件名</code>文件，在里面放置静态文件，此时静态文件的访问地址是 <code>127.0.0.1：8000/static/集中管理的文件名中的静态文件</code> 。</p>
+<blockquote>
+<p>STATICFILES_DIRS 的设置只是提供给开发模式下的Django自带静态文件代理服务定位静态文件用的。</p>
+</blockquote>
+<h3 id="STATIC-ROOT"><a href="#STATIC-ROOT" class="headerlink" title="STATIC_ROOT"></a>STATIC_ROOT</h3><p>在Django项目部署上线的时候，DEBUG需要设置为False，Django 不再提供静态文件代理功能，app自带的静态文件夹分布在各app下无法访问到，此时需使用 <code>pyhton manage.py collectstatic</code> 收集所有的静态文件，STATIC_ROOT就是用来设置所有的静态文件的聚合目录，如：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">STATIC_ROOT = os.path.join(BASE_DIR, <span class="string">'static'</span>)</span><br></pre></td></tr></table></figure>
+<p>使用 <code>python manage.py collectstatic</code> 之后，django会把所有的static文件都复制到STATIC_ROOT文件夹下。</p>
+<h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><ol>
+<li>无论是开发模式还是生产环境下，Django项目都依赖STATIC_URL=’/static/‘的设置，因为这提供了静态文件访问的映射关系，有了他，Django才能够访问静态文件。</li>
+<li>STATICFILES_DIRS用于指定在项目根目录下统一管理的静态文件夹的名字，但只是在开发过程中有效以及使用，生产环境下，所有的静态文件都将被收集到统一的目录下（包括 STATICFILES_DIRS 的），交给第三方静态服务器调度提供。</li>
+<li>若存在app下的static和STATICFILES_DIRS设置中同名的文件，默认访问的是STATICFILES_DIRS设置的静态文件下的，所以在app下的static中再设置一个app名的文件夹对静态文件管理，这样在访问时加上app名127.0.0.1：8000/static/app名，这样可以有效避免一些重名问题。</li>
+<li>关于static目录的位置设置使用建议，若website中的每个app的独立性非常强的话，就在每个单独的app下设置static目录，这样app就会支持热插拔，独立性强。若app的独立性不强，app之间相互联系的话，建议使用集中管理static的方法。但是无论使用哪种方式，在项目部署的时候，都会进行静态文件的收集，由第三方静态服务器管理。</li>
+</ol>
+<h2 id="media文件"><a href="#media文件" class="headerlink" title="media文件"></a>media文件</h2><p>设置和static类似，因为在开发模式下（DEBUG需要设置为True），Django并不提供media文件的代理服务，所以即使在开发模式下，也需要手动设置medai文件的代理。</p>
+<h3 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h3><p>需要同时设置MEDIA_URL和MEDIA_ROOT</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># media文件的路径</span></span><br><span class="line">MEDIA_URL = <span class="string">"/media/"</span> <span class="comment"># 可以改名</span></span><br><span class="line">MEDIA_ROOT = os.path.join(BASE_DIR, <span class="string">'media'</span>)  <span class="comment"># media为放置 media文件的文件夹名</span></span><br></pre></td></tr></table></figure>
+<p>解释：<br>设置<code>MEDIA_ROOT</code>后，Django做了一定的处理，能够使上传的文件传到<code>MEDIA_ROOT</code>指定的文件中，如models.py中指定的模型有些有 <code>upload_to=&quot;org/%Y/%m&quot;</code>，这样指定后，就会在media中创建 <code>org/年/月</code> 的文件夹存储文件。此时仅仅设置 <code>MEDIA_ROOT</code> 参数，就可以完成上传时自动放到设置的media目录下。但是此时的图片访问地址是当前所在页面的地址，加上存储的地址，为<code>当前所在地址/org/%Y/%m/图片</code>。</p>
+<p>若想访问到meida中的地址，还需要设置<code>MEDIA_URL = &quot;/media/&quot;</code>，设置之后访问media的路径就变成了<code>127.0.0.1：8000/media/org/%Y/%m/图片</code>。但是目前通过这个地址还是访问不了media（这点和static不同），Django没有对media的访问做处理，还需要我们手动对url的访问处理：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 在项目urls.py中设置url</span></span><br><span class="line"><span class="keyword">from</span> django.views.static <span class="keyword">import</span> serve  <span class="comment"># 静态文件处理的view，该方法接受path参数</span></span><br><span class="line"><span class="comment"># 配置上传文件的访问url</span></span><br><span class="line">url(<span class="string">r'^media/(?P&lt;path&gt;.*)$'</span>, serve, &#123;<span class="string">"document_root"</span>: MEDIA_ROOT&#125;),</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> django.views.static <span class="keyword">import</span> serve</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">serve</span><span class="params">(request, path, document_root=None, show_indexes=False)</span>:</span></span><br><span class="line">    <span class="keyword">pass</span></span><br><span class="line"><span class="string">'''</span></span><br><span class="line"><span class="string">这个方法serve是一个专门用于处理静态文件的view，这里的用法就和我们定义一个view视图处理url请求一样，&lt;path&gt;中设置的参数path会传递给view处理函数，也就是这里的serve函数，</span></span><br><span class="line"><span class="string">&#123;"document_root": MEDIA_ROOT&#125;这叫额外参数，为dict类型，额外参数只能被视图函数（这里的serve）读取</span></span><br><span class="line"><span class="string">通过serve参数可见，设置的path和document_root都是serve()的参数</span></span><br><span class="line"><span class="string">'''</span></span><br></pre></td></tr></table></figure>
+<p>此时就完成了media文件的访问。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/04/20/%E9%98%BF%E9%87%8C%E4%BA%91%E9%83%A8%E7%BD%B2Django%E9%A1%B9%E7%9B%AE/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -385,7 +510,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-06-05 20:09:41" itemprop="dateModified" datetime="2020-06-05T20:09:41+08:00">2020-06-05</time>
+                <time title="修改时间：2020-06-06 20:51:48" itemprop="dateModified" datetime="2020-06-06T20:51:48+08:00">2020-06-06</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -493,14 +618,15 @@
 <p>一切配置完成之后，通过 <code>sudo systemctl start nginx</code> 即可启动nginx服务，此时没有异常则为启动正常（可以通过 <code>sudo systemctl state nginx</code> 查看nginx服务的状态），之后即可用浏览器访问 <code>http://nginx配置文件中server_name指定的地址</code> 。</p>
 <h2 id="后续问题"><a href="#后续问题" class="headerlink" title="后续问题"></a>后续问题</h2><h3 id="静态文件的访问"><a href="#静态文件的访问" class="headerlink" title="静态文件的访问"></a>静态文件的访问</h3><p>Django中的静态文件访问设置需要分两种情况进行讨论（更加settings.py中DEBUG配置的状态分），即 开发测试场景下 和 生产环境中。</p>
 <h4 id="开发测试场景下"><a href="#开发测试场景下" class="headerlink" title="开发测试场景下"></a>开发测试场景下</h4><p>DEBUG设置为True。<br>此场景下Django自带的服务器提供静态文件的代理服务，此时只需要设置 <code>STATIC_URL</code> 以及 <code>STATICFILES_DIRS</code> 即可完成静态文件的访问，并且此时Django自带的服务器提供静态文件的代理服务还会自动代理项目中使用的外部app自带的静态文件（且不需要额外的设置）。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">STATIC_URL = <span class="string">'/static/'</span></span><br><span class="line"><span class="comment"># 全局静态文件配置，开发模式下一定要设置该参数</span></span><br><span class="line">STATICFILES_DIRS = [</span><br><span class="line">    os.path.join(BASE_DIR, <span class="string">'static'</span>),</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">STATIC_URL = <span class="string">'/static/'</span></span><br><span class="line"><span class="comment"># 全局静态文件配置，开发模式下用于一些公共静态文件的路径提供，因为不是在app下单独设置，开发模式下Django自带的静态文件代理无法定位到这些文件，需要使用STATICFILES_DIRS进行设置。</span></span><br><span class="line">STATICFILES_DIRS = [</span><br><span class="line">    os.path.join(BASE_DIR, <span class="string">'static'</span>),  <span class="comment"># 指向项目下的static文件夹</span></span><br><span class="line">]</span><br></pre></td></tr></table></figure>
 <blockquote>
-<p>开发模式下，STATICFILES_DIRS和STATIC_ROOT不能共存，需要注释掉STATIC_ROOT配置，否则提示 <code>(staticfiles.E002) The STATICFILES_DIRS setting should not contain the STATIC_ROOT setting.</code>。</p>
+<p>注意：STATICFILES_DIRS 和 STATIC_ROOT 的配置不能相同，否则提示 <code>(staticfiles.E002) The STATICFILES_DIRS setting should not contain the STATIC_ROOT setting.</code>。一般情况下，在生产环境中所有的静态资源都会收集到一起放到统一的文件夹下，交由第三方服务代理，此时STATICFILES_DIRS也就不需要使用了。</p>
 </blockquote>
 <h4 id="生产环境下"><a href="#生产环境下" class="headerlink" title="生产环境下"></a>生产环境下</h4><p>DEBUG设置为False（此时注意：必须设置ALLOWED_HOSTS参数，用于设置允许访问当前网站的ip地址）<br>在Django部署上线之后，为了不对外暴露内部程序细节（测试开发过程中，DEBUG设置为True，异常会显示在浏览器），此时需要设置DEBUG为False，而一旦这样设置之后，Django将不再提供静态服务代理的功能，需要手动配置来完成。配置过程和media的配置相同（因为Django是不提供media文件的代理服务的，所以即使在开发阶段也是需要手动配置的）。<br>手动实现静态文件代理的方式有以下几种：</p>
 <ol>
-<li>通过配置url进行访问（Django只推荐在开发过程中使用，生产环境下最好使用第2种）<br>配置的过程和media的配置过程一样，配置内容如下：<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># settings.py中的配置</span></span><br><span class="line">STATIC_URL = <span class="string">'/static/'</span></span><br><span class="line">STATIC_ROOT = os.path.join(BASE_DIR, <span class="string">'static'</span>)</span><br><span class="line"><span class="comment"># media文件的路径</span></span><br><span class="line">MEDIA_URL = <span class="string">"/media/"</span></span><br><span class="line">MEDIA_ROOT = os.path.join(BASE_DIR, <span class="string">'media'</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># urls.py中的路由设置</span></span><br><span class="line"><span class="keyword">from</span> MyProject.settings <span class="keyword">import</span> STATIC_ROOT</span><br><span class="line"><span class="keyword">from</span> MyProject.settings <span class="keyword">import</span> STATIC_ROOT</span><br><span class="line"><span class="keyword">from</span> django.views.static <span class="keyword">import</span> serve  <span class="comment"># 用于提供静态文件的视图和功能。这些仅在开发过程中使用，不应在生产环境中使用。</span></span><br><span class="line"></span><br><span class="line">url(<span class="string">r'^media/(?P&lt;path&gt;.*)$'</span>, serve, &#123;<span class="string">"document_root"</span>: MEDIA_ROOT&#125;),</span><br><span class="line">url(<span class="string">r'^static/(?P&lt;path&gt;.*)$'</span>, serve, &#123;<span class="string">"document_root"</span>: STATIC_ROOT&#125;),</span><br></pre></td></tr></table></figure></li>
+<li>通过配置url进行访问（Django只推荐在开发过程中使用，生产环境下最好使用第2种）<br>配置的过程和media的配置过程一样，配置内容如下：<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># settings.py中的配置</span></span><br><span class="line">STATIC_URL = <span class="string">'/static/'</span></span><br><span class="line">STATIC_ROOT = os.path.join(BASE_DIR, <span class="string">'static'</span>)  <span class="comment"># 指向项目下的static文件夹</span></span><br><span class="line"><span class="comment"># media文件的路径</span></span><br><span class="line">MEDIA_URL = <span class="string">"/media/"</span></span><br><span class="line">MEDIA_ROOT = os.path.join(BASE_DIR, <span class="string">'media'</span>)  <span class="comment"># 指向项目下的media文件夹</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># urls.py中的路由设置</span></span><br><span class="line"><span class="keyword">from</span> MyProject.settings <span class="keyword">import</span> STATIC_ROOT</span><br><span class="line"><span class="keyword">from</span> MyProject.settings <span class="keyword">import</span> STATIC_ROOT</span><br><span class="line"><span class="keyword">from</span> django.views.static <span class="keyword">import</span> serve  <span class="comment"># 用于提供静态文件的视图和功能。这些仅在开发过程中使用，不应在生产环境中使用。</span></span><br><span class="line"></span><br><span class="line">url(<span class="string">r'^media/(?P&lt;path&gt;.*)$'</span>, serve, &#123;<span class="string">"document_root"</span>: MEDIA_ROOT&#125;),</span><br><span class="line">url(<span class="string">r'^static/(?P&lt;path&gt;.*)$'</span>, serve, &#123;<span class="string">"document_root"</span>: STATIC_ROOT&#125;),</span><br></pre></td></tr></table></figure></li>
 <li>通过第三方服务器，如使用Nginx来提供静态文件的代理服务（Nginx拥有更高的静态资源处理性能）<br>此时配置文件中只需要提供 <code>STATIC_URL</code> 和 <code>MEDIA_URL</code> 两个配置，如下：<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">STATIC_URL = <span class="string">'/static/'</span></span><br><span class="line">MEDIA_URL = <span class="string">'/media/'</span></span><br></pre></td></tr></table></figure>
+之后，Django所有静态资源的访问都将被转到Nginx，由Nginx提供。<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># nginx下的静态文件代理配置</span></span><br><span class="line">location /media  &#123;</span><br><span class="line">  alias /root/projects/MxShop/media;  <span class="comment"># 指向django项目下的media文件夹</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">location /static &#123;</span><br><span class="line">  alias /root/projects/MxShop/static; <span class="comment"># 指向django项目下的static文件夹</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 </li>
 </ol>
@@ -1255,105 +1381,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/10/Vue%E5%9F%BA%E7%A1%80/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="Skylor Tang">
-      <meta itemprop="description" content="Your advantages today will be replaced by future trends, so keep learning.">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Skylor Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2019/12/10/Vue%E5%9F%BA%E7%A1%80/" class="post-title-link" itemprop="url">Vue基础</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2019-12-10 09:01:08" itemprop="dateCreated datePublished" datetime="2019-12-10T09:01:08+08:00">2019-12-10</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-06-02 10:34:59" itemprop="dateModified" datetime="2020-06-02T10:34:59+08:00">2020-06-02</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/" itemprop="url" rel="index"><span itemprop="name">计算机</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/Vue/" itemprop="url" rel="index"><span itemprop="name">Vue</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2019/12/10/Vue%E5%9F%BA%E7%A1%80/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2019/12/10/Vue%E5%9F%BA%E7%A1%80/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>Vue是一套用于构建用户界面的渐进式框架。与其它大型框架不同的是，Vue 被设计为可以自底向上逐层应用。Vue 的核心库只关注视图层，不仅易于上手，还便于与第三方库或既有项目整合。另一方面，当与现代化的工具链以及各种支持类库结合使用时，Vue 也完全能够为复杂的单页应用提供驱动。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2019/12/10/Vue%E5%9F%BA%E7%A1%80/">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1425,7 +1452,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">27</span>
+          <span class="site-state-item-count">28</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1438,7 +1465,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">20</span>
+        <span class="site-state-item-count">21</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
