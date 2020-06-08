@@ -238,66 +238,68 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h2 id="flask初探"><a href="#flask初探" class="headerlink" title="flask初探"></a>flask初探</h2><p>一个最小的应用：</p>
+        <h2 id="flask初探"><a class="header-anchor" href="#flask初探">¶</a>flask初探</h2>
+<p>一个最小的应用：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># app.py</span></span><br><span class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> Flask</span><br><span class="line"></span><br><span class="line">app = Flask(__name__)</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.route('/')  # 通过装饰器声明路由</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">hello_world</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">return</span> <span class="string">'Hello World!'</span></span><br></pre></td></tr></table></figure>
-
 <p>上面的例子中index()函数注册为应用根地址的处理程序。使用<code>app.route()</code>装饰器注册视图函数是首选方法，但不是唯一的方法。Flask还支持一种更传统的方式：使用<code>app.add_url_rule()</code>方法。这个方法最简单的形式接受3个参数：URL、端点名和视图函数。下述示例使用app.add url rule()方法注册index()函数，其作用与前例相同：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">hello_world</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">return</span> <span class="string">'Hello World!'</span></span><br><span class="line">app.add_url_rule(<span class="string">'/'</span>, <span class="string">'index'</span>, index)</span><br></pre></td></tr></table></figure>
-
-<h3 id="启动项目"><a href="#启动项目" class="headerlink" title="启动项目"></a>启动项目</h3><p>一个完成的应用应该包括一个应用实例、一个路由和一个视图函数，此时运行以上的程序就可以完成一个小型的网页请求：</p>
+<h3 id="启动项目"><a class="header-anchor" href="#启动项目">¶</a>启动项目</h3>
+<p>一个完成的应用应该包括一个应用实例、一个路由和一个视图函数，此时运行以上的程序就可以完成一个小型的网页请求：</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> <span class="built_in">export</span> FLASK_APP=app.py</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> flask run</span></span><br><span class="line"> * Running on http://127.0.0.1:5000/</span><br></pre></td></tr></table></figure>
-
 <p>命令解释：</p>
 <ul>
-<li><p>export FLASK_APP=hello.py ：设置环境变量，用于指定运行的应用文件，若没有设置，则默认会在项目根目录下找名为<code>wsgi.py</code> 或者 <code>app.py</code>的文件进行启动，否则会报异常。</p>
+<li>
+<p>export FLASK_APP=<a href="http://hello.py" target="_blank" rel="noopener">hello.py</a> ：设置环境变量，用于指定运行的应用文件，若没有设置，则默认会在项目根目录下找名为<code>wsgi.py</code> 或者 <code>app.py</code>的文件进行启动，否则会报异常。</p>
 </li>
-<li><p>flask run ：运行项目</p>
+<li>
+<p>flask run ：运行项目</p>
 </li>
 </ul>
 <p>此时访问默认路径<code>http://127.0.0.1:5000/</code>即可进行访问，和Django类似，若想被外部服务器、特定的端口访问，可以使用<code>flask run --host=0.0.0.0 --port=5050</code>，此时外部就可以进行访问。</p>
 <p>处理通过 <code>flask run</code> 命令的方式启动项目之外，还可以通过python脚本的方式启动项目</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 以python脚本方式启动项目</span></span><br><span class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> Flask</span><br><span class="line"></span><br><span class="line">app = Flask(__name__)</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.route('/')  # 通过装饰器声明路由</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">hello_world</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">return</span> <span class="string">'Hello World!'</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:</span><br><span class="line">  	app.run()</span><br></pre></td></tr></table></figure>
-
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> python app.py</span></span><br></pre></td></tr></table></figure>
-
 <p>该方式在单元测试中用较多。</p>
-<h3 id="调试模式"><a href="#调试模式" class="headerlink" title="调试模式"></a>调试模式</h3><p>通过设置环境变量 <code>export FLASK_ENV=development</code> 启动调试模式，在该模式下，每次修改代码服务器都会自动重启，并且当应用出错的时候，还会提供调试工具。和Django一样，调试模式不应该应用在生产环境中。</p>
-<h2 id="路由"><a href="#路由" class="headerlink" title="路由"></a>路由</h2><p>通过使用装饰器 <code>@route()</code> 或者 <code>app.add_url_rule()</code>将视图函数绑定到URL中，可以在URL中添加变量，实现动态路由，除了添加变量之外，还可以指定变量的类型。</p>
+<h3 id="调试模式"><a class="header-anchor" href="#调试模式">¶</a>调试模式</h3>
+<p>通过设置环境变量 <code>export FLASK_ENV=development</code> 启动调试模式，在该模式下，每次修改代码服务器都会自动重启，并且当应用出错的时候，还会提供调试工具。和Django一样，调试模式不应该应用在生产环境中。</p>
+<h2 id="路由"><a class="header-anchor" href="#路由">¶</a>路由</h2>
+<p>通过使用装饰器 <code>@route()</code> 或者 <code>app.add_url_rule()</code>将视图函数绑定到URL中，可以在URL中添加变量，实现动态路由，除了添加变量之外，还可以指定变量的类型。</p>
 <table>
 <thead>
 <tr>
 <th>类型</th>
-<th align="left">解释</th>
+<th style="text-align:left">解释</th>
 </tr>
 </thead>
-<tbody><tr>
+<tbody>
+<tr>
 <td><code>string</code></td>
-<td align="left">（缺省值） 接受任何不包含斜杠的文本</td>
+<td style="text-align:left">（缺省值） 接受任何不包含斜杠的文本</td>
 </tr>
 <tr>
 <td><code>int</code></td>
-<td align="left">接受正整数</td>
+<td style="text-align:left">接受正整数</td>
 </tr>
 <tr>
 <td><code>float</code></td>
-<td align="left">接受正浮点数</td>
+<td style="text-align:left">接受正浮点数</td>
 </tr>
 <tr>
 <td><code>path</code></td>
-<td align="left">类似 <code>string</code> ，但可以包含斜杠</td>
+<td style="text-align:left">类似 <code>string</code> ，但可以包含斜杠</td>
 </tr>
 <tr>
 <td><code>uuid</code></td>
-<td align="left">接受 UUID 字符串（通用唯一识别码）</td>
+<td style="text-align:left">接受 UUID 字符串（通用唯一识别码）</td>
 </tr>
-</tbody></table>
+</tbody>
+</table>
 <p>path演示：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> cgi <span class="keyword">import</span> escape</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.route('/path/&lt;path:subpath&gt;')</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">show_subpath</span><span class="params">(subpath)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> <span class="string">'Subpath %s'</span> % escape(subpath)  </span><br><span class="line">  </span><br><span class="line"><span class="comment"># 访问 localhost:5000/path/baidu/google</span></span><br><span class="line"><span class="comment"># 返回结果：Subpath baidu/google</span></span><br></pre></td></tr></table></figure>
-
 <p>uuid演示： UUID是由一组32位数的16进制数字所构成，以连字号分隔的五组来显示，形式为 8-4-4-4-12，总共有 36个字符（即三十二个英数字母和四个连字号）</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@app.route('/uuid/&lt;uuid:uuid&gt;')</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">show_uuid</span><span class="params">(uuid)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> <span class="string">'Uuid %s'</span> % uuid</span><br><span class="line">  </span><br><span class="line"><span class="comment"># 访问 localhost:5000/uuid/123e4567-e89b-12d3-a456-426655440000</span></span><br><span class="line"><span class="comment"># 返回结果：Uuid 123e4567-e89b-12d3-a456-426655440000</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="关于URL后是否添加-的问题"><a href="#关于URL后是否添加-的问题" class="headerlink" title="关于URL后是否添加 / 的问题"></a>关于URL后是否添加 / 的问题</h3><p>在访问尾部有斜杠的url的时候，若是填写url时没有添加/，则此次的访问会自动重定向到尾部含有斜杠的路径中，所以在访问尾部有斜杠的url的时候，无论手动添加斜杠与否，最终都会访问有斜杠的路径。</p>
+<h3 id="关于URL后是否添加-的问题"><a class="header-anchor" href="#关于URL后是否添加-的问题">¶</a>关于URL后是否添加 / 的问题</h3>
+<p>在访问尾部有斜杠的url的时候，若是填写url时没有添加/，则此次的访问会自动重定向到尾部含有斜杠的路径中，所以在访问尾部有斜杠的url的时候，无论手动添加斜杠与否，最终都会访问有斜杠的路径。</p>
 <p>在访问尾部没有斜杠的url的时候，要是手动在末尾添加了斜杠，则得到404错误。</p>
 
     </div>

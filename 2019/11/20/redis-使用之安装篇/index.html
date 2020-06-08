@@ -243,7 +243,8 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>Redis是一种支持分布式（不使用分布式的功能也可以）的nosql数据库，他的数据是保存在内存中的，同时Redis可以定时吧内存中的数据同步到磁盘，即可以将数据持久化，并且他比memcached支持更多的数据结构，包括 string，list列表[队列和栈] ，set[集合]，sorted set[有序集合]，hash(hash表)。</p>
+        <h2 id="概述"><a class="header-anchor" href="#概述">¶</a>概述</h2>
+<p>Redis是一种支持分布式（不使用分布式的功能也可以）的nosql数据库，他的数据是保存在内存中的，同时Redis可以定时吧内存中的数据同步到磁盘，即可以将数据持久化，并且他比memcached支持更多的数据结构，包括 string，list列表[队列和栈] ，set[集合]，sorted set[有序集合]，hash(hash表)。</p>
 <p>Redis的使用场景：一般都是在web后台，或者在服务器后台</p>
 <ol>
 <li>登录会话存储：存储在 Redis 中，与 memcached 相比，数据不会丢失。</li>
@@ -256,59 +257,100 @@
 <li>发布和订阅的功能：可以用来做聊天软件。</li>
 </ol>
 <p><img src="/2019/11/20/redis-%E4%BD%BF%E7%94%A8%E4%B9%8B%E5%AE%89%E8%A3%85%E7%AF%87/redis%E5%92%8Cmemecached%E6%AF%94%E8%BE%83.png" alt="redis和memecached比较"></p>
-<h2 id="redis的安装"><a href="#redis的安装" class="headerlink" title="redis的安装"></a>redis的安装</h2><h3 id="ubuntu-16-04-01下安装"><a href="#ubuntu-16-04-01下安装" class="headerlink" title="ubuntu 16.04.01下安装"></a>ubuntu 16.04.01下安装</h3><p>使用 <code>apt-get install redis-server</code> 进行安装（16版本以下可以直接使用 <code>apt install redis-server</code> 安装）</p>
+<h2 id="redis的安装"><a class="header-anchor" href="#redis的安装">¶</a>redis的安装</h2>
+<h3 id="ubuntu-16-04-01下安装"><a class="header-anchor" href="#ubuntu-16-04-01下安装">¶</a>ubuntu 16.04.01下安装</h3>
+<p>使用 <code>apt-get install redis-server</code> 进行安装（16版本以下可以直接使用 <code>apt install redis-server</code> 安装）</p>
 <blockquote>
-<p>如果遇到提示：<br>E: Unable to locate package redis-server<br>则使用sudo apt-get update 进行更新后再使用命令进行安装</p>
+<p>如果遇到提示：<br>
+E: Unable to locate package redis-server<br>
+则使用sudo apt-get update 进行更新后再使用命令进行安装</p>
 </blockquote>
 <p>卸载 <code>apt-get purge –auto-remove redis-server</code></p>
 <p>启动：通过 <code>ps aux|grep redis</code> 进行查看</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">root     16373  1286  0 11:27 pts/0    00:00:00 grep --color=auto redis</span><br></pre></td></tr></table></figure>
-<p>就是没打开，此时使用 <code>service redis-server start</code> 进行开启。<br><img src="/2019/11/20/redis-%E4%BD%BF%E7%94%A8%E4%B9%8B%E5%AE%89%E8%A3%85%E7%AF%87/start.png" alt="服务开启"><br>停止服务：<code>service redis-server stop</code><br>重启服务：<code>service redis-server restart</code></p>
-<h3 id="centos7系统下安装"><a href="#centos7系统下安装" class="headerlink" title="centos7系统下安装"></a>centos7系统下安装</h3><p>安装： <code>yum install redis</code><br>启动： <code>systemctl start redis</code></p>
+<p>就是没打开，此时使用 <code>service redis-server start</code> 进行开启。<br>
+<img src="/2019/11/20/redis-%E4%BD%BF%E7%94%A8%E4%B9%8B%E5%AE%89%E8%A3%85%E7%AF%87/start.png" alt="服务开启"><br>
+停止服务：<code>service redis-server stop</code><br>
+重启服务：<code>service redis-server restart</code></p>
+<h3 id="centos7系统下安装"><a class="header-anchor" href="#centos7系统下安装">¶</a>centos7系统下安装</h3>
+<p>安装： <code>yum install redis</code><br>
+启动： <code>systemctl start redis</code></p>
 <blockquote>
 <p>启动服务时，使用的时默认的 redis 配置（/etc/redis.conf中的内容），此时就不需要在命令后添加具体的配置文件，如需使用特定的配置文件来启动 redis，则需要在使用 <code>redis-server 配置文件路径</code> 手动开启。</p>
 </blockquote>
-<p>重启： <code>systemctl restart redis</code><br>停止： <code>systemctl stop redis</code><br>除了通过 <code>systemctl stop redis</code> 命令的方式终止 redis 服务，还可以在客户端（redis-cli）中通过 shutdown 指令关闭redis服务。<br>查看状态： <code>systemctl status redis</code><br>centos7下的 redis 配置文件所在位置默认是 <code>/etc/redis.conf</code> ，具体可以使用 <code>whereis redis</code> 查看到。</p>
+<p>重启： <code>systemctl restart redis</code><br>
+停止： <code>systemctl stop redis</code><br>
+除了通过 <code>systemctl stop redis</code> 命令的方式终止 redis 服务，还可以在客户端（redis-cli）中通过 shutdown 指令关闭redis服务。<br>
+查看状态： <code>systemctl status redis</code><br>
+centos7下的 redis 配置文件所在位置默认是 <code>/etc/redis.conf</code> ，具体可以使用 <code>whereis redis</code> 查看到。</p>
 <p>可以参考该内容：<a href="https://www.cnblogs.com/chengxs/p/9833911.html" target="_blank" rel="noopener">https://www.cnblogs.com/chengxs/p/9833911.html</a></p>
-<h3 id="windows系统下的安装及使用"><a href="#windows系统下的安装及使用" class="headerlink" title="windows系统下的安装及使用"></a>windows系统下的安装及使用</h3><p>下载地址：<a href="https://github.com/MicrosoftArchive/redis/releases" target="_blank" rel="noopener">https://github.com/MicrosoftArchive/redis/releases</a><br>运行：进入到redis安装的所在路径，然后执行 <code>redis-server.exe redis.windows.conf</code> 就可以运行了。</p>
+<h3 id="windows系统下的安装及使用"><a class="header-anchor" href="#windows系统下的安装及使用">¶</a>windows系统下的安装及使用</h3>
+<p>下载地址：<a href="https://github.com/MicrosoftArchive/redis/releases" target="_blank" rel="noopener">https://github.com/MicrosoftArchive/redis/releases</a><br>
+运行：进入到redis安装的所在路径，然后执行 <code>redis-server.exe redis.windows.conf</code> 就可以运行了。</p>
 <blockquote>
-<p>注意：第一次执行 <code>redis-server.exe redis.windows.conf</code> 可能会报错，<br><code>[12672] 21 Apr 16:52:01.018 # Creating Server TCP listening socket *:6379: bind: No error</code><br>解决方法：在命令行中运行以下命令断开连接<br>redis-cli.exe<br>127.0.0.1:6379&gt;shutdown<br>not connected&gt;exit<br>之后再次重新执行 <code>redis-server.exe redis.windows.conf</code> 启动即可。</p>
+<p>注意：第一次执行 <code>redis-server.exe redis.windows.conf</code> 可能会报错，<br>
+<code>[12672] 21 Apr 16:52:01.018 # Creating Server TCP listening socket *:6379: bind: No error</code><br>
+解决方法：在命令行中运行以下命令断开连接<br>
+redis-cli.exe<br>
+127.0.0.1:6379&gt;shutdown<br>
+not connected&gt;exit<br>
+之后再次重新执行 <code>redis-server.exe redis.windows.conf</code> 启动即可。</p>
 </blockquote>
 <p>服务启动完成之后，执行 <code>redis-cli.exe</code> ，即可连接 redis 数据库了。</p>
 <blockquote>
-<p>注意：启动服务的时候是要指定配置文件的，即 windows 系统下的 redis.windows.conf 文件，linux 下是 redis.conf 文件，才算是完整的启动，否则就会出现启动了服务器，但是连接后没有数据的情况，远程连接也没有用。<br>没有添加配置文件的启动都会在第一行显示 <code>[19668] 16 Apr 10:14:31.228 # Warning: no config file specified, using the default config. In order to specify a config file use redis-server.exe /path/to/redis.conf</code> ，但是连接操作 redis-cli 的启动不受影响，只会影响到查数据，远程连接别的redis 数据库也不会受到影响（别的redis数据库服务正确启动了—使用了配置文件启动）。</p>
+<p>注意：启动服务的时候是要指定配置文件的，即 windows 系统下的 redis.windows.conf 文件，linux 下是 redis.conf 文件，才算是完整的启动，否则就会出现启动了服务器，但是连接后没有数据的情况，远程连接也没有用。<br>
+没有添加配置文件的启动都会在第一行显示 <code>[19668] 16 Apr 10:14:31.228 # Warning: no config file specified, using the default config. In order to specify a config file use redis-server.exe /path/to/redis.conf</code> ，但是连接操作 redis-cli 的启动不受影响，只会影响到查数据，远程连接别的redis 数据库也不会受到影响（别的redis数据库服务正确启动了—使用了配置文件启动）。</p>
 </blockquote>
-<h2 id="连接"><a href="#连接" class="headerlink" title="连接"></a>连接</h2><p>redis 和 mysql 以及 mongdb 是一样的，都提供客户端进行连接，输入命令 redis-cli（前提是redis安装路径已经加入环境变量了）就可以链接到 redis 服务器了。</p>
-<h3 id="其他机器访问本机redis服务器"><a href="#其他机器访问本机redis服务器" class="headerlink" title="其他机器访问本机redis服务器"></a>其他机器访问本机redis服务器</h3><p>需要修改配置，默认情况下不能访问。<br>想要让其他机器访问本机的 redis 服务器，那么要修改 redis.conf 的配置文件，修改 <code>bind [自己的ip地址或者0.0.0.0]</code>，其他机器才能访问。</p>
+<h2 id="连接"><a class="header-anchor" href="#连接">¶</a>连接</h2>
+<p>redis 和 mysql 以及 mongdb 是一样的，都提供客户端进行连接，输入命令 redis-cli（前提是redis安装路径已经加入环境变量了）就可以链接到 redis 服务器了。</p>
+<h3 id="其他机器访问本机redis服务器"><a class="header-anchor" href="#其他机器访问本机redis服务器">¶</a>其他机器访问本机redis服务器</h3>
+<p>需要修改配置，默认情况下不能访问。<br>
+想要让其他机器访问本机的 redis 服务器，那么要修改 redis.conf 的配置文件，修改 <code>bind [自己的ip地址或者0.0.0.0]</code>，其他机器才能访问。</p>
 <blockquote>
-<p><font color="red">注意</font>：bind绑定的本机网卡的 ip 地址，而不是想让其他机器连接的 ip 地址。如果有多块网卡，那么可以绑定多个网卡的 ip 地址。如果绑定到的是 0.0.0.0 ，那么意味着其他机器可以通过本机所有的 ip 地址进行访问，绑定的是 127.0.0.1 则只有本机可以访问，外界无法进行访问（ 127.0.0.1 是本地回环地址）。通过 ifconfig 查看本机网卡配置。<br>所以，如果我们想限制只有指定的主机可以连接到 redis 中，我们只能通过防火墙来控制，而不能通过 redis 中的 bind 参数来限制。如使用阿里云的安全组，来限制指定的主机连接6379端口。</p>
+<p><font color="red">注意</font>：bind绑定的本机网卡的 ip 地址，而不是想让其他机器连接的 ip 地址。如果有多块网卡，那么可以绑定多个网卡的 ip 地址。如果绑定到的是 0.0.0.0 ，那么意味着其他机器可以通过本机所有的 ip 地址进行访问，绑定的是 127.0.0.1 则只有本机可以访问，外界无法进行访问（ 127.0.0.1 是本地回环地址）。通过 ifconfig 查看本机网卡配置。<br>
+所以，如果我们想限制只有指定的主机可以连接到 redis 中，我们只能通过防火墙来控制，而不能通过 redis 中的 bind 参数来限制。如使用阿里云的安全组，来限制指定的主机连接6379端口。</p>
 </blockquote>
-<h4 id="若想被其他机器访问的时候，具体做法"><a href="#若想被其他机器访问的时候，具体做法" class="headerlink" title="若想被其他机器访问的时候，具体做法"></a>若想被其他机器访问的时候，具体做法</h4><h5 id="bind-IP"><a href="#bind-IP" class="headerlink" title="bind IP"></a>bind IP</h5><p>找到 <code>bind 127.0.0.1</code> 将其注释，或者修改为 <code>bind [自己的ip地址或者0.0.0.0]</code>，使用云服务器的时候，ip使用的是私有IP。</p>
+<h4 id="若想被其他机器访问的时候，具体做法"><a class="header-anchor" href="#若想被其他机器访问的时候，具体做法">¶</a>若想被其他机器访问的时候，具体做法</h4>
+<h5 id="bind-IP"><a class="header-anchor" href="#bind-IP">¶</a>bind IP</h5>
+<p>找到 <code>bind 127.0.0.1</code> 将其注释，或者修改为 <code>bind [自己的ip地址或者0.0.0.0]</code>，使用云服务器的时候，ip使用的是私有IP。</p>
 <blockquote>
 <p>注意：对 redis.conf 文件修改之后，最好重启一下，配置文件才能生效，centos7下使用  <code>systemctl restart redis</code> 命令进行重启。</p>
 </blockquote>
-<h5 id="设置密码"><a href="#设置密码" class="headerlink" title="设置密码"></a>设置密码</h5><p>为了系统安全（因为设置了所有的外部及其都可以通过设置的IP访问到该数据库）最好设置一下访问密码，在配置文件中修改 <code>requiredpass 设置的密码</code>，此时就给 redis 设置了密码。设置密码之后，使用 redis-cli 访问数据库的时候，需要添加 <code>-a 密码</code> 参数进行访问（不添加或者输入的密码错误都可以进入，但是当进行的时候就会提示 <code>(error) NOAUTH Authentication required.</code> ），两种方式可以解决：</p>
+<h5 id="设置密码"><a class="header-anchor" href="#设置密码">¶</a>设置密码</h5>
+<p>为了系统安全（因为设置了所有的外部及其都可以通过设置的IP访问到该数据库）最好设置一下访问密码，在配置文件中修改 <code>requiredpass 设置的密码</code>，此时就给 redis 设置了密码。设置密码之后，使用 redis-cli 访问数据库的时候，需要添加 <code>-a 密码</code> 参数进行访问（不添加或者输入的密码错误都可以进入，但是当进行的时候就会提示 <code>(error) NOAUTH Authentication required.</code> ），两种方式可以解决：</p>
 <ul>
 <li>访问的时候，添加 -a 参数进行访问，如 <code>redis-cli -a 设置的密码</code>。</li>
 <li>未使用密码进入 redis-cli 后，使用 <code>auth 密码</code> 进行验证，通过之后提示 OK，即可正常使用。</li>
 </ul>
 <p>除了修改配置文件 redis.conf 的方式外，还可以在 redis-cli 中使用 config 指令的方式进行密码的修改和设置：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ 127.0.0.1:6379&gt; config get requirepass   <span class="comment"># 获得 requirepass 设置的密码</span></span><br><span class="line">1) <span class="string">"requirepass"</span></span><br><span class="line">2) <span class="string">"123"</span></span><br><span class="line">$ 127.0.0.1:6379&gt; config <span class="built_in">set</span> requirepass 321   <span class="comment"># 修改密码</span></span><br><span class="line">OK</span><br></pre></td></tr></table></figure>
-<p><em>*只是使用这种方式设置的密码只对本次启动的redis服务有效，一旦redis服务重启，设置就会消失</em></p>
-<h3 id="关于如何在外部链接阿里云主机centos7中的redis"><a href="#关于如何在外部链接阿里云主机centos7中的redis" class="headerlink" title="关于如何在外部链接阿里云主机centos7中的redis"></a>关于如何在外部链接阿里云主机centos7中的redis</h3><ol>
-<li>修改配置文件<br>执行 <code>vim /etc/redis.conf</code> 修改配置文件，安装的位置可能不同，可使用 <code>whereis redis</code> 进行查看<br>redis 默认只能本机访问，需要修改一些配置<br>注释掉 bind 127.0.0.1 或者是改为 bind 0.0.0.0<br>配置密码 requirepass<br>取消注释并改为自己需要的密码，如 <code>requirepass 密码</code></li>
-<li>开放 6379 端口<br>端口开放之后最好重新启动阿里云服务器或者使用 <code>systemctl stop redis</code> 停止 redis 的服务（推荐最好还是重启服务器的好），使用 <code>ps aux|grep redis</code> 查看 redis-server 服务是否关闭，确认关闭后，使用 <code>systemctl start redis</code> 重新启动 redis-server 服务。</li>
-<li>访问<br>在外部访问的时候，通过 <code>redis-cli –h 公有ip地址 -p 6379</code> 进行访问（当然，本地需要安装 redis-cli 服务），记住一定是公有ip地址，此外若是设置了访问密码的话，需要使用 -a 参数传递密码，如果 redis 设置了密码，而登录的时候没有传递密码的话，会报错 <code>(error) NOAUTH Authentication required.</code> 。<br><font color="red"><strong>使用服务器的话，建议还是添加密码，否则容易被黑，因为开放了所有 ip 都可以访问</strong></font>。</li>
+<p>*<em>只是使用这种方式设置的密码只对本次启动的redis服务有效，一旦redis服务重启，设置就会消失</em></p>
+<h3 id="关于如何在外部链接阿里云主机centos7中的redis"><a class="header-anchor" href="#关于如何在外部链接阿里云主机centos7中的redis">¶</a>关于如何在外部链接阿里云主机centos7中的redis</h3>
+<ol>
+<li>修改配置文件<br>
+执行 <code>vim /etc/redis.conf</code> 修改配置文件，安装的位置可能不同，可使用 <code>whereis redis</code> 进行查看<br>
+redis 默认只能本机访问，需要修改一些配置<br>
+注释掉 bind 127.0.0.1 或者是改为 bind 0.0.0.0<br>
+配置密码 requirepass<br>
+取消注释并改为自己需要的密码，如 <code>requirepass 密码</code></li>
+<li>开放 6379 端口<br>
+端口开放之后最好重新启动阿里云服务器或者使用 <code>systemctl stop redis</code> 停止 redis 的服务（推荐最好还是重启服务器的好），使用 <code>ps aux|grep redis</code> 查看 redis-server 服务是否关闭，确认关闭后，使用 <code>systemctl start redis</code> 重新启动 redis-server 服务。</li>
+<li>访问<br>
+在外部访问的时候，通过 <code>redis-cli –h 公有ip地址 -p 6379</code> 进行访问（当然，本地需要安装 redis-cli 服务），记住一定是公有ip地址，此外若是设置了访问密码的话，需要使用 -a 参数传递密码，如果 redis 设置了密码，而登录的时候没有传递密码的话，会报错 <code>(error) NOAUTH Authentication required.</code> 。<br>
+<font color="red"><strong>使用服务器的话，建议还是添加密码，否则容易被黑，因为开放了所有 ip 都可以访问</strong></font>。</li>
 </ol>
-<h2 id="redis的权限设置"><a href="#redis的权限设置" class="headerlink" title="redis的权限设置"></a>redis的权限设置</h2><p>redis 可以通过设置密码来增强安全强度。除了设置密码，我们还可以通过修改 redis 的默认端口、对端口做防火墙等。</p>
+<h2 id="redis的权限设置"><a class="header-anchor" href="#redis的权限设置">¶</a>redis的权限设置</h2>
+<p>redis 可以通过设置密码来增强安全强度。除了设置密码，我们还可以通过修改 redis 的默认端口、对端口做防火墙等。</p>
 <blockquote>
 <p>注意：redis 密码的设置采用的是明文的方式，设置在配置文件 redis.conf 中的 requirepass 字段，所以我们要保证 redis.conf 文件的<strong>访问权限</strong>以保证数据库安全。</p>
 </blockquote>
 <p>redis3.2版本后新增 protected-mode 配置，默认是yes，即开启。设置外部网络连接redis服务，设置方式如下：</p>
 <ul>
-<li><p>关闭 protected-mode 模式，此时外部网络可以直接访问（相当于设置了 bind 0.0.0.0 ），配置密码时，密码有效，需要设置密码进行验证。</p>
+<li>
+<p>关闭 protected-mode 模式，此时外部网络可以直接访问（相当于设置了 bind 0.0.0.0 ），配置密码时，密码有效，需要设置密码进行验证。</p>
 </li>
-<li><p>开启 protected-mode 保护模式，只能本地访问，若要在外部进行访问，需要配置 <code>bind ip</code> 或者设置访问密码（不设置bind，只设置密码，外部输入密码可以访问，此时bind 相当于设置了 bind 0.0.0.0）。</p>
+<li>
+<p>开启 protected-mode 保护模式，只能本地访问，若要在外部进行访问，需要配置 <code>bind ip</code> 或者设置访问密码（不设置bind，只设置密码，外部输入密码可以访问，此时bind 相当于设置了 bind 0.0.0.0）。</p>
 </li>
 </ul>
 <p>protected-mode 的配置是 redis 的安全保护措施，不建议设置为no，且为了安全使用，最好再同时设置bind和访问密码。私有云配置bind时，绑定的应该是私有IP地址。</p>

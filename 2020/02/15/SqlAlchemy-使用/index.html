@@ -244,17 +244,26 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><p>使用 <code>pip install sqlalchemy</code> 进行安装<br>默认情况下，SqlAlchemy 是直接支持 SQLite3 的，不需要安装额外的驱动程序，但是想要支持其他的数据库需要安装相应的驱动程序</p>
+        <h2 id="安装"><a class="header-anchor" href="#安装">¶</a>安装</h2>
+<p>使用 <code>pip install sqlalchemy</code> 进行安装<br>
+默认情况下，SqlAlchemy 是直接支持 SQLite3 的，不需要安装额外的驱动程序，但是想要支持其他的数据库需要安装相应的驱动程序</p>
 <ul>
 <li>若想要支持 mysql，需要安装 pymysql 驱动</li>
 </ul>
-<h2 id="使用（以使用-MySql-为例）"><a href="#使用（以使用-MySql-为例）" class="headerlink" title="使用（以使用 MySql 为例）"></a>使用（以使用 MySql 为例）</h2><h3 id="连接数据库"><a href="#连接数据库" class="headerlink" title="连接数据库"></a>连接数据库</h3><p>要连接数据库，首先需要建立一个 SqlAlchemy 引擎，为数据库创建一个公共接口来执行 SQL 语句<br>示例：</p>
+<h2 id="使用（以使用-MySql-为例）"><a class="header-anchor" href="#使用（以使用-MySql-为例）">¶</a>使用（以使用 MySql 为例）</h2>
+<h3 id="连接数据库"><a class="header-anchor" href="#连接数据库">¶</a>连接数据库</h3>
+<p>要连接数据库，首先需要建立一个 SqlAlchemy 引擎，为数据库创建一个公共接口来执行 SQL 语句<br>
+示例：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sqlalchemy <span class="keyword">import</span> create_engine</span><br><span class="line"></span><br><span class="line"><span class="comment"># 引擎</span></span><br><span class="line">engine = create_engine(</span><br><span class="line">    <span class="string">'mysql+pymysql://root:739230854@localhost:3306/test'</span>, pool_recycle=<span class="number">3600</span></span><br><span class="line">)</span><br><span class="line">connection = engine.connect()  <span class="comment"># &lt;sqlalchemy.engine.base.Connection object at 0x7f9028117510&gt;</span></span><br></pre></td></tr></table></figure>
 <blockquote>
 <p>注意：<code>create_engine</code> 函数会返回一个引擎的实例。但是，在调用需要使用连接的操作（比如查询）之前，它实际上并不会打开连接。</p>
 </blockquote>
-<h3 id="选择-SQLAlchemy-Core-还是-SQLAlchemy-ORM"><a href="#选择-SQLAlchemy-Core-还是-SQLAlchemy-ORM" class="headerlink" title="选择 SQLAlchemy Core 还是 SQLAlchemy ORM"></a>选择 SQLAlchemy Core 还是 SQLAlchemy ORM</h3><p>在使用 SQLAlchemy 构建应用程序之前，你要决定主要使用 ORM 还是 Core，这通常取决于多个因素和个人偏好。两者语法略有不同，最大的区别是把数据看作模式还是业务对象。<br>Core 的视图以模式为中心，与传统的 SQL 一样，关注的是表、键和索引结构。ORM 把元数据和业务对象中的底层模式和结构封装起来，这种封装使得和数据库的交互变得更加容易，就像在使用普通的 Python 代码一样。</p>
-<h3 id="使用-SQLAlchemy-Core-为应用程序提供数据库服务"><a href="#使用-SQLAlchemy-Core-为应用程序提供数据库服务" class="headerlink" title="使用 SQLAlchemy Core 为应用程序提供数据库服务"></a>使用 SQLAlchemy Core 为应用程序提供数据库服务</h3><h4 id="模式和类型"><a href="#模式和类型" class="headerlink" title="模式和类型"></a>模式和类型</h4><p>SqlAlchemy 提供了四种类型：</p>
+<h3 id="选择-SQLAlchemy-Core-还是-SQLAlchemy-ORM"><a class="header-anchor" href="#选择-SQLAlchemy-Core-还是-SQLAlchemy-ORM">¶</a>选择 SQLAlchemy Core 还是 SQLAlchemy ORM</h3>
+<p>在使用 SQLAlchemy 构建应用程序之前，你要决定主要使用 ORM 还是 Core，这通常取决于多个因素和个人偏好。两者语法略有不同，最大的区别是把数据看作模式还是业务对象。<br>
+Core 的视图以模式为中心，与传统的 SQL 一样，关注的是表、键和索引结构。ORM 把元数据和业务对象中的底层模式和结构封装起来，这种封装使得和数据库的交互变得更加容易，就像在使用普通的 Python 代码一样。</p>
+<h3 id="使用-SQLAlchemy-Core-为应用程序提供数据库服务"><a class="header-anchor" href="#使用-SQLAlchemy-Core-为应用程序提供数据库服务">¶</a>使用 SQLAlchemy Core 为应用程序提供数据库服务</h3>
+<h4 id="模式和类型"><a class="header-anchor" href="#模式和类型">¶</a>模式和类型</h4>
+<p>SqlAlchemy 提供了四种类型：</p>
 <ul>
 <li>通用类型</li>
 <li>SQL类型</li>
@@ -262,81 +271,83 @@
 <li>用户定义类型</li>
 </ul>
 <p>SQLAlchemy 定义了大量的通用类型，可以从 sqlalchemy.type 模块中导入，为了方便起见，在 sqlalchemy 中也可以直接使用。</p>
-<p><strong><em>通用类型及对应关系表：</em></strong></p>
+<p><em><strong>通用类型及对应关系表：</strong></em></p>
 <table>
 <thead>
 <tr>
-<th align="left">SQLAlchemy</th>
-<th align="left">Python</th>
-<th align="left">SQL</th>
+<th style="text-align:left">SQLAlchemy</th>
+<th style="text-align:left">Python</th>
+<th style="text-align:left">SQL</th>
 </tr>
 </thead>
-<tbody><tr>
-<td align="left">BigInteger</td>
-<td align="left">int</td>
-<td align="left">BIGINT</td>
+<tbody>
+<tr>
+<td style="text-align:left">BigInteger</td>
+<td style="text-align:left">int</td>
+<td style="text-align:left">BIGINT</td>
 </tr>
 <tr>
-<td align="left">Boolean</td>
-<td align="left">bool</td>
-<td align="left">BOOLEAN或SMALLINT</td>
+<td style="text-align:left">Boolean</td>
+<td style="text-align:left">bool</td>
+<td style="text-align:left">BOOLEAN或SMALLINT</td>
 </tr>
 <tr>
-<td align="left">Date</td>
-<td align="left">datetime.date</td>
-<td align="left">DATE（SQLite:STRING）</td>
+<td style="text-align:left">Date</td>
+<td style="text-align:left">datetime.date</td>
+<td style="text-align:left">DATE（SQLite:STRING）</td>
 </tr>
 <tr>
-<td align="left">DateTime</td>
-<td align="left">datetime.datetime</td>
-<td align="left">DATETIME（SQLite:STRING）</td>
+<td style="text-align:left">DateTime</td>
+<td style="text-align:left">datetime.datetime</td>
+<td style="text-align:left">DATETIME（SQLite:STRING）</td>
 </tr>
 <tr>
-<td align="left">Enum</td>
-<td align="left">str</td>
-<td align="left">ENUM或VARCHAR</td>
+<td style="text-align:left">Enum</td>
+<td style="text-align:left">str</td>
+<td style="text-align:left">ENUM或VARCHAR</td>
 </tr>
 <tr>
-<td align="left">Float</td>
-<td align="left">float或Decimal</td>
-<td align="left">FLOAT或REAL</td>
+<td style="text-align:left">Float</td>
+<td style="text-align:left">float或Decimal</td>
+<td style="text-align:left">FLOAT或REAL</td>
 </tr>
 <tr>
-<td align="left">Integer</td>
-<td align="left">int</td>
-<td align="left">INTEGER</td>
+<td style="text-align:left">Integer</td>
+<td style="text-align:left">int</td>
+<td style="text-align:left">INTEGER</td>
 </tr>
 <tr>
-<td align="left">Interval</td>
-<td align="left">datetime.timedelta</td>
-<td align="left">INTERVAL或DATE（从纪元开始）</td>
+<td style="text-align:left">Interval</td>
+<td style="text-align:left">datetime.timedelta</td>
+<td style="text-align:left">INTERVAL或DATE（从纪元开始）</td>
 </tr>
 <tr>
-<td align="left">LargeBinary</td>
-<td align="left">byte</td>
-<td align="left">BLOB或BYTEA</td>
+<td style="text-align:left">LargeBinary</td>
+<td style="text-align:left">byte</td>
+<td style="text-align:left">BLOB或BYTEA</td>
 </tr>
 <tr>
-<td align="left">Numeric</td>
-<td align="left">decimal.Decimal</td>
-<td align="left">NUMERIC或DECIMAL</td>
+<td style="text-align:left">Numeric</td>
+<td style="text-align:left">decimal.Decimal</td>
+<td style="text-align:left">NUMERIC或DECIMAL</td>
 </tr>
 <tr>
-<td align="left">Unicode</td>
-<td align="left">unicode</td>
-<td align="left">UNICODE或VARCHAR</td>
+<td style="text-align:left">Unicode</td>
+<td style="text-align:left">unicode</td>
+<td style="text-align:left">UNICODE或VARCHAR</td>
 </tr>
 <tr>
-<td align="left">Text</td>
-<td align="left">str</td>
-<td align="left">CLOB或TEXT</td>
+<td style="text-align:left">Text</td>
+<td style="text-align:left">str</td>
+<td style="text-align:left">CLOB或TEXT</td>
 </tr>
 <tr>
-<td align="left">Tiem</td>
-<td align="left">datetime.time</td>
-<td align="left">DATETIME</td>
+<td style="text-align:left">Tiem</td>
+<td style="text-align:left">datetime.time</td>
+<td style="text-align:left">DATETIME</td>
 </tr>
-</tbody></table>
+</tbody>
+</table>
 <p>除了通用类型，还可以使用SQL标准类型和厂商自定义类型，是为了方便在通用类型无法满足时调用的。</p>
 <p>区别：</p>
 <ul>
@@ -345,37 +356,48 @@
 </ul>
 <p>示例：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sqlalchemy <span class="keyword">import</span> create_engine</span><br><span class="line"><span class="keyword">from</span> sqlalchemy <span class="keyword">import</span> MetaData</span><br><span class="line"><span class="keyword">from</span> sqlalchemy <span class="keyword">import</span> Table, Column, Integer, Numeric, String, ForeignKey, Boolean</span><br><span class="line"></span><br><span class="line"><span class="comment"># 引擎</span></span><br><span class="line">engine = create_engine(</span><br><span class="line">    <span class="string">'mysql+pymysql://root:739230854@localhost:3306/test'</span>, pool_recycle=<span class="number">3600</span></span><br><span class="line">)</span><br><span class="line">connection = engine.connect()  <span class="comment"># 打开数据库的链接，创建表的时候并不需要</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 元数据</span></span><br><span class="line">metadata = MetaData()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 表</span></span><br><span class="line">cookies = Table(<span class="string">'cookies'</span>, metadata,</span><br><span class="line">    Column(<span class="string">'cookie_id'</span>, Integer(), primary_key=<span class="literal">True</span>),  <span class="comment"># 作为主键</span></span><br><span class="line">    Column(<span class="string">'cookie_name'</span>, String(<span class="number">50</span>), index=<span class="literal">True</span>),  <span class="comment"># 创建索引，加快查找的速度</span></span><br><span class="line">    Column(<span class="string">'cookie_recipe_url'</span>, String(<span class="number">50</span>)),  </span><br><span class="line">    Column(<span class="string">'cookie_sku'</span>, String(<span class="number">55</span>)),</span><br><span class="line">    Column(<span class="string">'quantity'</span>, Integer()),</span><br><span class="line">    Column(<span class="string">'unit_cost'</span>, Numeric(<span class="number">12</span>, <span class="number">2</span>))  <span class="comment"># 长度以及精度</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 带有更多选项的表</span></span><br><span class="line"><span class="keyword">from</span> datetime <span class="keyword">import</span> datetime</span><br><span class="line"><span class="keyword">from</span> sqlalchemy <span class="keyword">import</span> DateTime</span><br><span class="line"></span><br><span class="line">user = Table(<span class="string">'users'</span>, metadata,</span><br><span class="line">    Column(<span class="string">'user_id'</span>, Integer(), primary_key=<span class="literal">True</span>),</span><br><span class="line">    Column(<span class="string">'username'</span>, String(<span class="number">15</span>), nullable=<span class="literal">False</span>, unique=<span class="literal">True</span>),  <span class="comment"># 必须有，且不能为空</span></span><br><span class="line">    Column(<span class="string">'email_address'</span>, String(<span class="number">255</span>), nullable=<span class="literal">False</span>),</span><br><span class="line">    Column(<span class="string">'phone'</span>, String(<span class="number">20</span>), nullable=<span class="literal">False</span>),</span><br><span class="line">    Column(<span class="string">'password'</span>, String(<span class="number">25</span>), nullable=<span class="literal">False</span>),</span><br><span class="line">    Column(<span class="string">'created_on'</span>, DateTime(), default=datetime.now),</span><br><span class="line">    Column(<span class="string">'updated_on'</span>, DateTime(), default=datetime.now, onupdate=datetime.now)  <span class="comment"># 设置onupdate使得每次更新的时候将当前时间设置给列</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> sqlalchemy <span class="keyword">import</span> ForeignKey</span><br><span class="line"></span><br><span class="line">orders = Table(<span class="string">'orders'</span>, metadata,</span><br><span class="line">    Column(<span class="string">'order_id'</span>, Integer(), primary_key=<span class="literal">True</span>),</span><br><span class="line">    Column(<span class="string">'user_id'</span>, ForeignKey(<span class="string">'users.user_id'</span>)),  <span class="comment"># 使用的是字符串，而不是对列的实际引用</span></span><br><span class="line">    Column(<span class="string">'shipped'</span>, Boolean(), default=<span class="literal">False</span>),</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">line_items = Table(<span class="string">'line_items'</span>, metadata,</span><br><span class="line">    Column(<span class="string">'line_items)id'</span>, Integer(), primary_key=<span class="literal">True</span>),</span><br><span class="line">    Column(<span class="string">'order_id'</span>, ForeignKey(<span class="string">'orders.order_id'</span>)),</span><br><span class="line">    Column(<span class="string">'cookie_id'</span>, ForeignKey(<span class="string">'cookies.cookie_id'</span>)),</span><br><span class="line">    Column(<span class="string">'quantity'</span>, Integer()),</span><br><span class="line">    Column(<span class="string">'extended_cost'</span>, Numeric(<span class="number">12</span>, <span class="number">2</span>))</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 表的持久化-即在数据库中创建表</span></span><br><span class="line">metadata.create_all(engine)</span><br></pre></td></tr></table></figure>
-<h4 id="插入数据"><a href="#插入数据" class="headerlink" title="插入数据"></a>插入数据</h4><p>使用 <code>insetr()</code> 作为表实例cookies的方法进行数据插入<br>示例：</p>
+<h4 id="插入数据"><a class="header-anchor" href="#插入数据">¶</a>插入数据</h4>
+<p>使用 <code>insetr()</code> 作为表实例cookies的方法进行数据插入<br>
+示例：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 插入数据</span></span><br><span class="line">ins = cookies.insert().values(</span><br><span class="line">    cookie_name = <span class="string">'chocolate chip'</span>,</span><br><span class="line">    cookie_recipe_url = <span class="string">"http://xxx"</span>,</span><br><span class="line">    cookie_sku = <span class="string">'CC01'</span>,</span><br><span class="line">    quantity = <span class="string">'12'</span>,</span><br><span class="line">    unit_cost = <span class="string">'0.50'</span></span><br><span class="line">)</span><br><span class="line"><span class="comment"># print(str(ins))</span></span><br><span class="line"><span class="string">'''</span></span><br><span class="line"><span class="string">INSERT INTO cookies </span></span><br><span class="line"><span class="string">    (cookie_name, cookie_recipe_url, cookie_sku, quantity, unit_cost) </span></span><br><span class="line"><span class="string">VALUES </span></span><br><span class="line"><span class="string">    (:cookie_name, :cookie_recipe_url, :cookie_sku, :quantity, :unit_cost)</span></span><br><span class="line"><span class="string">'''</span></span><br><span class="line"><span class="comment"># print(ins.compile().params)  # 可以查询随查询一起发送的实际参数</span></span><br><span class="line"><span class="string">'''</span></span><br><span class="line"><span class="string">&#123;'cookie_name': 'chocolate chip', 'cookie_recipe_url': 'http://xxx', </span></span><br><span class="line"><span class="string">'cookie_sku': 'CC01', 'quantity': '12', 'unit_cost': '0.50'&#125;</span></span><br><span class="line"><span class="string">'''</span></span><br></pre></td></tr></table></figure>
 <blockquote>
-<p>在SQL语句中，我们提供的值被替换为 <code>:column_name</code> 的形式，这就是 SQLAlchemy 通过 str() 函数表示参数的方式，参数用来帮助确保数据被正确的转义，从而减少 SQL 注入攻击等安全问题。<br>ins 对象的 compile() 方法返回一个 SQLCompiler 对象，该对象允许我们通过 params 属性访问隋查询一起发送的实际参数。</p>
+<p>在SQL语句中，我们提供的值被替换为 <code>:column_name</code> 的形式，这就是 SQLAlchemy 通过 str() 函数表示参数的方式，参数用来帮助确保数据被正确的转义，从而减少 SQL 注入攻击等安全问题。<br>
+ins 对象的 compile() 方法返回一个 SQLCompiler 对象，该对象允许我们通过 params 属性访问隋查询一起发送的实际参数。</p>
 </blockquote>
-<p><code>insert</code>除了可以作为表实例cookies的方法来使用外，还可以作为单独的函数来使用，此时表实例cookies作为函数的参数，事实上，这种方法更加贴近于数据库的 insert 写法，因此更加推荐这种用法<br>示例：</p>
+<p><code>insert</code>除了可以作为表实例cookies的方法来使用外，还可以作为单独的函数来使用，此时表实例cookies作为函数的参数，事实上，这种方法更加贴近于数据库的 insert 写法，因此更加推荐这种用法<br>
+示例：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sqlalchemy <span class="keyword">import</span> insert</span><br><span class="line"></span><br><span class="line">ins = insert(cookies).values(</span><br><span class="line">    cookie_name = <span class="string">'chocolate chip'</span>,</span><br><span class="line">    cookie_recipe_url = <span class="string">"http://xxx"</span>,</span><br><span class="line">    cookie_sku = <span class="string">'CC01'</span>,</span><br><span class="line">    quantity = <span class="string">'12'</span>,</span><br><span class="line">    unit_cost = <span class="string">'0.50'</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
-
-<h5 id="执行插入数据"><a href="#执行插入数据" class="headerlink" title="执行插入数据"></a>执行插入数据</h5><p>执行插入语句，执行前需要先添加引擎并连接<br>示例：</p>
+<h5 id="执行插入数据"><a class="header-anchor" href="#执行插入数据">¶</a>执行插入数据</h5>
+<p>执行插入语句，执行前需要先添加引擎并连接<br>
+示例：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sqlalchemy <span class="keyword">import</span> create_engine</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> sqlalchemy_test <span class="keyword">import</span> cookies</span><br><span class="line"></span><br><span class="line"><span class="comment"># 引擎</span></span><br><span class="line">engine = create_engine(</span><br><span class="line">    <span class="string">'mysql+pymysql://root:739230854@localhost:3306/test'</span>, pool_recycle=<span class="number">3600</span></span><br><span class="line">)</span><br><span class="line">connection = engine.connect()  <span class="comment"># 打开数据库的链接</span></span><br><span class="line"></span><br><span class="line">result = connection.execute(ins) <span class="comment"># 使用链接执行</span></span><br><span class="line"></span><br><span class="line">print(result)  <span class="comment"># &lt;sqlalchemy.engine.result.ResultProxy object at 0x7f1d30fe5f10&gt;</span></span><br><span class="line">print(result.inserted_primary_key)  <span class="comment"># 产看刚刚添加的数据的ID</span></span><br></pre></td></tr></table></figure>
-
-<p>连接对象的<code>execute</code>方法不仅可以接受语句，还可以在语句之后接受关键字参数值，在编译语句时，它会向列列表添加每个关键字参数键，并将它们的每个值添加到 SQL 语句的 VALUES 部分，但是这种用法不常用，但是他很好的说明了语句在发送到数据库服务器之前是如何编译和组装的。可以通过使用一个字典列表一次插入很多条记录，字典里面包含我们要提交的数据。<br>示例：</p>
+<p>连接对象的<code>execute</code>方法不仅可以接受语句，还可以在语句之后接受关键字参数值，在编译语句时，它会向列列表添加每个关键字参数键，并将它们的每个值添加到 SQL 语句的 VALUES 部分，但是这种用法不常用，但是他很好的说明了语句在发送到数据库服务器之前是如何编译和组装的。可以通过使用一个字典列表一次插入很多条记录，字典里面包含我们要提交的数据。<br>
+示例：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">ins = cookies.insert()  <span class="comment"># 此处的ins也可以这么写 ins = insert(cookies)</span></span><br><span class="line">result = connection.execute(</span><br><span class="line">    ins,  <span class="comment"># 插入语句仍然是execute方法的第一个参数</span></span><br><span class="line">    cookie_name = <span class="string">'dack chocolate chip'</span>,</span><br><span class="line">    cookie_recipe_url = <span class="string">"http://xxx/qqq"</span>,</span><br><span class="line">    cookie_sku = <span class="string">'CC02'</span>,</span><br><span class="line">    quantity = <span class="string">'1'</span>,</span><br><span class="line">    unit_cost = <span class="string">'0.75'</span></span><br><span class="line">)  <span class="comment"># 这样在连接的同时，添加了数据</span></span><br></pre></td></tr></table></figure>
-<p>进阶版，通过使用一个字典列表一次插入很多条记录，字典里面包含我们要提交的数据<br>示例：</p>
+<p>进阶版，通过使用一个字典列表一次插入很多条记录，字典里面包含我们要提交的数据<br>
+示例：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">inventory_list = [</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="string">'cookie_name'</span>: <span class="string">'peanut butter'</span>,</span><br><span class="line">        <span class="string">'cookie_recipe_url'</span>: <span class="string">'http://xxx/1'</span>,</span><br><span class="line">        <span class="string">'cookie_sku'</span>: <span class="string">'PB01'</span>,</span><br><span class="line">        <span class="string">'quantity'</span>: <span class="string">'24'</span>,</span><br><span class="line">        <span class="string">'unit_cost'</span>: <span class="string">'0.25'</span></span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="string">'cookie_name'</span>: <span class="string">'oatmeal raisin'</span>,</span><br><span class="line">        <span class="string">'cookie_recipe_url'</span>: <span class="string">'http://xxx/2'</span>,</span><br><span class="line">        <span class="string">'cookie_sku'</span>: <span class="string">'EWW01'</span>,</span><br><span class="line">        <span class="string">'quantity'</span>: <span class="string">'100'</span>,</span><br><span class="line">        <span class="string">'unit_cost'</span>: <span class="string">'1.00'</span></span><br><span class="line">    &#125;</span><br><span class="line">]</span><br><span class="line">result = connection.execute(ins, inventory_list)</span><br></pre></td></tr></table></figure>
 <blockquote>
 <p><font color="red">注意</font>：创建字典列表的时候，字典必须拥有完全相同的键，sqlalchemy 会根据列表中的第一个字典编译语句，如果后续的字典不同会出错</p>
 </blockquote>
-<h4 id="查找数据"><a href="#查找数据" class="headerlink" title="查找数据"></a>查找数据</h4><p>使用 <code>select()</code> 作为表实例 cookies 的方法进行数据查询，select() 方法需要一个列的<em>列表</em>来选择，为了方便，还可以直接接受一个 Table 实例（这里的cookies表），则此时选中该表中的所有的内容。<br>示例：</p>
+<h4 id="查找数据"><a class="header-anchor" href="#查找数据">¶</a>查找数据</h4>
+<p>使用 <code>select()</code> 作为表实例 cookies 的方法进行数据查询，select() 方法需要一个列的<em>列表</em>来选择，为了方便，还可以直接接受一个 Table 实例（这里的cookies表），则此时选中该表中的所有的内容。<br>
+示例：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sqlalchemy <span class="keyword">import</span> select</span><br><span class="line"></span><br><span class="line">s = select([cookies])  </span><br><span class="line"><span class="comment"># print(str(s))  # 仍然可以使用str(s)查看数据库看到的SQL语句，或者直接打印也行</span></span><br><span class="line">rp = connection.execute(s)  <span class="comment"># rp是ResultProxy的缩写</span></span><br><span class="line"><span class="comment"># print('rp:',type(rp))  # &lt;sqlalchemy.engine.result.ResultProxy object at 0x7f2dc9f608d0&gt;</span></span><br><span class="line">result = rp.fetchall()</span><br><span class="line"><span class="string">'''</span></span><br><span class="line"><span class="string">print(result)</span></span><br><span class="line"><span class="string">[</span></span><br><span class="line"><span class="string">    (5, 'chocolate chip', 'http://xxx', 'CC01', 12, Decimal('0.50')), </span></span><br><span class="line"><span class="string">    (6, 'dack chocolate chip', 'http://xxx/qqq', 'CC02', 1, Decimal('0.75')), </span></span><br><span class="line"><span class="string">    (7, 'peanut butter', 'http://xxx/1', 'PB01', 24, Decimal('0.25')), </span></span><br><span class="line"><span class="string">    (8, 'oatmeal raisin', 'http://xxx/2', 'EWW01', 100, Decimal('1.00'))</span></span><br><span class="line"><span class="string">]</span></span><br></pre></td></tr></table></figure>
-<p>与 <code>insert()</code> 方法的调用方式一致，Table 实例对象也提供了 select() 方法<br>示例：</p>
+<p>与 <code>insert()</code> 方法的调用方式一致，Table 实例对象也提供了 select() 方法<br>
+示例：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">s = cookies.select()  <span class="comment"># 直接使用cookies的select方法</span></span><br><span class="line">rp = connection.execute(s)</span><br></pre></td></tr></table></figure>
-
-<h5 id="ResultProxy"><a href="#ResultProxy" class="headerlink" title="ResultProxy"></a>ResultProxy</h5><p>ResultProxy 是 DBAPI 游标对象的包装器，主要目的是让语句返回的结果更容易使用和操作，比如，ResultProxy 允许通过索引，名称或 column对象 进行访问，从而简化了对查询结果的处理。<br>通过上面的例子中可以发现，调用 <code>connection.execute(s)</code> 执行数据库操作之后返回的实例对象就是 ResultProxy 类型。<br>示例：</p>
+<h5 id="ResultProxy"><a class="header-anchor" href="#ResultProxy">¶</a>ResultProxy</h5>
+<p>ResultProxy 是 DBAPI 游标对象的包装器，主要目的是让语句返回的结果更容易使用和操作，比如，ResultProxy 允许通过索引，名称或 column对象 进行访问，从而简化了对查询结果的处理。<br>
+通过上面的例子中可以发现，调用 <code>connection.execute(s)</code> 执行数据库操作之后返回的实例对象就是 ResultProxy 类型。<br>
+示例：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">first_row = result[<span class="number">0</span>]  <span class="comment"># 获取ResultProxy的第一行</span></span><br><span class="line">print(first_row)</span><br><span class="line">print(first_row[<span class="number">1</span>])  <span class="comment"># 通过索引访问列</span></span><br><span class="line">print(first_row.cookie_name)  <span class="comment"># 通过名称访问列</span></span><br><span class="line">print(first_row[cookies.c.cookie_name])  <span class="comment"># 通过column对象访问列</span></span><br><span class="line"><span class="string">'''</span></span><br><span class="line"><span class="string">(5, 'chocolate chip', 'http://xxx', 'CC01', 12, Decimal('0.50'))</span></span><br><span class="line"><span class="string">chocolate chip</span></span><br><span class="line"><span class="string">chocolate chip</span></span><br><span class="line"><span class="string">chocolate chip</span></span><br><span class="line"><span class="string">'''</span></span><br></pre></td></tr></table></figure>
 <blockquote>
 <p>注意：例子中的result是调用 ResultProxy 提供的 fetchall() 方法得到的</p>
 </blockquote>
-<p>通过迭代的方式获得 ResultProxy 的项<br>示例：</p>
+<p>通过迭代的方式获得 ResultProxy 的项<br>
+示例：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">s = select([cookies])</span><br><span class="line">rp = connection.execute(s)</span><br><span class="line">print(rp.keys())   <span class="comment"># 通过 ResultProxy 的keys()方法，得到表列名</span></span><br><span class="line"><span class="comment"># ['cookie_id', 'cookie_name', 'cookie_recipe_url', 'cookie_sku', 'quantity', 'unit_cost']</span></span><br><span class="line"><span class="keyword">for</span> record <span class="keyword">in</span> rp:  <span class="comment"># 通过迭代的方式获得 ResultProxy 的项</span></span><br><span class="line">    print(record)  <span class="comment"># (9, 'chocolate chip', 'http://xxx', 'CC01', 12, Decimal('0.50'))</span></span><br><span class="line">    print(type(record))  <span class="comment"># &lt;class 'sqlalchemy.engine.result.RowProxy'&gt;  注意是 RowProxy</span></span><br><span class="line">    print(record.cookie_name)  <span class="comment"># chocolate chip</span></span><br></pre></td></tr></table></figure>
-
 <p>ResultProxy 提供的可调用方法和属性包括：</p>
 <ul>
 <li>使用 <code>rowcount</code> 属性获得本次操作的数据条数，如在查询操作中，就是获得本次查询获得数据条数</li>
@@ -396,111 +418,132 @@
 <li>谨慎使用 scalar() 方法，因为如果查询返回多行多列，就会引发错误，多行多列在测试过程中会经常丢失。</li>
 </ol>
 </blockquote>
-<p>以上的查询方式得到各条记录的所有列，通常我们只需要使用这些列中的一部分。如果额外的列中的数据量很大，就会到导致应用程序运行变慢，消耗的内存远超预期，下面我们可以对查询返回的列数进行限制。<br>示例：</p>
+<p>以上的查询方式得到各条记录的所有列，通常我们只需要使用这些列中的一部分。如果额外的列中的数据量很大，就会到导致应用程序运行变慢，消耗的内存远超预期，下面我们可以对查询返回的列数进行限制。<br>
+示例：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 为了限制返回的列数，需要以列表的形式将查询的列传递给 select() 方法</span></span><br><span class="line">s = select([cookies.c.cookie_name, cookies.c.quantity])</span><br><span class="line">rp = connection.execute(s)</span><br><span class="line">print(rp.keys())</span><br><span class="line">print(rp.first())</span><br><span class="line"><span class="string">'''</span></span><br><span class="line"><span class="string">['cookie_name', 'quantity']</span></span><br><span class="line"><span class="string">('chocolate chip', 12)</span></span><br><span class="line"><span class="string">'''</span></span><br></pre></td></tr></table></figure>
 <p><strong>[*] <code>cookies.c.cookie_name</code> 表示cookies表的Column对象（列对象）cookie_name</strong></p>
-<h5 id="排序"><a href="#排序" class="headerlink" title="排序"></a>排序</h5><p>需要将查找返回的数据按照特性的顺序排列，可以使用 <code>order_by()</code> 语句，默认是升序的方式排序。<br>示例：</p>
+<h5 id="排序"><a class="header-anchor" href="#排序">¶</a>排序</h5>
+<p>需要将查找返回的数据按照特性的顺序排列，可以使用 <code>order_by()</code> 语句，默认是升序的方式排序。<br>
+示例：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">s = select([cookies.c.cookie_name, cookies.c.quantity]).order_by(cookies.c.quantity)</span><br><span class="line"><span class="comment"># 在查询后，调用 order_by() 方法，通过表的列明来指定排列标准</span></span><br><span class="line">rp = connection.execute(s)</span><br><span class="line"><span class="keyword">for</span> cookie <span class="keyword">in</span> rp:</span><br><span class="line">    print(<span class="string">f"<span class="subst">&#123;cookie.quantity&#125;</span> - <span class="subst">&#123;cookie.cookie_name&#125;</span>"</span>)   <span class="comment"># 通过数据名称进行访问</span></span><br></pre></td></tr></table></figure>
-
-<p>想要降序或者倒序排列，可以使用<code>desc()</code>语句，但是，这需要额外的导包 <code>from sqlalchemy import desc</code><br>示例：</p>
+<p>想要降序或者倒序排列，可以使用<code>desc()</code>语句，但是，这需要额外的导包 <code>from sqlalchemy import desc</code><br>
+示例：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sqlalchemy <span class="keyword">import</span> desc</span><br><span class="line"></span><br><span class="line">s = select([cookies.c.cookie_name, cookies.c.quantity])</span><br><span class="line">s = s.order_by(desc(cookies.c.quantity))  <span class="comment"># 使用desc()对cookies.c.quantity列进行了包装</span></span><br><span class="line"><span class="comment"># 使用print(s)直接打印，或者使用print(str(s))可以看到对应的sql语句为 SELECT cookies.cookie_name, cookies.quantity FROM cookies ORDER BY cookies.cookie_name DESC</span></span><br><span class="line">rp = connection.execute(s)</span><br></pre></td></tr></table></figure>
 <p>除了调用 <code>desc()</code> 函数，<code>desc()</code> 还可以作为Column对象的方法进行调用，像这样<code>cookies.c.quantity.desc()</code>，但是如果在长语句中这样使用，可能会造成阅读困难，所以建议将<code>desc()</code>作为函数进行使用。</p>
 <blockquote>
 <p>提示：所有的操作语句在都可以通过直接打印的方式查看到对应的 SQL 语句。</p>
 </blockquote>
-<h5 id="对返回数据的结果条数进行限制"><a href="#对返回数据的结果条数进行限制" class="headerlink" title="对返回数据的结果条数进行限制"></a>对返回数据的结果条数进行限制</h5><p>虽然可以对 ResultProxy 使用 <code>first()</code> 和 <code>fetchone()</code> 获得一行数据，但是实际查询了所有的记录，使用 <code>limit()</code> 方法让 limit语句 成为查询的一部分，对查询的记录的条数进行限制。<br>示例：</p>
+<h5 id="对返回数据的结果条数进行限制"><a class="header-anchor" href="#对返回数据的结果条数进行限制">¶</a>对返回数据的结果条数进行限制</h5>
+<p>虽然可以对 ResultProxy 使用 <code>first()</code> 和 <code>fetchone()</code> 获得一行数据，但是实际查询了所有的记录，使用 <code>limit()</code> 方法让 limit语句 成为查询的一部分，对查询的记录的条数进行限制。<br>
+示例：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查询两种库存量最少的cookies</span></span><br><span class="line">s = select([cookies.c.cookie_name, cookies.c.quantity])</span><br><span class="line">s = s.order_by(cookies.c.quantity)</span><br><span class="line">s = s.limit(<span class="number">2</span>)  <span class="comment"># 和 order_by 一样，都是Select自带的，不需要导包</span></span><br><span class="line">rp = connection.execute(s)</span><br><span class="line">print(rp.fetchall())  <span class="comment"># [('dack chocolate chip', 1), ('chocolate chip', 12)]</span></span><br><span class="line">print([result.cookie_name <span class="keyword">for</span> result <span class="keyword">in</span> rp])  <span class="comment"># [] 此时为空，是查不到数据的，因为之前使用 fetchall() 已经返回了所有的数据了</span></span><br></pre></td></tr></table></figure>
 <blockquote>
 <p>注意最后一行，想再次从 ResultProxy 对象中获得数据的时候，发现获取不到了，这是因为 <a href="#ResultProxy">ResultProxy</a> 对象是DBAPI游标对象的包装器，游标实际上是一种能从包括多条数据记录的结果集中每次提取一条记录的机制。游标充当指针的作用，ResultProxy 对象在被使用一次后，会记录位置。</p>
 </blockquote>
-<h5 id="内置SQL函数和标签"><a href="#内置SQL函数和标签" class="headerlink" title="内置SQL函数和标签"></a>内置SQL函数和标签</h5><p>许多数据库设计都包含了 SQL 函数，这些函数的设计目的是为了让某些操作可以直接在数据库服务器上使用，如 SUM 函数，SqlAlchemy可以利用后端数据库中的 SQL 函数，常见的函数为 SUM 以及 COUNT，想使用这两个函数，需要导入 <code>sqlalchemy.sql.func</code> 模块，这些函数包装在他们要操作的列上。<br>示例：</p>
+<h5 id="内置SQL函数和标签"><a class="header-anchor" href="#内置SQL函数和标签">¶</a>内置SQL函数和标签</h5>
+<p>许多数据库设计都包含了 SQL 函数，这些函数的设计目的是为了让某些操作可以直接在数据库服务器上使用，如 SUM 函数，SqlAlchemy可以利用后端数据库中的 SQL 函数，常见的函数为 SUM 以及 COUNT，想使用这两个函数，需要导入 <code>sqlalchemy.sql.func</code> 模块，这些函数包装在他们要操作的列上。<br>
+示例：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 计算cookie的总数</span></span><br><span class="line"><span class="keyword">from</span> sqlalchemy.sql <span class="keyword">import</span> func</span><br><span class="line"></span><br><span class="line">s = select([func.sum(cookies.c.quantity)]) </span><br><span class="line">print(s)  <span class="comment"># SELECT sum(cookies.quantity) AS sum_1 FROM cookies</span></span><br><span class="line">rp = connection.execute(s)</span><br><span class="line">print(rp.scalar())  <span class="comment"># scalar只返回查询到的第一个数据的最左边的列，且只返回第一行的数据</span></span><br></pre></td></tr></table></figure>
 <blockquote>
-<p><strong>建议使用导入 func 模块的方式，因为直接导入 sum 可以会引起问题，而且还容易和Python内置的sum函数混淆</strong> </p>
+<p><strong>建议使用导入 func 模块的方式，因为直接导入 sum 可以会引起问题，而且还容易和Python内置的sum函数混淆</strong></p>
 </blockquote>
-<p>count 计数<br>示例：</p>
+<p>count 计数<br>
+示例：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">s = select([func.count(cookies.c.cookie_name)])</span><br><span class="line">print(s)  <span class="comment"># SELECT count(cookies.cookie_name) AS count_1 FROM cookies</span></span><br><span class="line">rp = connection.execute(s)</span><br><span class="line">recode = rp.first()  <span class="comment"># 数据类型为RowProxy，代表查询到的一行数据，若直接打印</span></span><br><span class="line">print(type(recode))  <span class="comment"># &lt;class 'sqlalchemy.engine.result.RowProxy'&gt;，但是直接打印的话就是一行数据，以元组的形式打印的</span></span><br><span class="line">print(recode.keys())  <span class="comment"># 以列表的形式返回查找的数据的各列名组成的列表</span></span><br><span class="line">print(recode.count_1)  <span class="comment"># 使用 count_1 是调用count默认的列名</span></span><br></pre></td></tr></table></figure>
-<p>RequestProxy 和 RowProxy 类型都可以调用keys()方法，用来返回列名<br>print(recode.count_1)是以列名的形式打印内容的，因为使用使用COUNT和SUM方法都会以<code>&lt;func_name&gt;_&lt;position&gt;</code>的形式起别名，position是调用COUNT和SUM方法的次数，如第二个调用的count()函数得到的别名将是count_2。但是这样的命名方式实在不够明确，SQLAlchemy提供了 <code>label()</code> 函数来解决这个问题，可以使用 <code>label()</code> 函数来为列取个别名。<br>示例：</p>
+<p>RequestProxy 和 RowProxy 类型都可以调用keys()方法，用来返回列名<br>
+print(recode.count_1)是以列名的形式打印内容的，因为使用使用COUNT和SUM方法都会以<code>&lt;func_name&gt;_&lt;position&gt;</code>的形式起别名，position是调用COUNT和SUM方法的次数，如第二个调用的count()函数得到的别名将是count_2。但是这样的命名方式实在不够明确，SQLAlchemy提供了 <code>label()</code> 函数来解决这个问题，可以使用 <code>label()</code> 函数来为列取个别名。<br>
+示例：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">s = select([func.count(cookies.c.cookie_name).label(<span class="string">'inventory_count'</span>)])</span><br><span class="line">print(s)  <span class="comment"># SELECT count(cookies.cookie_name) AS inventory_count FROM cookies</span></span><br><span class="line">rp = connection.execute(s)</span><br><span class="line">print(rp.first().keys())  <span class="comment"># ['inventory_count']</span></span><br></pre></td></tr></table></figure>
-<p>只需要在更改的列对象上调用 <code>label()</code> 函数即可，这意味着，我们在查找原有列名时，也可以对返回的列取别名，像这样 <code>s = select([cookies.c.cookie_name.label(&#39;cookie_name_count&#39;)])</code>。</p>
+<p>只需要在更改的列对象上调用 <code>label()</code> 函数即可，这意味着，我们在查找原有列名时，也可以对返回的列取别名，像这样 <code>s = select([cookies.c.cookie_name.label('cookie_name_count')])</code>。</p>
 <blockquote>
 <p><strong>除了 fitchall 得到的是 list 类型，其他的方法得到的行数据都是 RowProxy 类型的单个数据，当然 fitchall()得到的是行数据的集合，所以列表中的每一项都是 RowProxy 类型的数据。</strong></p>
 </blockquote>
-<h5 id="过滤"><a href="#过滤" class="headerlink" title="过滤"></a>过滤</h5><p>对查询进行过滤是通过 <code>where()</code> 语句来完成，可以把多个 where()子句 接在一起使用，功能就像传统的 SQL 语句中的 AND 一样。<br>示例：</p>
+<h5 id="过滤"><a class="header-anchor" href="#过滤">¶</a>过滤</h5>
+<p>对查询进行过滤是通过 <code>where()</code> 语句来完成，可以把多个 where()子句 接在一起使用，功能就像传统的 SQL 语句中的 AND 一样。<br>
+示例：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">s = select([cookies]).where(cookies.c.cookie_name == <span class="string">"chocolate chip"</span>)</span><br><span class="line">print(s)  <span class="comment"># SELECT cookies.cookie_id, cookies.cookie_name, cookies.cookie_recipe_url, cookies.cookie_sku, cookies.quantity, cookies.unit_cost FROM cookies WHERE cookies.cookie_name = :cookie_name_1</span></span><br><span class="line">print(s.compile().params)  <span class="comment"># 查询发送的实际参数</span></span><br><span class="line">rp = connection.execute(s)  </span><br><span class="line">recode = rp.first()</span><br><span class="line">print(type(recode))</span><br><span class="line">print(recode.items())  <span class="comment"># [('cookie_id', 5), ('cookie_name', 'chocolate chip'), ('cookie_recipe_url', 'http://xxx'), ('cookie_sku', 'CC01'), ('quantity', 12), ('unit_cost', Decimal('0.50'))]</span></span><br></pre></td></tr></table></figure>
 <blockquote>
 <p>注意：RowProxy 对象的 items() 方法返回得到由列名和值组成的元组列表，注意是记录对象 RowProxy 含有该方法，而不是 RequestProxy。</p>
 </blockquote>
-<p>使用 <code>like</code> 方法进行模糊查询<br>示例：查询包含 chocolate 的 cookie 名</p>
+<p>使用 <code>like</code> 方法进行模糊查询<br>
+示例：查询包含 chocolate 的 cookie 名</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">s = select([cookies]).where(cookies.c.cookie_name.like(<span class="string">'%chocolate%'</span>))</span><br><span class="line">print(s)  <span class="comment"># SELECT cookies.cookie_id, cookies.cookie_name, cookies.cookie_recipe_url, cookies.cookie_sku, cookies.quantity, cookies.unit_cost FROM cookies WHERE cookies.cookie_name LIKE :cookie_name_1</span></span><br></pre></td></tr></table></figure>
-
-<h6 id="ClauseElement"><a href="#ClauseElement" class="headerlink" title="ClauseElement"></a>ClauseElement</h6><p><code>ClauseElement</code> 是在子句中使用的实体，一般是表中的列。不过，与列不同的是ClauseElement拥有许多额外的功能，如之前我们调用的like()方法，此外还有许多额外的方法。</p>
+<h6 id="ClauseElement"><a class="header-anchor" href="#ClauseElement">¶</a>ClauseElement</h6>
+<p><code>ClauseElement</code> 是在子句中使用的实体，一般是表中的列。不过，与列不同的是ClauseElement拥有许多额外的功能，如之前我们调用的like()方法，此外还有许多额外的方法。</p>
 <table>
 <thead>
 <tr>
-<th align="left">方法</th>
-<th align="left">用途</th>
+<th style="text-align:left">方法</th>
+<th style="text-align:left">用途</th>
 </tr>
 </thead>
-<tbody><tr>
-<td align="left">between(cleft, cright)</td>
-<td align="left">查找cleft和cright之间的内容</td>
+<tbody>
+<tr>
+<td style="text-align:left">between(cleft, cright)</td>
+<td style="text-align:left">查找cleft和cright之间的内容</td>
 </tr>
 <tr>
-<td align="left">concat(column_two)</td>
-<td align="left">连接列</td>
+<td style="text-align:left">concat(column_two)</td>
+<td style="text-align:left">连接列</td>
 </tr>
 <tr>
-<td align="left">destinct()</td>
-<td align="left">查找列的唯一值</td>
+<td style="text-align:left">destinct()</td>
+<td style="text-align:left">查找列的唯一值</td>
 </tr>
 <tr>
-<td align="left">in_([list])</td>
-<td align="left">查找列在列表中的位置</td>
+<td style="text-align:left">in_([list])</td>
+<td style="text-align:left">查找列在列表中的位置</td>
 </tr>
 <tr>
-<td align="left">is_(None)</td>
-<td align="left">查找列None的位置（通常用于检查Null和None）</td>
+<td style="text-align:left">is_(None)</td>
+<td style="text-align:left">查找列None的位置（通常用于检查Null和None）</td>
 </tr>
 <tr>
-<td align="left">contains(string)</td>
-<td align="left">查找包含string的列（区分大小写）</td>
+<td style="text-align:left">contains(string)</td>
+<td style="text-align:left">查找包含string的列（区分大小写）</td>
 </tr>
 <tr>
-<td align="left">endswith(string)</td>
-<td align="left">查找以string结尾的列（区分大小写）</td>
+<td style="text-align:left">endswith(string)</td>
+<td style="text-align:left">查找以string结尾的列（区分大小写）</td>
 </tr>
 <tr>
-<td align="left">like(string)</td>
-<td align="left">查找与string匹配的列（区分大小写）</td>
+<td style="text-align:left">like(string)</td>
+<td style="text-align:left">查找与string匹配的列（区分大小写）</td>
 </tr>
 <tr>
-<td align="left">startwith(string)</td>
-<td align="left">查找以string开头的列（区分大小写）</td>
+<td style="text-align:left">startwith(string)</td>
+<td style="text-align:left">查找以string开头的列（区分大小写）</td>
 </tr>
 <tr>
-<td align="left">ilike(string)</td>
-<td align="left">查找与string匹配的列（不区分大小写）</td>
+<td style="text-align:left">ilike(string)</td>
+<td style="text-align:left">查找与string匹配的列（不区分大小写）</td>
 </tr>
-</tbody></table>
+</tbody>
+</table>
 <blockquote>
 <p>以上这些方法都有相反的方法，例如 notlike() 和 notin_()。not&lt;方法&gt; 这种命名方式约定的唯一例外是不带下划线的 isnot() 方法。</p>
 </blockquote>
-<h6 id="运算符"><a href="#运算符" class="headerlink" title="运算符"></a>运算符</h6><p>除了 ClauseElement 中的这些方法之外，还可以在 where() 语句中使用运算符，SQLAlchemy 针对大多数的Python运算符都做了重载，包括标准的比较运算符<code>（==、！=、&lt;、&gt;、&lt;=、=&gt;）</code>，他们的功能和在Python中一样。在与None比较时，==被重载为IS NULL语句。算数运算符<code>（+、-、*、/和%）</code>还可以用来独立于数据库的字符串做连接处理。</p>
-<p>使用+连接字符串<br>示例：</p>
+<h6 id="运算符"><a class="header-anchor" href="#运算符">¶</a>运算符</h6>
+<p>除了 ClauseElement 中的这些方法之外，还可以在 where() 语句中使用运算符，SQLAlchemy 针对大多数的Python运算符都做了重载，包括标准的比较运算符<code>（==、！=、&lt;、&gt;、&lt;=、=&gt;）</code>，他们的功能和在Python中一样。在与None比较时，==被重载为IS NULL语句。算数运算符<code>（+、-、*、/和%）</code>还可以用来独立于数据库的字符串做连接处理。</p>
+<p>使用+连接字符串<br>
+示例：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">s = select([cookies.c.cookie_name, <span class="string">'SKU-'</span> + cookies.c.cookie_sku])</span><br><span class="line">print(s)  <span class="comment"># SELECT cookies.cookie_name, :cookie_sku_1 || cookies.cookie_sku AS anon_1 FROM cookies</span></span><br><span class="line"><span class="keyword">for</span> row <span class="keyword">in</span> connection.execute(s):</span><br><span class="line">    print(row)</span><br><span class="line"><span class="string">'''</span></span><br><span class="line"><span class="string">('chocolate chip', 'SKU-CC01')</span></span><br><span class="line"><span class="string">('dack chocolate chip', 'SKU-CC02')</span></span><br><span class="line"><span class="string">('peanut butter', 'SKU-PB01')</span></span><br><span class="line"><span class="string">('oatmeal raisin', 'SKU-EWW01')</span></span><br><span class="line"><span class="string">('chocolate chip', 'SKU-CC01')</span></span><br><span class="line"><span class="string">('peanut butter', 'SKU-PB01')</span></span><br><span class="line"><span class="string">('oatmeal raisin', 'SKU-EWW01')</span></span><br><span class="line"><span class="string">'''</span></span><br><span class="line">rp =  connection.execute(s)</span><br><span class="line">print(rp.keys())  <span class="comment"># ['cookie_name', 'anon_1']</span></span><br></pre></td></tr></table></figure>
-
-<p>运算符的另外一种用法是根据多个列来计算值<br>示例：</p>
+<p>运算符的另外一种用法是根据多个列来计算值<br>
+示例：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 计算各种cookie的库存价值</span></span><br><span class="line"><span class="keyword">from</span> sqlalchemy <span class="keyword">import</span> cast, Numeric</span><br><span class="line">s = select([cookies.c.cookie_name,</span><br><span class="line">        cast((cookies.c.quantity * cookies.c.unit_cost),</span><br><span class="line">        Numeric(<span class="number">12</span>,<span class="number">1</span>)).label(<span class="string">'inv_cost'</span>)])</span><br><span class="line">print(s)  <span class="comment"># SELECT cookies.cookie_name, CAST(cookies.quantity * cookies.unit_cost AS NUMERIC(12,1)) AS inv_cost FROM cookies</span></span><br><span class="line"><span class="keyword">for</span> row <span class="keyword">in</span> connection.execute(s):</span><br><span class="line">    print(<span class="string">"&#123;&#125; - &#123;&#125;"</span>.format(row.cookie_name, row.inv_cost))</span><br><span class="line"><span class="string">"""</span></span><br><span class="line"><span class="string">chocolate chip - 6.0</span></span><br><span class="line"><span class="string">dack chocolate chip - 0.8</span></span><br><span class="line"><span class="string">peanut butter - 6.0</span></span><br><span class="line"><span class="string">oatmeal raisin - 100.0</span></span><br><span class="line"><span class="string">chocolate chip - 6.0</span></span><br><span class="line"><span class="string">peanut butter - 6.0</span></span><br><span class="line"><span class="string">oatmeal raisin - 100.0</span></span><br><span class="line"><span class="string">"""</span></span><br></pre></td></tr></table></figure>
 <p>cast() 是另一个允许做类型转换的函数，使用方式是 cast(数据,转换类型)，这里如果不使用 cast，也是可以获得相应的数据的，此时我们可以在 python 语句中对数据类型进行强制转换：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">print(<span class="string">"&#123;&#125; - &#123;:.2f&#125;"</span>.format(row.cookie_name, row.inv_cost))</span><br></pre></td></tr></table></figure>
 <p>区别是前者直接在查询返回结果时就进行了格式化，而后者需要打印时手动完成转换。</p>
-<h6 id="布尔运算符"><a href="#布尔运算符" class="headerlink" title="布尔运算符"></a>布尔运算符</h6><p>SQLAlchemy 还支持布尔运算符 AND、OR 和 NOT，他们用位运算符（&amp;、|和~）来表示。受Python运算符优先级规则的影响，应当尽量使用下面的连接词，而不要使用这些重载的运算符。</p>
-<h6 id="连接词"><a href="#连接词" class="headerlink" title="连接词"></a>连接词</h6><p><code>and_()</code>、<code>or_()</code>、<code>not_()</code>。为了实现某种期望的效果，我们既可以把多个where()子句连接在一起，也可以使用连接词来实现，而且使用连接词的可读性更好，功能性更强。<br>示例：</p>
+<h6 id="布尔运算符"><a class="header-anchor" href="#布尔运算符">¶</a>布尔运算符</h6>
+<p>SQLAlchemy 还支持布尔运算符 AND、OR 和 NOT，他们用位运算符（&amp;、|和~）来表示。受Python运算符优先级规则的影响，应当尽量使用下面的连接词，而不要使用这些重载的运算符。</p>
+<h6 id="连接词"><a class="header-anchor" href="#连接词">¶</a>连接词</h6>
+<p><code>and_()</code>、<code>or_()</code>、<code>not_()</code>。为了实现某种期望的效果，我们既可以把多个where()子句连接在一起，也可以使用连接词来实现，而且使用连接词的可读性更好，功能性更强。<br>
+示例：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sqlalchemy <span class="keyword">import</span> and_,or_,not_</span><br><span class="line"></span><br><span class="line">s = select([cookies]).where(</span><br><span class="line">    and_(cookies.c.quantity &gt; <span class="number">23</span>,</span><br><span class="line">        cookies.c.unit_cost &lt; <span class="number">0.40</span></span><br><span class="line">    )</span><br><span class="line">)</span><br><span class="line"><span class="string">'''</span></span><br><span class="line"><span class="string"># 等价的版本（使用布尔运算符--注意优先级，因为优先级的关系，内部的单个条件需要加上括号以白表明优先级）</span></span><br><span class="line"><span class="string">s = select([cookies]).where(</span></span><br><span class="line"><span class="string">    (cookies.c.quantity &gt; 23) &amp;</span></span><br><span class="line"><span class="string">        (cookies.c.unit_cost &lt; 0.40)</span></span><br><span class="line"><span class="string">    )</span></span><br><span class="line"><span class="string">'''</span></span><br><span class="line">print(s)  <span class="comment"># SELECT cookies.cookie_id, cookies.cookie_name, cookies.cookie_recipe_url, cookies.cookie_sku, cookies.quantity, cookies.unit_cost FROM cookies WHERE cookies.quantity &gt; :quantity_1 AND cookies.unit_cost &lt; :unit_cost_1 </span></span><br><span class="line"><span class="keyword">for</span> row <span class="keyword">in</span> connection.execute(s):</span><br><span class="line">    print(row.cookie_name)</span><br></pre></td></tr></table></figure>
-<h6 id="复杂过滤"><a href="#复杂过滤" class="headerlink" title="复杂过滤"></a>复杂过滤</h6><p>连接词 配合 ClauseElement 使用，实现复杂查询<br>示例：</p>
+<h6 id="复杂过滤"><a class="header-anchor" href="#复杂过滤">¶</a>复杂过滤</h6>
+<p>连接词 配合 ClauseElement 使用，实现复杂查询<br>
+示例：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">s = select([cookies]).where(</span><br><span class="line">    or_(</span><br><span class="line">        cookies.c.quantity.between(<span class="number">10</span>,<span class="number">50</span>),</span><br><span class="line">        cookies.c.cookie_name.contains(<span class="string">'chip'</span>)  <span class="comment"># 查询包含'chip'的项</span></span><br><span class="line">    )</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
-
 <p>未完待续 …</p>
 
     </div>

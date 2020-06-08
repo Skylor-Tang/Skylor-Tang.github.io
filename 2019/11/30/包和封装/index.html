@@ -240,7 +240,8 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h1 id="封装"><a href="#封装" class="headerlink" title="封装"></a>封装</h1><p>通过命名来实现封装</p>
+        <h1>封装</h1>
+<p>通过命名来实现封装</p>
 <ul>
 <li>名字一般使用CamelCase</li>
 <li>首字母大写：public</li>
@@ -249,32 +250,32 @@
 <p>相对于 包 而言，若一个外部的包想要访问本包内定义的结构，和  结构的方法（不仅仅是结构，定义的一般方法若想被其他包使用，也是要大写首字母的），这些命名，包括结构内变量的命名都要采用大写。</p>
 <p>但是在同一个包下的内容可以随便调用。</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> tree</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">"fmt"</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Node <span class="keyword">struct</span> &#123;</span><br><span class="line">	Value       <span class="keyword">int</span></span><br><span class="line">	Left, Right *Node</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(node Node)</span> <span class="title">Print</span><span class="params">()</span></span> &#123;</span><br><span class="line">	fmt.Print(node.Value, <span class="string">" "</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(node *Node)</span> <span class="title">SetValue</span><span class="params">(value <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> node == <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">"Setting Value to nil "</span> +</span><br><span class="line">			<span class="string">"node. Ignored."</span>)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	node.Value = value</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">CreateNode</span><span class="params">(value <span class="keyword">int</span>)</span> *<span class="title">Node</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> &amp;Node&#123;Value: value&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h1 id="包"><a href="#包" class="headerlink" title="包"></a>包</h1><ul>
+<h1>包</h1>
+<ul>
 <li>每个目录一个包，只能是同一种包</li>
-<li>main包包含可执行入口– main函数，只有main包才能有main函数</li>
+<li>main包包含可执行入口-- main函数，只有main包才能有main函数</li>
 <li>为结构定义的方法必须放在同一个包内</li>
 <li>可以是同一个包内的不同文件，对包外来说，只要知道包名，都可以使用，不需要知道文件名</li>
 </ul>
 <p>使用时，import导入的是存放包的目录名，同一个目录下只能有一种包名，用来表示包内文件的关系，以及被其他包使用时的开头 <code>包名.方法或变量</code>。但是为了不产生歧义，最好使用的时候，包名和目录名设置成一致的即可。</p>
-<h2 id="如何扩充系统类型或者别人的类型"><a href="#如何扩充系统类型或者别人的类型" class="headerlink" title="如何扩充系统类型或者别人的类型"></a>如何扩充系统类型或者别人的类型</h2><p>在含有继承的语言中，可以通过继承的方式来扩充原有的功能，但是在go中是没有继承的概念的。Go采用以下两种方式来扩充：</p>
+<h2 id="如何扩充系统类型或者别人的类型"><a class="header-anchor" href="#如何扩充系统类型或者别人的类型">¶</a>如何扩充系统类型或者别人的类型</h2>
+<p>在含有继承的语言中，可以通过继承的方式来扩充原有的功能，但是在go中是没有继承的概念的。Go采用以下两种方式来扩充：</p>
 <ul>
 <li>定义别名</li>
 <li>使用组合</li>
 </ul>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 使用组合的方式来完成    扩充自定义的treeNode结构，增加后序遍历的功能</span></span><br><span class="line"><span class="keyword">type</span> myTreeNode <span class="keyword">struct</span> &#123;</span><br><span class="line">	node *tree.Node</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(myNode *myTreeNode)</span> <span class="title">postOrder</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> myNode == <span class="literal">nil</span> || myNode.node == <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	left := myTreeNode&#123;myNode.node.Left&#125;</span><br><span class="line">	right := myTreeNode&#123;myNode.node.Right&#125;</span><br><span class="line"></span><br><span class="line">	left.postOrder()</span><br><span class="line">	right.postOrder()</span><br><span class="line">	myNode.node.Print()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 使用别名的方式来完成  扩充[]int切片类型，提供Push、Pop、IsEmpty的功能</span></span><br><span class="line"><span class="keyword">package</span> queue</span><br><span class="line"></span><br><span class="line"><span class="comment">// A FIFO queue.</span></span><br><span class="line"><span class="keyword">type</span> Queue []<span class="keyword">int</span>    <span class="comment">// 使用type 定义了[]int类型的别名 Queue</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// Pushes the element into the queue.</span></span><br><span class="line"><span class="comment">// 		e.g. q.Push(123)</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(q *Queue)</span> <span class="title">Push</span><span class="params">(v <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">	*q = <span class="built_in">append</span>(*q, v)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Pops element from head.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(q *Queue)</span> <span class="title">Pop</span><span class="params">()</span> <span class="title">int</span></span> &#123;</span><br><span class="line">	head := (*q)[<span class="number">0</span>]</span><br><span class="line">	*q = (*q)[<span class="number">1</span>:]</span><br><span class="line">	<span class="keyword">return</span> head</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Returns if the queue is empty or not.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(q *Queue)</span> <span class="title">IsEmpty</span><span class="params">()</span> <span class="title">bool</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="built_in">len</span>(*q) == <span class="number">0</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h1 id="GOPATH环境变量"><a href="#GOPATH环境变量" class="headerlink" title="GOPATH环境变量"></a>GOPATH环境变量</h1><ul>
+<h1>GOPATH环境变量</h1>
+<ul>
 <li>默认在~/go（Unix，Linux）</li>
 <li>官方推荐：所有项目和第三方库都放在同一个GOPATH下</li>
 <li>也可以将每个项目放在不同的GOPATH</li>
 <li>GO在 编译 的时候会自动到每个GOPATN下找到自己所依赖的包</li>
 </ul>
-<p>正常情况下  go get golang.org/x/tools/cmd/goimports</p>
+<p>正常情况下  go get <a href="http://golang.org/x/tools/cmd/goimports" target="_blank" rel="noopener">golang.org/x/tools/cmd/goimports</a></p>
 <p>使用gopm来获取无法下载的包</p>
-<p>go get -v github.com/gpmgo/gopm</p>
+<p>go get -v <a href="http://github.com/gpmgo/gopm" target="_blank" rel="noopener">github.com/gpmgo/gopm</a></p>
 <ul>
 <li>go build 来编译</li>
 <li>go install 产生pkg文件和可执行文件</li>
@@ -366,7 +367,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#封装"><span class="nav-number">1.</span> <span class="nav-text">封装</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#包"><span class="nav-number">2.</span> <span class="nav-text">包</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#如何扩充系统类型或者别人的类型"><span class="nav-number">2.1.</span> <span class="nav-text">如何扩充系统类型或者别人的类型</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#GOPATH环境变量"><span class="nav-number">3.</span> <span class="nav-text">GOPATH环境变量</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#"><span class="nav-number">1.</span> <span class="nav-text">封装</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#"><span class="nav-number">2.</span> <span class="nav-text">包</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#如何扩充系统类型或者别人的类型"><span class="nav-number">2.1.</span> <span class="nav-text">如何扩充系统类型或者别人的类型</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#"><span class="nav-number">3.</span> <span class="nav-text">GOPATH环境变量</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
