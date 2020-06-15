@@ -789,7 +789,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-05-20 21:43:45" itemprop="dateModified" datetime="2020-05-20T21:43:45+08:00">2020-05-20</time>
+                <time title="修改时间：2020-06-15 20:21:04" itemprop="dateModified" datetime="2020-06-15T20:21:04+08:00">2020-06-15</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -903,6 +903,14 @@
 <p>合并之后，冲突的分支中的内容不变（本来分支中的内容就不会变），虽然此时和主分支中冲突文件的内容不同，因为解决冲突的问题，版本管理器也就认为这两个文件是一样的了。</p>
 <h2 id="暂存，临时修改"><a class="header-anchor" href="#暂存，临时修改">¶</a>暂存，临时修改</h2>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">临时修改：git stash</span><br><span class="line"></span><br><span class="line">git stash  将当前的工作区 存起来</span><br><span class="line">此时可以切换到别的分支，或者创建新的分支来完成别的工作</span><br><span class="line"></span><br><span class="line">再切换到当前分支，使用git stash pop 就可以继续之前的工作了</span><br></pre></td></tr></table></figure>
+<h2 id="删除存储的文件"><a class="header-anchor" href="#删除存储的文件">¶</a>删除存储的文件</h2>
+<p>同时删除工作区和索引中的文件</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git rm 文件名</span><br></pre></td></tr></table></figure>
+<p>仅从索引中删除文件</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git rm --cached 文件名</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>此方式删除后，本地文件还存在，只是不希望这个文件被版本控制。此删除方式多用在修改 .gitignore 文件时，因为修改 .gitignore 文件后，若被忽略的文件在之前已经被添加到仓库中，文件忽略是没有效果的。</p>
+</blockquote>
 
       
     </div>
