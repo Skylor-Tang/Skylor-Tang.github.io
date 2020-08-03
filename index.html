@@ -164,6 +164,348 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/08/03/%E7%AE%97%E6%B3%95%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Skylor Tang">
+      <meta itemprop="description" content="Your advantages today will be replaced by future trends, so keep learning.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Skylor Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/08/03/%E7%AE%97%E6%B3%95%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" class="post-title-link" itemprop="url">算法数据结构</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-08-03 18:12:55 / 修改时间：21:33:44" itemprop="dateCreated datePublished" datetime="2020-08-03T18:12:55+08:00">2020-08-03</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/" itemprop="url" rel="index"><span itemprop="name">计算机</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/%E7%AE%97%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">算法</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" itemprop="url" rel="index"><span itemprop="name">数据结构</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2020/08/03/%E7%AE%97%E6%B3%95%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2020/08/03/%E7%AE%97%E6%B3%95%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="算法复杂度"><a class="header-anchor" href="#算法复杂度">¶</a>算法复杂度</h2>
+<p>算法复杂度分为时间复杂度和空间复杂度。<br>
+时间复杂度是指执行算法所需要的计算工作量；而空间复杂度是指执行这个算法所需要的内存空间。（算法的复杂性体现在运行某个算法时计算机所需资源的多少上，计算机资源最重要的是时间和空间（即寄存器）资源，因此复杂度分为时间和空间复杂度。）</p>
+<h3 id="时间复杂度"><a class="header-anchor" href="#时间复杂度">¶</a>时间复杂度</h3>
+<p>时间复杂度排序：<br>
+O(1) &lt; O(logn) &lt; O(n) &lt; O(nlogn) &lt; O(n²) &lt; O(n²logn) &lt; O(n³)</p>
+<p>简单快速判断算法的时间复杂度（适用于大部分简单的代码）</p>
+<ul>
+<li>确定问题规模 n</li>
+<li>循环减半过程  --&gt; logn</li>
+<li>k层关于n的循环 --&gt; nᵏ</li>
+<li>复杂情况 --&gt; 根据算法执行过程判断</li>
+</ul>
+<h3 id="空间复杂度"><a class="header-anchor" href="#空间复杂度">¶</a>空间复杂度</h3>
+<p>空间复杂度：评估算法内存占用大小的式子<br>
+空间复杂度的表现方式和时间复杂度一致：</p>
+<ul>
+<li>算法使用了几个变量： O(1)</li>
+<li>算法使用了长度为n的以为列表： O(n)</li>
+<li>算法使用了m行n列的二维列表： O(mn)</li>
+<li>递归需要使用到系统栈的空间，因为需要记录上次递归中函数的位置，每走一层就需要消耗1个空间，所以没走k层，就需要消耗O(k)的空间</li>
+</ul>
+<p>空间换时间</p>
+<p>冒泡后 选标记前 插移位 快归位(找到元素应有的位置)递归</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">cal_time</span><span class="params">(func)</span>:</span></span><br><span class="line">    <span class="string">'''</span></span><br><span class="line"><span class="string">    简易算法时间装饰器</span></span><br><span class="line"><span class="string">    '''</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">wrapper</span><span class="params">(*args, **kwargs)</span>:</span></span><br><span class="line">        t1 = time.time()</span><br><span class="line">        result = func(*args, **kwargs)</span><br><span class="line">        t2 = time.time()</span><br><span class="line">        print(<span class="string">"%s running time: %s secs."</span> % (func.__name__, t2-t1))</span><br><span class="line">        <span class="keyword">return</span> result</span><br><span class="line">    <span class="keyword">return</span> wrapper</span><br></pre></td></tr></table></figure>
+<p><strong>以下所有的排序算法的实现，都是基于列表的下标完成的</strong></p>
+<h2 id="递归问题"><a class="header-anchor" href="#递归问题">¶</a>递归问题</h2>
+<p>递归的特点： 1.调用自身 2.结束条件<br>
+递归案例： 汉诺塔问题</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">hanoi</span><span class="params">(n, a, b ,c)</span>:</span></span><br><span class="line">    <span class="string">"""</span></span><br><span class="line"><span class="string">    n 表示圆盘个数</span></span><br><span class="line"><span class="string">    三个参数代表三个柱子相对位置</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    <span class="keyword">if</span> n &gt; <span class="number">0</span>:</span><br><span class="line">        hanoi(n<span class="number">-1</span>, a, c, b)</span><br><span class="line">        print(<span class="string">'moving from %s to %s'</span> %(a, c))</span><br><span class="line">        hanoi(n<span class="number">-1</span>, b, a, c)</span><br><span class="line"></span><br><span class="line">hanoi(<span class="number">3</span>, <span class="string">'A'</span>, <span class="string">'B'</span>, <span class="string">'C'</span>)</span><br></pre></td></tr></table></figure>
+<p>算法解析：<br>
+为了保证小的盘子只能放在大的盘子之上，将n个盘子分为两个部分（1以及n-1两个部分），1 表示最后的一个大盘子，n-1 看作一个整体。</p>
+<h2 id="列表查找"><a class="header-anchor" href="#列表查找">¶</a>列表查找</h2>
+<p>列表查找（线性表查找）：从列表中查找指定元素</p>
+<ul>
+<li>输入：列表、待查找元素</li>
+<li>输出：元素下标（未找到元素时一般返回None或-1）</li>
+</ul>
+<p>list类型内置查找函数：index()   —  是线性（顺序）查找，因为二分查找要求列表是有序列表，故采用的是线性查找</p>
+<h3 id="顺序查找-Linear-Search"><a class="header-anchor" href="#顺序查找-Linear-Search">¶</a>顺序查找 (Linear Search)</h3>
+<p>也叫线性查找，从列表的第一个元素开始，顺序进行搜索</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">linear_search</span><span class="params">(li, val)</span>:</span></span><br><span class="line">    <span class="keyword">for</span> ind, v <span class="keyword">in</span> enumerate(li):</span><br><span class="line">        <span class="keyword">if</span> v == val:</span><br><span class="line">            <span class="keyword">return</span> ind</span><br><span class="line">    <span class="keyword">else</span>:                                       </span><br><span class="line">        <span class="keyword">return</span> <span class="literal">None</span></span><br></pre></td></tr></table></figure>
+<p>时间复杂度：O(n)</p>
+<p><em><strong>python 中独创了 <code>for...else...</code> 以及 <code>while...else...</code> 语法，用于在循环结束之后直接执行else中的内容，好处是当循环中因为break退出时，else中的内容将不在执行。</strong></em></p>
+<h3 id="二分查找-Binary-Search"><a class="header-anchor" href="#二分查找-Binary-Search">¶</a>二分查找 (Binary Search)</h3>
+<p>又叫折半查找，从有序列表的初始候选区 li[0:n] 开始，通过对待查找的值与候选区中间值的比较，可以使候选区减少一半。</p>
+<p>算法的前提：查找目标<code>必须是排序好的</code>列表</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">binary_search</span><span class="params">(li, val)</span>:</span></span><br><span class="line">    left = <span class="number">0</span></span><br><span class="line">    right = len(li) - <span class="number">1</span></span><br><span class="line">    <span class="keyword">while</span> left &lt;= right:</span><br><span class="line">        mid = (left + right) // <span class="number">2</span>  </span><br><span class="line">        <span class="keyword">if</span> li[mid] == val:</span><br><span class="line">            <span class="keyword">return</span> mid</span><br><span class="line">        <span class="keyword">elif</span> li[mid] &gt; val:</span><br><span class="line">            right = mid - <span class="number">1</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            left = mid + <span class="number">1</span></span><br><span class="line">    <span class="keyword">else</span>:  </span><br><span class="line">        <span class="keyword">return</span> <span class="literal">None</span></span><br></pre></td></tr></table></figure>
+<p>时间复杂度：涉及到循环减半，所以复杂度是O(logn)</p>
+<p>小结：<br>
+list类型内置查找函数<code>index()</code> 是线性（顺序）查找，因为二分查找要求列表是有序列表，故采用的是线性查找，<br>
+二分查找要求列表的顺序为有序列表，而排序算法的复杂度都大于O(n)，所以在选用查找方式的时候就需要斟酌：</p>
+<ul>
+<li>有序列表，肯定采用二分查找（binary serarch）</li>
+<li>无序列表，看查找的次数，如果查找只进行你一次，为了避免采用二分查找的列表排序的过程的消耗，推荐采用线性查找（linear search）<br>
+如果进行多次查找，可采用二分查找，此时排序的消耗时间可以忽略。</li>
+</ul>
+<h2 id="列表排序"><a class="header-anchor" href="#列表排序">¶</a>列表排序</h2>
+<p>将无序列表变成有序的列表</p>
+<ul>
+<li>输入： 列表</li>
+<li>输出： 有序列表</li>
+</ul>
+<p>排序方式：升序与降序</p>
+<p>内置排序函数： sort()</p>
+<h3 id="冒泡排序"><a class="header-anchor" href="#冒泡排序">¶</a>冒泡排序</h3>
+<p>冒泡排序的一趟过程：列表每两个相邻的数，如果前面比后面大，则交换两个数。（箭头只会到倒数第二个元素）  —&gt; 导致列表中的最大数的排到末尾。<br>
+最大值所在的区为有序区，剩下的为无序区，每一趟从无序区中得到一个最大值放到有序区中。<br>
+循环的次数（趟数）为列表长度n-1，因为最后一个元素不需要进行了。</p>
+<p>代码的关键点： 趟、无序区范围</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">bubble_sort</span><span class="params">(li)</span>:</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(len(li)<span class="number">-1</span>):  <span class="comment"># 排序的趟数 = 总元素个数 - 1 因为剩下的最后一个元素(表首)不需要排序</span></span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> range(len(li)-i<span class="number">-1</span>):  <span class="comment"># 总长度-有序区长度 - 1 = 无序区长度 -1 </span></span><br><span class="line">            <span class="keyword">if</span> li[j] &gt; li[j+<span class="number">1</span>]:  <span class="comment"># 当前为升序排序，若降序则改为小于即可</span></span><br><span class="line">                li[j], li[j+<span class="number">1</span>] = li[j+<span class="number">1</span>], li[j]</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> random</span><br><span class="line"></span><br><span class="line">li = [random.randint(<span class="number">0</span>, <span class="number">100</span>) <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">10</span>)]</span><br><span class="line">print(li)</span><br><span class="line">bubble_sort(li)</span><br><span class="line">print(li)</span><br></pre></td></tr></table></figure>
+<p>时间复杂度： O(n²)</p>
+<p>冒泡排序算法改进：<br>
+以上的实现中，默认是对所有的元素都进行了比较查看，<br>
+可能会存在的情况是说在一趟排序中，如<code>[9, 8, 7, 1, 2, 3, 4]</code>这样，在进行了3次冒泡之后，已经不需要再进行排序了，所以可以通过设置标记的方式将不在排序之后退出代码。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">bubble_sort</span><span class="params">(li)</span>:</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(len(li)<span class="number">-1</span>):  </span><br><span class="line">        exchange = <span class="literal">False</span></span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> range(len(li)-i<span class="number">-1</span>): </span><br><span class="line">            <span class="keyword">if</span> li[j] &gt; li[j+<span class="number">1</span>]:</span><br><span class="line">                li[j], li[j+<span class="number">1</span>] = li[j+<span class="number">1</span>], li[j]</span><br><span class="line">                exchange = <span class="literal">True</span></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> exchange:</span><br><span class="line">            <span class="keyword">return</span></span><br></pre></td></tr></table></figure>
+<p>算法改进（设置了标记值）之后，当列表值是顺序的时候，此时列表只会遍历一边，此时就达到了冒泡排序的最好情况时间复杂度 <code>O(n)</code>。</p>
+<p>算法要点：每次循环找出并固定表尾的最大值。</p>
+<h3 id="选择排序"><a class="header-anchor" href="#选择排序">¶</a>选择排序</h3>
+<p>遍历列表，每次找出列表中的最小值，继续找剩下的列表中的最小值，即多次遍历列表，每次取最小数。</p>
+<p>一般实现：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">select_sort_simple</span><span class="params">(li)</span>:</span></span><br><span class="line">    li_new = []</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(len(li)):</span><br><span class="line">        min_val = min(li)  <span class="comment"># O(n)</span></span><br><span class="line">        li_new.append(min_val)</span><br><span class="line">        li.remove(min_val) <span class="comment"># O(n)</span></span><br><span class="line">    <span class="keyword">return</span> li_new</span><br></pre></td></tr></table></figure>
+<p>算法的时间复杂度为 O(n²)，该算法虽然实现了选择排序的功能，但却另外开辟了内存空间，我们需要做到 <code>原地排序</code> ，即不额外创建新的列表，而只在当前待排序的列表上进行操作。</p>
+<p>改进方案：<br>
+将找出的小值从开头开始放，原先位置上的值与小值所在的位置进行交换。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">select_sort</span><span class="params">(li)</span>:</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(len(li)<span class="number">-1</span>):  <span class="comment"># i表示第几趟， 减少1 是最后剩下的一定是最大的数</span></span><br><span class="line">        min_loc = i  <span class="comment"># 将无序区第一个元素作为最小值进行比较，为了好进行位置交换操作，所以采用下标的形式</span></span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> range(i+<span class="number">1</span>, len(li)):  <span class="comment"># 此处使用i+1作为第一个元素，去除了自己和自己比的过程</span></span><br><span class="line">            <span class="keyword">if</span> li[j] &lt; li[min_loc]:</span><br><span class="line">                min_loc = j  <span class="comment"># 记录最小值的下标</span></span><br><span class="line">        li[i], li[min_loc] = li[min_loc], li[i]</span><br></pre></td></tr></table></figure>
+<p>时间复杂度： O(n²)</p>
+<p>算法要点：<br>
+每次得到表首的最小值，通过做标记，每次找出相对的较小值记录下标，一趟找出无序区的最小值与有序区某位交换位置。</p>
+<h3 id="插入排序"><a class="header-anchor" href="#插入排序">¶</a>插入排序</h3>
+<p>类似打牌插牌，初始手里（有序区）只有一张牌，每次（从无序区）摸一张牌，插入到手里已有牌的正确位置。</p>
+<p>思路：<br>
+头部第一个数据为有序区第一个值，然后从第二个数据开始做为无序区提供的值（使用参数记录元素值，因为位置需要提供给有序区），与有序区中现有值进行比较，确定插入的位置，现有值按序挪动位置，占用无序区数据的位置。</p>
+<blockquote>
+<p>挪位置的规则：从有序区最后一个值与待插入值进行大小比较，如果大于待插入值，则该元素移动（下标+1）</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">insert_sort</span><span class="params">(li)</span>:</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">1</span>, len(li)):  <span class="comment"># i表示待插入的元素的下标</span></span><br><span class="line">        tmp = li[i]  <span class="comment"># 因为其所在位置要提供给有序区挪位，故记录</span></span><br><span class="line">        j = i - <span class="number">1</span>  <span class="comment"># j表示有序区最后元素的下标</span></span><br><span class="line">        <span class="keyword">while</span> j &gt;= <span class="number">0</span> <span class="keyword">and</span>  li[j] &gt; tmp :</span><br><span class="line">            li[j+<span class="number">1</span>] = li[j]</span><br><span class="line">            j -= <span class="number">1</span></span><br><span class="line">        li[j+<span class="number">1</span>] = tmp</span><br></pre></td></tr></table></figure>
+<p>时间复杂度： O(n²)</p>
+<p>最好情况时间复杂度：O(n)  顺序情况，此时内部while不执行。</p>
+<p>算法要点：和选择排序的起始下标不同，为1开始，因为默认0已经是有序区的最小值。</p>
+<h3 id="快速排序"><a class="header-anchor" href="#快速排序">¶</a>快速排序</h3>
+<p>思路：<br>
+取第一个元素p，使元素p归位（列表被分为两部分，左边都比p小，右边都比p大）。<br>
+递归完成所有元素的排序（左右两部分分别归位（归位时都是取部分的第一个值作为归位元素），直到归位元素一侧元素个数为1或者0），从而完成整个列表的排序。<br>
+所以，排序只要实现元素归位功能，然后递归即可。</p>
+<p>快排算法框架：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">quick_sort</span><span class="params">(data, left, right)</span>:</span></span><br><span class="line">    <span class="string">'''</span></span><br><span class="line"><span class="string">    data 表示待排序的列表</span></span><br><span class="line"><span class="string">    left 待排序列表的起始下标</span></span><br><span class="line"><span class="string">    right 待排序列表的终点下标</span></span><br><span class="line"><span class="string">    '''</span></span><br><span class="line">    <span class="keyword">if</span> left &lt; right:  <span class="comment"># 递归的终止条件，当左右相等的时候说明列表中只有一个元素，此时不需要进行排序</span></span><br><span class="line">        mid = partition(data, left, right)  <span class="comment"># mid 为归位元素的下标</span></span><br><span class="line">        quick_sort(data, left, mid<span class="number">-1</span>)</span><br><span class="line">        quick_sort(data, mid+<span class="number">1</span>, right)</span><br></pre></td></tr></table></figure>
+<p>归位算法实现：<br>
+归位，指回到其该有的位置（在排序后应该在的位置），实现步骤如下：</p>
+<ol>
+<li>以列表的第一个值为待归位的元素（归位元素：使该元素左边的元素都是小于归位元素，右边的元素都大于归位元素），并记录该元素的值，此时列表产生一个空位。</li>
+<li>从列表的最右边开始（因为步骤1选取列表第一个元素为待归位元素后，left指向的是待填补的空位），依次找小于待归位元素的值，没有就往前一个找，找到后，将元素放到空位left上，此时右边的位置提供了一个空位，然后从左边开始找大于待归位元素的元素，依次找大于待归位元素的值，找到后当到right空位上。</li>
+<li>以此右边左边这样循环找，直到left=right，此时的空位为待归位元素的位置（最后必定是重叠的，都指向了归位元素所在的空位），保证了左边的元素都小于等于，右边都大于等于归位元素。</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">partition</span><span class="params">(li, left, right)</span>:</span></span><br><span class="line">    tmp = li[left]</span><br><span class="line">    <span class="keyword">while</span> left &lt; right:  <span class="comment"># 当两侧指针重叠，取消循环</span></span><br><span class="line">        <span class="comment"># 一定要先从右边开始找，因为此时左侧有空位</span></span><br><span class="line">        <span class="keyword">while</span> left &lt; right <span class="keyword">and</span> li[right] &gt;=tmp:  <span class="comment"># 从右边往左找</span></span><br><span class="line">            right -= <span class="number">1</span>  <span class="comment"># 一旦大于等于tmp，往左一步</span></span><br><span class="line">        li[left] = li[right]  <span class="comment"># 将右边找出的小的值放在空位上</span></span><br><span class="line">        <span class="comment"># 右边找到填补空位后，再从左边开始找填补右边的空位</span></span><br><span class="line">        <span class="keyword">while</span> left &lt; right <span class="keyword">and</span> li[left] &lt;= tmp:</span><br><span class="line">            left += <span class="number">1</span></span><br><span class="line">        li[right] = li[left]  <span class="comment"># 左边的值填补到右边的空位上</span></span><br><span class="line">    li[left] = tmp  <span class="comment"># 循环结束后，此时left = right ，并且都指向了空位</span></span><br><span class="line">    <span class="keyword">return</span> left  <span class="comment"># left 和 right 是同一个值</span></span><br></pre></td></tr></table></figure>
+<p>快速排序的时间复杂度：O(nlogn)</p>
+<p>复杂度的粗略估计依据：</p>
+<ul>
+<li>递归分层，对半分 <code>n/2</code>，每次减半，一共要分logn层，为 O(logn)</li>
+<li>每层从全局上看是从左往右扫，扫描整个列表一次，所以每层的时间复杂度为 O(n)</li>
+</ul>
+<p>所以时间复杂度是 O(nlogn)</p>
+<p>空间复杂度：O(logn)<br>
+算法使用到了递归，递归需要消耗系统的内存资源，考虑平均情况下递归分层为 logn 层，所以使用空间复杂度为 O(logn)。</p>
+<p>快速排序的问题，递归：</p>
+<ul>
+<li>python有递归最大深度的限制（可以更改），默认的递归深度是有限制的，当递归深度超过默认值的时候，就会引发RuntimeError。<br>
+递归深度解决方式：  <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> sys</span><br><span class="line">sys.setrecursionlimit(<span class="number">1000000</span>)  <span class="comment"># 表示递归深度为100w</span></span><br></pre></td></tr></table></figure>
+</li>
+<li>递归会消耗相当大的系统资源 — 内存</li>
+</ul>
+<p>快速排序最坏情况：<br>
+好的情况下每次分层都是能够对半分 <code>n/2</code>，所以分层要分logn层，为 O(logn) ，但是最坏的情况，如 <code>[5,4,3,2,1]</code> 这种有顺序的列表，当前算法选取的left每次都是最大值，会导致分层的时候不是对半分，而是分为 <code>1</code> 和 <code>n-1</code> 两个部分，这就导致递归分层是的层数和 <code>n</code> 相同，此时分层的时间复杂度为 O(n)，所以最坏的情况下的时间复杂度为 O(n²)。同理，此时对应的最坏空间复杂度就为O(n)。</p>
+<p>解决措施： 为了避免有序的列表使用快排产生的问题，此时可以使用 <code>随机主元</code> 的方式，即随机选取需要归位的元素，而非使用left位置的元素，这样可以一定程度上减轻倒序列表的影响。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> random</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">random_partition</span><span class="params">(li, left, right)</span>:</span></span><br><span class="line">    i = random.randint(left, right)  <span class="comment"># 随机产生需要归位的元素下标</span></span><br><span class="line">    tmp = li[i]</span><br><span class="line">    <span class="keyword">while</span> left &lt; right:</span><br><span class="line">        <span class="keyword">while</span> right &gt; i <span class="keyword">and</span> li[right] &gt;= tmp:</span><br><span class="line">            right -= <span class="number">1</span></span><br><span class="line">        li[i] = li[right]</span><br><span class="line">        i = right  <span class="comment"># 将i指向新的空位</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">while</span> left &lt; i <span class="keyword">and</span> li[left] &lt;= tmp:</span><br><span class="line">            left += <span class="number">1</span></span><br><span class="line">        li[i] = li[left]</span><br><span class="line">        i = left</span><br><span class="line">    li[i] = tmp</span><br><span class="line">    <span class="keyword">return</span> i</span><br></pre></td></tr></table></figure>
+<p>通过运行时间分析，在处理倒序列表时，性能提升到处理一般数据的性能，在常规列表的测试下，性能与选取left位置元素相差无几。</p>
+<p>算法要点：配合动画理解<br>
+判断的标准始终是左边指针小于右指针，i始终指向的是空位。<br>
+默认采用的以左边第一个为待归位值，实际上是一种特殊的情况，在代码实现中left和right即作为了元素指针，又作为空位指针。</p>
+<h3 id="堆排序"><a class="header-anchor" href="#堆排序">¶</a>堆排序</h3>
+<h4 id="树和二叉树"><a class="header-anchor" href="#树和二叉树">¶</a>树和二叉树</h4>
+<p>树是一种数据结构<br>
+一些概念：</p>
+<ul>
+<li>节点的度：表示某个节点的分叉个数</li>
+<li>树的度：书中度最多的节点的度为树的度</li>
+</ul>
+<p>二叉树定义：</p>
+<ul>
+<li>度不超多2的树</li>
+<li>每个节点最多有两个孩子节点</li>
+</ul>
+<p>完全二叉树：叶节点只能出现在最下层和次下层，并且最下层的节点都集中在该层最左边的若干位置的二叉树。<br>
+满二叉树：一个二叉树，如果每一层的节点数都达到最大值，则这个二叉树就是满二叉树，满二叉树是特殊的完全二叉树。</p>
+<p>二叉树的存储方式：</p>
+<ul>
+<li>链式存储方式</li>
+<li>顺序存储方式：使用列表来存储</li>
+</ul>
+<p>完全二叉树父节点和左孩子节点的编号下标的关系： i -&gt; 2i+1     (i从0开始)<br>
+完全二叉树父节点和左孩子节点的编号下标的关系： i -&gt; 2i+2     (i从0开始)<br>
+反之，从孩子节点找父节点都可以采用 (孩子节点编号-1)//2 ，注意使用的是整除。</p>
+<h4 id="堆"><a class="header-anchor" href="#堆">¶</a>堆</h4>
+<p>一种特殊的完全二叉树。<br>
+大根堆：一个完全二叉树，满足任一父节点都比其他孩子节点大。<br>
+小根堆：一个完全二叉树，满足任一父节点都比其他孩子节点小。</p>
+<p>升序排序采用大根堆排序，利用堆的向下调整的性质实现。<br>
+向下调整性质：<br>
+当根节点的左右子树都已经是堆（假设是最大值）的时候，但根不满足堆，可以通过一次向下的调整来将其变成一个堆。<br>
+向下调整原理：<br>
+根节点不是最大值，从其两个子节点中选取较大的值替换现在的根节点（选两者的较大值保证了堆的性质，能保证根大于孩子节点），出现的空位再使用空位节点的两个子节点以及之前的根节点中的较大值最为根节点值替换，以此类推，最后的空位使用出来的变量替换。</p>
+<p>堆排序的过程：</p>
+<ol>
+<li>建立一个堆（升序使用的大根堆）。</li>
+<li>得到堆顶的元素，为当前数据中的最大值。</li>
+<li>去除堆顶，将堆的最后一个叶子结点（选取最后一个叶子节点，是为了保证经过调整之后，最后得到的树是一个完全二叉树）的元素放到堆顶，此时可通过一次调整性质得到大根堆。</li>
+<li>将堆顶元素抛出，为当前数据中的第二大值。</li>
+<li>重复步骤3，直到堆为空。</li>
+</ol>
+<p>堆的构造：<br>
+一个完全二叉树，从最后一个非叶子节点开始，对每个小的子树进行向下调整，最后得到的就是一个堆。</p>
+<h4 id="堆排序代码实现"><a class="header-anchor" href="#堆排序代码实现">¶</a>堆排序代码实现</h4>
+<p>算法实现：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sift</span><span class="params">(li, low, high)</span>:</span></span><br><span class="line">    <span class="string">"""</span></span><br><span class="line"><span class="string">    大根堆向下调整实现</span></span><br><span class="line"><span class="string">    注意对的前提是此堆除了堆顶外，其他部分已经满足大根堆</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    :param li: 列表</span></span><br><span class="line"><span class="string">    :param low: 堆的根节点</span></span><br><span class="line"><span class="string">    :param high： 堆的最后一个元素的位置</span></span><br><span class="line"><span class="string">    :return</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    i = low  <span class="comment"># 开始指向根节点</span></span><br><span class="line">    j = <span class="number">2</span> * i + <span class="number">1</span>  <span class="comment"># 开始指向左孩子节点</span></span><br><span class="line">    tmp = li[low]  <span class="comment"># 将堆顶元素存储</span></span><br><span class="line">    <span class="keyword">while</span> j &lt;= high:  <span class="comment"># 只要j没有越界，就表示i指向的节点不是叶子节点</span></span><br><span class="line">        <span class="keyword">if</span> j + <span class="number">1</span> &lt;= high <span class="keyword">and</span> li[j+<span class="number">1</span>] &gt; li[j]:  <span class="comment"># 如果有右孩子节点，且相对较大</span></span><br><span class="line">            j = j + <span class="number">1</span>  <span class="comment"># 将j指向右孩子</span></span><br><span class="line">        <span class="keyword">if</span> li[j] &gt; tmp:</span><br><span class="line">            li[i] = li[j]  <span class="comment"># 直接兑换，因为以j为根的子树已经是大根堆，所以li[j]此时已经是最大的了</span></span><br><span class="line">            i = j  <span class="comment"># 同理，指向下一层，执行同样的步骤，为tmp找位置</span></span><br><span class="line">            j = i * <span class="number">2</span> + <span class="number">1</span></span><br><span class="line">        <span class="keyword">else</span>: </span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">    li[i] = tmp</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">heap_sort</span><span class="params">(li)</span>:</span></span><br><span class="line">    <span class="comment"># 首先构造一个大根堆</span></span><br><span class="line">    n = len(li)</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range((n<span class="number">-2</span>)//<span class="number">2</span>, <span class="number">-1</span>, <span class="number">-1</span>):  <span class="comment"># 倒推，从最后一个父节点开始找所有的父节点</span></span><br><span class="line">        <span class="comment"># i表示建堆开始的时候调整的部分的根的下标</span></span><br><span class="line">        sift(li, i, n<span class="number">-1</span>)  <span class="comment"># 从最后一个堆开始，每个小堆都可以使用向下调整得到大根堆，循环结束后，整个大根堆构造完成</span></span><br><span class="line">        <span class="comment"># 传递的high参数使用了一个小技巧</span></span><br><span class="line">    <span class="comment"># 开始挨个提出大根堆堆顶元素</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(n<span class="number">-1</span>, <span class="number">0</span>, <span class="number">-1</span>):  <span class="comment"># 从最后一个元素开始，用于替换为树的根节点，剩下的最后一个不需要进行调整，所以到0即可</span></span><br><span class="line">        li[<span class="number">0</span>], li[i] = li[i], li[<span class="number">0</span>]  <span class="comment"># 堆顶和最后一个元素交换，存储堆顶最大值，将最后一个叶子节点值放到堆顶开始调整</span></span><br><span class="line">        sift(li, <span class="number">0</span>, i<span class="number">-1</span>)</span><br></pre></td></tr></table></figure>
+<p>时间复杂度：O(nlogn)<br>
+其中，sift()函数的时间复杂度为O(logn)，这是因为最坏的情况需要进行二叉树的深度次数大概是logn，即当前完全二叉树的根值需要放到最底层的叶子节点位置才完成了大根堆。</p>
+<p>实际表现堆排序相对快速排序要稍微慢一些。</p>
+<h4 id="heapq模块"><a class="header-anchor" href="#heapq模块">¶</a>heapq模块</h4>
+<p>python内置的堆排序模块heapq， 其中的 _siftdown() 方法实现的就是向下调整。<br>
+heapq 表示的意思是 heap queue , 即用堆实现的优先队列（优先队列指小的元素先出，或者大的元素先出）。<br>
+使用：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> heapq</span><br><span class="line"><span class="keyword">import</span> random</span><br><span class="line"></span><br><span class="line">li = list(range(<span class="number">100</span>))</span><br><span class="line">random.shuffle(li)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">heapq.heapify(li)  <span class="comment"># 建堆，建造一个小根堆</span></span><br><span class="line"></span><br><span class="line">print(heapq.heappop(li))  <span class="comment"># 往外弹出一个最小的元素</span></span><br></pre></td></tr></table></figure>
+<h4 id="堆的思想的应用"><a class="header-anchor" href="#堆的思想的应用">¶</a>堆的思想的应用</h4>
+<p>topk 问题：现有n个数，设计算法得到前k大的数（k &lt; n）。<br>
+解决该问题的几种方式：</p>
+<ul>
+<li>排序后进行切片 O(nlogn)，k &lt; n，此处忽略切片的复杂度 O(k)，只考虑了排序的时间复杂度（排序采用时间复杂度更低的快排或者堆排）。</li>
+<li>使用复杂度为 O(n²) 的排序算法，但只进行k次排序（因为topk问题只要前k大的数），总的时间复杂度为 O(kn)，当数据多，k小的时候，该算法明显优于方法1。</li>
+<li>采用堆，思路和堆排序的实现类似，但是堆的元素只有k个，时间复杂度为 O(nlogk)。</li>
+</ul>
+<p>使用堆解决 topk 问题思路：</p>
+<ol>
+<li>取列表前 k 个元素建立一个 <strong>小根堆</strong>，堆顶就是目前第 k 大的数（ k 个元素中的最小的那个元素）。</li>
+<li>依次向后遍历原列表，将列表中的元素与当前小根堆的堆顶元素比较，如果小于堆顶，则忽略该元素；如果大于堆顶，则将堆顶更换为该元素（此时堆内的元素就是目前 k 个最大的元素，堆顶是 k 个元素中最小的），并且对堆进行依次调整。</li>
+<li>遍历列表所有元素后，倒序弹出堆顶元素。</li>
+</ol>
+<blockquote>
+<p>topk 问题一定要采用小根堆，因为堆中元素的大小关系，只能保证的是堆顶元素一定是最大的（使用大根堆）或者最小的（使用小根堆）。</p>
+</blockquote>
+<p>此方式的时间复杂度为 O(nlogk)，需要遍历所有的数 n，但是堆的元素个数始终只有 k 个，所以此时 sift() 函数的时间复杂度和 k 相关，为O(logk)，所以使用堆解决 topk 的时间复杂度为O(nlogk)</p>
+<p>代码实现：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sift</span><span class="params">(li, low, high)</span>:</span></span><br><span class="line">    <span class="string">"""</span></span><br><span class="line"><span class="string">    小根堆向下调整</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    i = low  </span><br><span class="line">    j = <span class="number">2</span> * i + <span class="number">1</span>  </span><br><span class="line">    tmp = li[low] </span><br><span class="line">    <span class="keyword">while</span> j &lt;= high:  </span><br><span class="line">        <span class="keyword">if</span> j + <span class="number">1</span> &lt;= high <span class="keyword">and</span> li[j+<span class="number">1</span>] &lt; li[j]:  </span><br><span class="line">            j = j + <span class="number">1</span>  </span><br><span class="line">        <span class="keyword">if</span> li[j] &lt; tmp:</span><br><span class="line">            li[i] = li[j]</span><br><span class="line">            i = j  </span><br><span class="line">            j = i * <span class="number">2</span> + <span class="number">1</span></span><br><span class="line">        <span class="keyword">else</span>: </span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">    li[i] = tmp</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">topk</span><span class="params">(li, k)</span>:</span></span><br><span class="line">    heap = li[<span class="number">0</span>:k]</span><br><span class="line">    <span class="comment"># 建堆</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range((k<span class="number">-2</span>)//<span class="number">2</span>, <span class="number">-1</span>, <span class="number">-1</span>):</span><br><span class="line">        sift(heap, i, k<span class="number">-1</span>)</span><br><span class="line">    <span class="comment"># 遍历列表剩余元素，如果比堆顶元素大，就替换并重新调整小根堆</span></span><br><span class="line">    print(<span class="string">'最初的根堆：'</span>, heap)</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(k, len(li)):</span><br><span class="line">        print(i)</span><br><span class="line">        <span class="keyword">if</span> li[i] &gt; heap[<span class="number">0</span>]:</span><br><span class="line">            heap[<span class="number">0</span>] = li[i]</span><br><span class="line">            sift(heap, <span class="number">0</span>, k<span class="number">-1</span>)</span><br><span class="line">        print(<span class="string">'小排序：'</span>, heap)</span><br><span class="line">    print(<span class="string">'完成：'</span>, heap)</span><br><span class="line">    <span class="comment"># 倒序输出堆中的元素</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(k<span class="number">-1</span>, <span class="number">0</span>, <span class="number">-1</span>):</span><br><span class="line">        heap[<span class="number">0</span>], heap[i] = heap[i], heap[<span class="number">0</span>]</span><br><span class="line">        sift(heap, <span class="number">0</span>, i<span class="number">-1</span>)</span><br><span class="line">    <span class="keyword">return</span> heap</span><br></pre></td></tr></table></figure>
+<h4 id="归并排序"><a class="header-anchor" href="#归并排序">¶</a>归并排序</h4>
+<p>归并：将两个有序的列表合并为一个有序的列表</p>
+<p>分解：将列表越分越小，直至分成一个元素为一个列表。<br>
+终止条件： 一个元素是有序的。<br>
+合并： 将两个有序列表归并，列表越来越大。</p>
+<p>算法实现：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">merge</span><span class="params">(li, low, mid, high)</span>:</span></span><br><span class="line">    <span class="string">'''</span></span><br><span class="line"><span class="string">    归并</span></span><br><span class="line"><span class="string">    '''</span></span><br><span class="line">    i = low</span><br><span class="line">    j = mid + <span class="number">1</span></span><br><span class="line">    ltmp = []  <span class="comment">#  设置临时变量</span></span><br><span class="line">    <span class="keyword">while</span> i&lt;= mid <span class="keyword">and</span> j &lt;= high:  <span class="comment"># 只要左右两边都有数</span></span><br><span class="line">        <span class="keyword">if</span> li[i] &lt; li[j]:</span><br><span class="line">            ltmp.append(li[i])</span><br><span class="line">            i += <span class="number">1</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            ltmp.append(li[j])</span><br><span class="line">            j += <span class="number">1</span></span><br><span class="line">    <span class="comment"># while执行完，两部分肯定有一部分是没有值的</span></span><br><span class="line">    <span class="keyword">while</span> i &lt;= mid:</span><br><span class="line">        ltmp.append(li[i])</span><br><span class="line">        i += <span class="number">1</span></span><br><span class="line">    <span class="keyword">while</span> j &lt;= high:</span><br><span class="line">        ltmp.append(li[j])</span><br><span class="line">        j += <span class="number">1</span></span><br><span class="line">    li[low:high+<span class="number">1</span>] = ltmp</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">merge_sort</span><span class="params">(li, low, high)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> low &lt; high:  <span class="comment"># 至少有两个元素，递归，只有一个元素时不需要处理</span></span><br><span class="line">        mid = (low+high) // <span class="number">2</span></span><br><span class="line">        merge_sort(li, low, mid)</span><br><span class="line">        merge_sort(li, mid+<span class="number">1</span>, high)</span><br><span class="line">        merge(li, low, mid, high)  <span class="comment"># 通过递归，此函数第一次执行的时候，一定是两个各位1个元素的列表的集合。</span></span><br></pre></td></tr></table></figure>
+<p>时间复杂度：O(nlogn)<br>
+空间复杂度：O(n)<br>
+之前的排序都是原地排序，所以需要使用额外的空间，需要考虑空间复杂度</p>
+<p>Python 内置的<code>list.sort()</code>方法内部实现是基于归并排序的<code>TimSort</code>排序算法，是结合了归并排序以及插入排序的排序算法。</p>
+<h4 id="小结"><a class="header-anchor" href="#小结">¶</a>小结</h4>
+<p>一般情况下，就运行时间而言：<br>
+快速排序&lt; 归并排序 &lt; 堆排序</p>
+<p>三种排序算法的缺点：</p>
+<ul>
+<li>快速排序：极端情况下（倒序）效率低O(n²)</li>
+<li>归并排序：需要额外的内存开销</li>
+<li>堆排序： 在快的排序算法中相对较慢</li>
+</ul>
+<p><img src="/2020/08/03/%E7%AE%97%E6%B3%95%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E7%AE%97%E6%B3%95%E6%97%B6%E9%97%B4%E7%A9%BA%E9%97%B4.jpg" alt="图片"></p>
+<p>排序的稳定性： 当两个元素的值一样的时候，保证他们的相对位置不变。<br>
+一般的，挨个比较的都是稳定的</p>
+<h4 id="希尔排序"><a class="header-anchor" href="#希尔排序">¶</a>希尔排序</h4>
+<p>由插入排序变形而来，是一种分组插入排序。<br>
+步骤：</p>
+<ol>
+<li>首先取一个整数d𝟭=n/2，将元素分为d𝟭个组，每组相邻两个元素之间的距离为 d𝟭，在各组内进行直接插入排序。</li>
+<li>取第二个整数d𝟮=d𝟭/2， 重复上述分组排序过程，直到d𝐢=1，即所有元素在同一个组内进行直接插入排序。</li>
+</ol>
+<p>希尔排序每趟并不使元素有序，而是使整体数据越来越接近有序；最后一趟排序使得所有数据有序。</p>
+<p>实现代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">insert_sort_gap</span><span class="params">(li, gap)</span>:</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(gap, len(li)):</span><br><span class="line">        tmp = li[i]</span><br><span class="line">        j = i- gap</span><br><span class="line">        <span class="keyword">while</span> j &gt;= <span class="number">0</span> <span class="keyword">and</span> li[j] &gt; tmp:</span><br><span class="line">            li[j+gap] = li[j]</span><br><span class="line">            j -= gap</span><br><span class="line">        li[j+gap] = tmp</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">shell_sort</span><span class="params">(li)</span>:</span></span><br><span class="line">    d = len(li) // <span class="number">2</span></span><br><span class="line">    <span class="keyword">while</span> d &gt;= <span class="number">1</span>:</span><br><span class="line">        insert_sort_gap(li, d)</span><br><span class="line">        d //= <span class="number">2</span></span><br></pre></td></tr></table></figure>
+<p>和插入排序的性能对比： 强于普通的插入排序，稍慢与堆排序（所以也比快速排序以及归并排序慢）</p>
+<p>希尔排序的时间复杂度：取决与gap的选择，不同的gap，得到的时间复杂度也不相同，我们选取的gap为N/2ᴷ，时间复杂度介于O(nlogn) 和 O(n²) 之间。</p>
+<h4 id="计数排序"><a class="header-anchor" href="#计数排序">¶</a>计数排序</h4>
+<p>是一个非基于比较的排序算法。</p>
+<p>对列表进行排序，已知列表中数的范围都在0到100之间，设计时间复杂度为O(n)的排序算法。</p>
+<p>实现代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">count_sort</span><span class="params">(li, max_count=<span class="number">100</span>)</span>:</span></span><br><span class="line">    count = [<span class="number">0</span> <span class="keyword">for</span> _ <span class="keyword">in</span> range(max_count+<span class="number">1</span>)]  <span class="comment"># 建立一个用于计数的列表，列表的下标用于记录数，下标上的值作为统计的个数</span></span><br><span class="line">    <span class="keyword">for</span> val <span class="keyword">in</span> li:</span><br><span class="line">        count[val] += <span class="number">1</span></span><br><span class="line">    li.clear()  <span class="comment"># 使用原先的列表空间作为排序后的列表空间</span></span><br><span class="line">    <span class="keyword">for</span> ind, val <span class="keyword">in</span> enumerate(count):  <span class="comment"># 操作的对象不是n(这里的排序对象li），所以不参与时间复杂度计算，涉及到n的部分实际上就是li.append(ind)的过程，为O(n)，所以整体的时间复杂度为O(n)</span></span><br><span class="line">        <span class="keyword">for</span> _ <span class="keyword">in</span> range(val):  </span><br><span class="line">            li.append(ind)</span><br><span class="line"><span class="keyword">import</span> random</span><br><span class="line"></span><br><span class="line">li = [random.randint(<span class="number">0</span>,<span class="number">100</span>) <span class="keyword">for</span> _ <span class="keyword">in</span> range(<span class="number">1000</span>)]</span><br><span class="line">count_sort(li)</span><br><span class="line">print(li)</span><br></pre></td></tr></table></figure>
+<p>它的优势在于在对一定范围内的整数排序时，它的复杂度为Ο(n+k)（其中k是整数的范围），快于任何比较排序算法。当然这是一种牺牲空间换取时间的做法，而且当O(k)&gt;O(nlog(n))的时候其效率反而不如基于比较的排序（基于比较的排序的时间复杂度在理论上的下限是O(nlog(n)), 如归并排序，堆排序）</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/06/01/Flask%E5%88%9D%E6%8E%A2/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -962,7 +1304,7 @@ JSONWebTokenAuthentication继承自BaseJSONWebTokenAuthentication，该父类中
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-06-02 10:35:39" itemprop="dateModified" datetime="2020-06-02T10:35:39+08:00">2020-06-02</time>
+                <time title="修改时间：2020-08-03 17:56:53" itemprop="dateModified" datetime="2020-08-03T17:56:53+08:00">2020-08-03</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1377,105 +1719,6 @@ JSONWebTokenAuthentication继承自BaseJSONWebTokenAuthentication，该父类中
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/01/30/%E9%9D%A2%E5%90%91%E6%8E%A5%E5%8F%A3/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="Skylor Tang">
-      <meta itemprop="description" content="Your advantages today will be replaced by future trends, so keep learning.">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Skylor Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/01/30/%E9%9D%A2%E5%90%91%E6%8E%A5%E5%8F%A3/" class="post-title-link" itemprop="url">Go基础之面向接口</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-01-30 18:21:33" itemprop="dateCreated datePublished" datetime="2020-01-30T18:21:33+08:00">2020-01-30</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-05-14 22:07:06" itemprop="dateModified" datetime="2020-05-14T22:07:06+08:00">2020-05-14</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/" itemprop="url" rel="index"><span itemprop="name">计算机</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/Golang/" itemprop="url" rel="index"><span itemprop="name">Golang</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2020/01/30/%E9%9D%A2%E5%90%91%E6%8E%A5%E5%8F%A3/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2020/01/30/%E9%9D%A2%E5%90%91%E6%8E%A5%E5%8F%A3/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>golang是一门面向接口的语言，没有传统的继承和多态，golang的面向对象仅支持封装（通过定义结构实现，type struct_name struct），而继承和多态是通过接口来实现的。所以golang的接口要比其他语言灵活的多。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/01/30/%E9%9D%A2%E5%90%91%E6%8E%A5%E5%8F%A3/">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1547,20 +1790,20 @@ JSONWebTokenAuthentication继承自BaseJSONWebTokenAuthentication，该父类中
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">28</span>
+          <span class="site-state-item-count">29</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-count">16</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">21</span>
+        <span class="site-state-item-count">24</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
