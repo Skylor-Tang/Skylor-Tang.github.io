@@ -548,7 +548,7 @@ heapq 表示的意思是 heap queue , 即用堆实现的优先队列（优先队
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-08-25 15:20:45" itemprop="dateModified" datetime="2020-08-25T15:20:45+08:00">2020-08-25</time>
+                <time title="修改时间：2020-08-25 15:22:25" itemprop="dateModified" datetime="2020-08-25T15:22:25+08:00">2020-08-25</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1219,7 +1219,7 @@ sudo ln -s 你的目录/Mxonline/conf/nginx/uc_nginx.conf /etc/nginx/conf.d/</p>
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-08-23 19:37:45" itemprop="dateModified" datetime="2020-08-23T19:37:45+08:00">2020-08-23</time>
+                <time title="修改时间：2020-08-28 21:34:10" itemprop="dateModified" datetime="2020-08-28T21:34:10+08:00">2020-08-28</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1363,6 +1363,7 @@ JSONWebTokenAuthentication 继承自 BaseJSONWebTokenAuthentication，该父类�
 <h3 id="djangorestframework-jwt-配置"><a class="header-anchor" href="#djangorestframework-jwt-配置">¶</a>djangorestframework_jwt 配置</h3>
 <p>提供配置文件的方式，方便定制JWT的某些功能，除了上面的指定方法外，常用的配置还有以下几个：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> datetime</span><br><span class="line"></span><br><span class="line">JWT_AUTH = &#123;</span><br><span class="line">    <span class="string">'JWT_EXPIRATION_DELTA'</span>: datetime.timedelta(days=<span class="number">7</span>),  <span class="comment"># 设置JWT的过期时间</span></span><br><span class="line">    <span class="string">'JWT_AUTH_HEADER_PREFIX'</span>: <span class="string">'JWT'</span>,  <span class="comment"># 指定接受token的前缀，常用的有Token和JWT两种</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>默认的 <code>JWT_AUTH_HEADER_PREFIX</code> 就是设置的 <code>JWT</code> 前缀，该设置在后端传递给前端token时并不其作用，而是在前端传递给后端的时候用到，用于在后端读取前端设置在 headers.Authorization 中的 <code>Authorization: JWT 9944b09199c62bcf9418ad846dd0e4bbdfc6ee4b</code> 时，验证前缀是否为settings.py中设置的前缀，所以该参数的设置只在后台验证的时候才会进行。</p>
 <h3 id="token功能的项目代码内嵌"><a class="header-anchor" href="#token功能的项目代码内嵌">¶</a>token功能的项目代码内嵌</h3>
 <p>有这样一种功能需求，我们在系统的注册功能中，当我们注册之后应该直接完成登录，显示登录状态，可以发现这部分的前端处理逻辑和登录功能的是类似，在跳转页面的时候也需要向后端传递token以完成身份的验证，但是djangorestframework_jwt只提供了login的url，并没有注册的，此时就需要我们手动在注册完成之后，手动构造符合djangorestframework_jwt要求的token并返回。<br>
 通过以上代码的分析，token的构造主要依赖两个方法，<code>jwt_payload_handler(user)</code>和<code>jwt_encode_handler(payload)</code>， 所以我们可以重写注册过程中需要使用到的 mixins.CreateModelMixin 中的create()方法，实现如下：</p>
