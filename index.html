@@ -164,6 +164,91 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/09/13/Python-%E5%85%83%E7%B1%BB%E7%BC%96%E7%A8%8B%E6%80%9D%E8%80%83/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Skylor Tang">
+      <meta itemprop="description" content="Your advantages today will be replaced by future trends, so keep learning.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Skylor Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/09/13/Python-%E5%85%83%E7%B1%BB%E7%BC%96%E7%A8%8B%E6%80%9D%E8%80%83/" class="post-title-link" itemprop="url">Python 元类编程思考</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-09-13 10:41:13" itemprop="dateCreated datePublished" datetime="2020-09-13T10:41:13+08:00">2020-09-13</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-09-14 19:02:27" itemprop="dateModified" datetime="2020-09-14T19:02:27+08:00">2020-09-14</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2020/09/13/Python-%E5%85%83%E7%B1%BB%E7%BC%96%E7%A8%8B%E6%80%9D%E8%80%83/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2020/09/13/Python-%E5%85%83%E7%B1%BB%E7%BC%96%E7%A8%8B%E6%80%9D%E8%80%83/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p><a href="https://www.jianshu.com/p/c1ca0b9c777d" target="_blank" rel="noopener">https://www.jianshu.com/p/c1ca0b9c777d</a></p>
+<h2 id="什么是元类"><a class="header-anchor" href="#什么是元类">¶</a>什么是元类</h2>
+<p>python中一切皆对象，type创建了一切对象，包括类、函数等。类创建了实例对象，而类本身也是对象，创建类的类就是元类。<br>
+元类（metaclass）可以控制类的创建过程，它主要做三件事： 1.拦截类的创建 2.修改类的定义 3.返回修改后的类对象。type就是Python中最基础的一个元类。</p>
+<h2 id="使用type动态的创建类"><a class="header-anchor" href="#使用type动态的创建类">¶</a>使用type动态的创建类</h2>
+<p>type除了用于返回当前对象的类型之外，还可以用于动态的创建类。chuang<br>
+#三个参数 ： 类的名称， 类的基类tuple类型， 类属性和类方法实例方法 dict类型</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/08/03/%E7%AE%97%E6%B3%95%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -195,7 +280,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-08-04 15:21:34" itemprop="dateModified" datetime="2020-08-04T15:21:34+08:00">2020-08-04</time>
+                <time title="修改时间：2020-10-20 09:35:16" itemprop="dateModified" datetime="2020-10-20T09:35:16+08:00">2020-10-20</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -498,6 +583,30 @@ heapq 表示的意思是 heap queue , 即用堆实现的优先队列（优先队
 <p>实现代码：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">count_sort</span><span class="params">(li, max_count=<span class="number">100</span>)</span>:</span></span><br><span class="line">    count = [<span class="number">0</span> <span class="keyword">for</span> _ <span class="keyword">in</span> range(max_count+<span class="number">1</span>)]  <span class="comment"># 建立一个用于计数的列表，列表的下标用于记录数，下标上的值作为统计的个数</span></span><br><span class="line">    <span class="keyword">for</span> val <span class="keyword">in</span> li:</span><br><span class="line">        count[val] += <span class="number">1</span></span><br><span class="line">    li.clear()  <span class="comment"># 使用原先的列表空间作为排序后的列表空间</span></span><br><span class="line">    <span class="keyword">for</span> ind, val <span class="keyword">in</span> enumerate(count):  <span class="comment"># 操作的对象不是n(这里的排序对象li），所以不参与时间复杂度计算，涉及到n的部分实际上就是li.append(ind)的过程，为O(n)，所以整体的时间复杂度为O(n)</span></span><br><span class="line">        <span class="keyword">for</span> _ <span class="keyword">in</span> range(val):  </span><br><span class="line">            li.append(ind)</span><br><span class="line"><span class="keyword">import</span> random</span><br><span class="line"></span><br><span class="line">li = [random.randint(<span class="number">0</span>,<span class="number">100</span>) <span class="keyword">for</span> _ <span class="keyword">in</span> range(<span class="number">1000</span>)]</span><br><span class="line">count_sort(li)</span><br><span class="line">print(li)</span><br></pre></td></tr></table></figure>
 <p>它的优势在于在对一定范围内的整数排序时，它的复杂度为 Ο(n+k)（其中k是整数的范围），快于其他任何的 <code>比较排序</code> 算法。当然这是一种牺牲空间换取时间的做法，而且当 O(k)&gt;O(nlog(n)) 的时候其效率反而不如基于比较的排序（基于比较的排序的时间复杂度在理论上的下限是 O(nlog(n)), 如归并排序，堆排序）。</p>
+<h3 id="桶排序"><a class="header-anchor" href="#桶排序">¶</a>桶排序</h3>
+<p>在计数排序中，如果元素范围比较大，为了构造相应的列表就会消耗大量的资源，此时可以使用桶排序的方式进行改造(避免了未存在的元素占用列表空间)。<br>
+桶排序（Bucket Sort）：首先将元素分在不同的桶中，再对每个桶中元素进行排序。</p>
+<p>实现代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 桶排序</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">bucket_sort</span><span class="params">(li, n=<span class="number">100</span>, max_num=<span class="number">10000</span>)</span>:</span></span><br><span class="line">    <span class="string">"""</span></span><br><span class="line"><span class="string">    n : 桶的个数</span></span><br><span class="line"><span class="string">    max_num: 所有的数中的最大值</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    bucketes = [[] <span class="keyword">for</span> _ <span class="keyword">in</span> range(n)]  <span class="comment"># 创建桶</span></span><br><span class="line">    <span class="keyword">for</span> var <span class="keyword">in</span> li:  <span class="comment"># 数据入桶</span></span><br><span class="line">        i = min(var // (max_num//n), n<span class="number">-1</span>) <span class="comment"># i 表示 var 放到几号桶里，桶号从0开始</span></span><br><span class="line">        <span class="comment"># 使用min(.., n-1)是为了处理临界情况，超过的数放到最后的桶中</span></span><br><span class="line">        bucketes[i].append(var)</span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> range(len(bucketes[i])<span class="number">-1</span>, <span class="number">0</span>, <span class="number">-1</span>):</span><br><span class="line">            <span class="keyword">if</span> bucketes[i][j] &lt; bucketes[i][j<span class="number">-1</span>]:</span><br><span class="line">                bucketes[i][j], bucketes[i][j<span class="number">-1</span>] = bucketes[i][j<span class="number">-1</span>], bucketes[i][j]</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line">    sorted_li = []</span><br><span class="line">    <span class="keyword">for</span> buc <span class="keyword">in</span> bucketes:</span><br><span class="line">        <span class="comment"># sorted_li += buc</span></span><br><span class="line">        sorted_li.extend(buc)</span><br><span class="line">    <span class="keyword">return</span> sorted_li</span><br></pre></td></tr></table></figure>
+<p>分析：<br>
+代码的核心内容是<code>i = min(var // (max_num//n), n-1) </code>，该语句巧妙的完成了分桶以及数据的入桶，这是一种平均情况下的分桶策略，对于如果数据分布集中的情况下，可以对集中部分的桶再进行分桶，这取决于具体的数据情况。<br>
+分桶的桶的数量取决于数据中的最大值。</p>
+<p>桶排序的表现取决于数据的分布，假使大部分的数据都集中在一个桶中，则性能就取决于一个桶的排序性能，而我们使用桶排序的目的是为了将数据分散在不同的桶中，每个桶中存储等量较少值，然后对较少的值进行排序，这样排序性能才会有所提升。也就是需要对不同数据排序时采取不同的分桶策略。</p>
+<p>平均情况的时间复杂度：O(n+k)<br>
+最坏情况时间复杂度：O(n²k)<br>
+空间复杂度：O(nk)<br>
+*k 通过n和m算出（n表示数据的个数，m表示桶的个数），k表示一个桶的大小。</p>
+<p>优化建议：桶内数据的排序方式、不同数据分布下，分桶的策略。</p>
+<h3 id="基数排序"><a class="header-anchor" href="#基数排序">¶</a>基数排序</h3>
+<p>类似关键字排序，基于桶排序，但是不使用桶内排序，而是借助桶的顺序（0-9的桶），完成每个数位上的数值大小的排序，从而实现所有数据的排序。</p>
+<p>代码实现：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 基数排序</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">radix_sort</span><span class="params">(li)</span>:</span></span><br><span class="line">    max_num = max(li)  <span class="comment"># 最大值的位数决定了循环的次数</span></span><br><span class="line">    it = <span class="number">0</span></span><br><span class="line">    <span class="keyword">while</span> <span class="number">10</span> ** it &lt;= max_num:</span><br><span class="line">        buckets = [[] <span class="keyword">for</span> _ <span class="keyword">in</span> range(<span class="number">10</span>)]</span><br><span class="line">        <span class="keyword">for</span> var <span class="keyword">in</span> li:</span><br><span class="line">            digit = (var // <span class="number">10</span> ** it) % <span class="number">10</span></span><br><span class="line">            buckets[digit].append(var)</span><br><span class="line">        <span class="comment"># 分桶完成</span></span><br><span class="line">        li.clear()</span><br><span class="line">        <span class="keyword">for</span> buc <span class="keyword">in</span> buckets:</span><br><span class="line">            li.extend(buc)  <span class="comment"># 把数据直接写会原来的数组，此时数组已经完成了个位数的排序，然后继续执行十位数的排序，依次进行。</span></span><br><span class="line">        it += <span class="number">1</span></span><br></pre></td></tr></table></figure>
+<p>关键点：没有使用内部排序，而是借助0-9的桶的相对位置来完成数据的排序。<br>
+时间复杂度：O(kn)<br>
+空间复杂度：O(k+n)<br>
+k表示数字的位数，代码中的it。</p>
+<p>分析：基数排序的时间复杂度是线性的，相比于非线性的快速排序，在特定的情况下的数据</p>
+<h3 id><a class="header-anchor" href="#">¶</a></h3>
 
       
     </div>
@@ -548,7 +657,7 @@ heapq 表示的意思是 heap queue , 即用堆实现的优先队列（优先队
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-08-25 15:22:25" itemprop="dateModified" datetime="2020-08-25T15:22:25+08:00">2020-08-25</time>
+                <time title="修改时间：2020-11-06 15:40:39" itemprop="dateModified" datetime="2020-11-06T15:40:39+08:00">2020-11-06</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1641,113 +1750,10 @@ JSONWebTokenAuthentication 继承自 BaseJSONWebTokenAuthentication，该父类�
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/02/15/SqlAlchemy-%E4%BD%BF%E7%94%A8/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="Skylor Tang">
-      <meta itemprop="description" content="Your advantages today will be replaced by future trends, so keep learning.">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Skylor Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/02/15/SqlAlchemy-%E4%BD%BF%E7%94%A8/" class="post-title-link" itemprop="url">SqlAlchemy 使用</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-02-15 07:53:40" itemprop="dateCreated datePublished" datetime="2020-02-15T07:53:40+08:00">2020-02-15</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-05-18 20:40:46" itemprop="dateModified" datetime="2020-05-18T20:40:46+08:00">2020-05-18</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/" itemprop="url" rel="index"><span itemprop="name">计算机</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/SqlAlchemy/" itemprop="url" rel="index"><span itemprop="name">SqlAlchemy</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">读书笔记</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2020/02/15/SqlAlchemy-%E4%BD%BF%E7%94%A8/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2020/02/15/SqlAlchemy-%E4%BD%BF%E7%94%A8/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>SqlAlchemy 库用于与各种数据库交互，你可使用一种类似于 Python 类和语句的方式创建数据模型和查询。使用 SqlAlchemy 的首要原因是，它将你的代码从底层数据库及其相关的 SQL 特性中抽象出来。SqlAlchemy 使用功能强大的常见语句和类型，确保其 SQL 语句为美中数据库和供应商正确、高效地构建出来，而你无需考虑这些。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/02/15/SqlAlchemy-%E4%BD%BF%E7%94%A8/">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -1815,7 +1821,7 @@ JSONWebTokenAuthentication 继承自 BaseJSONWebTokenAuthentication，该父类�
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">30</span>
+          <span class="site-state-item-count">31</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
