@@ -30,7 +30,7 @@
 <meta property="og:description" content="Python中的参数传递根据参数是否是可变类型进行分类...">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2019-10-16T12:33:50.000Z">
-<meta property="article:modified_time" content="2020-05-17T13:48:26.107Z">
+<meta property="article:modified_time" content="2020-12-18T06:32:16.460Z">
 <meta property="article:author" content="Skylor Tang">
 <meta property="article:tag" content="Go基础之指针">
 <meta name="twitter:card" content="summary">
@@ -198,7 +198,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-05-17 21:48:26" itemprop="dateModified" datetime="2020-05-17T21:48:26+08:00">2020-05-17</time>
+                <time title="修改时间：2020-12-18 14:32:16" itemprop="dateModified" datetime="2020-12-18T14:32:16+08:00">2020-12-18</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -242,16 +242,19 @@
       
         <p>示例：</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> a <span class="keyword">int</span> = <span class="number">2</span></span><br><span class="line"><span class="keyword">var</span> pa *<span class="keyword">int</span> = &amp;a   <span class="comment">// &amp;a 就是取a的地址</span></span><br><span class="line">*pa = <span class="number">3</span></span><br><span class="line">fmt.Println(a)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 结果</span></span><br><span class="line"><span class="number">3</span></span><br></pre></td></tr></table></figure>
-<p><strong>Go语言中的指针不能进行计算</strong></p>
+<p><strong>Go语言中的指针不能进行计算</strong><br>
+注意：这里的Golang指针类型变量不能进行运算指的是指针本身（pa），而不是指针指向的变量值（*pa）。</p>
 <h2 id="参数传递问题"><a class="header-anchor" href="#参数传递问题">¶</a>参数传递问题</h2>
-<p>Python中的参数传递根据参数是否是可变类型进行分类。</p>
+<p>Python中的参数传递根据参数是否是可变类型非为值传递和引用传递（实际上都是引用传递）。</p>
+<p>Golang:</p>
 <ul>
-<li>Go只有值传递一种方式</li>
-<li>但是这并不意味着Go在传递的时候都要将内容进行拷贝一份，而是可以使用指针类型，和c的用法一样。</li>
+<li>Go只有 <strong>值传递</strong> 这一种方式。</li>
+<li>但是这并不意味着Go在传递的时候都要将内容进行拷贝一份，而是可以使用指针类型，传递指针变量的值（指向内容的地址），和c的用法一样。</li>
 </ul>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">swap</span><span class="params">(a,b *<span class="keyword">int</span>)</span></span>&#123;</span><br><span class="line">  *b, *a = *a, *b</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">  a, b := <span class="number">3</span>,<span class="number">4</span></span><br><span class="line">  swap(&amp;a,&amp;b)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>更好的swap实现方式</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">swap</span><span class="params">(a,b <span class="keyword">int</span>)</span><span class="params">(<span class="keyword">int</span>, <span class="keyword">int</span>)</span></span>&#123;</span><br><span class="line">  <span class="keyword">return</span> b,a</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">  a,b := <span class="number">3</span>,<span class="number">4</span></span><br><span class="line">  a,b = swap(a,b) </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>两者的实现原理是不同的，前者本质上使用的是Go语言的“多重赋值”的特性实现的变量交换任务。</p>
 
     </div>
 
