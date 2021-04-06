@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Monaco:300,300italic,400,400italic,700,700italic|Consolas:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-big-counter.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"always","padding":18,"offset":12,"onmobile":true},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="由于浏览器安全方面的限制，大多数Ajax请求遵守“同源策略”，也就是说无法从不同的域、子域或协议中获取数据。本文主要通过CORS解决Ajax跨域请求的问题。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Ajax 跨域问题解决方案">
+<meta property="og:url" content="http://yoursite.com/2021/03/10/Ajax-%E8%B7%A8%E5%9F%9F%E9%97%AE%E9%A2%98%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/index.html">
+<meta property="og:site_name" content="Skylor Blog">
+<meta property="og:description" content="由于浏览器安全方面的限制，大多数Ajax请求遵守“同源策略”，也就是说无法从不同的域、子域或协议中获取数据。本文主要通过CORS解决Ajax跨域请求的问题。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-03-10T00:24:59.000Z">
+<meta property="article:modified_time" content="2021-04-06T01:34:32.533Z">
+<meta property="article:author" content="Skylor Tang">
+<meta property="article:tag" content="Ajax 跨域问题解决方案">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://yoursite.com/2021/03/10/Ajax-%E8%B7%A8%E5%9F%9F%E9%97%AE%E9%A2%98%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Ajax 跨域问题解决方案 | Skylor Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Skylor Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/03/10/Ajax-%E8%B7%A8%E5%9F%9F%E9%97%AE%E9%A2%98%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Skylor Tang">
+      <meta itemprop="description" content="Your advantages today will be replaced by future trends, so keep learning.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Skylor Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Ajax 跨域问题解决方案
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-03-10 08:24:59" itemprop="dateCreated datePublished" datetime="2021-03-10T08:24:59+08:00">2021-03-10</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-04-06 09:34:32" itemprop="dateModified" datetime="2021-04-06T09:34:32+08:00">2021-04-06</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/" itemprop="url" rel="index"><span itemprop="name">计算机</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/%E5%BC%80%E5%8F%91%E9%97%AE%E9%A2%98/" itemprop="url" rel="index"><span itemprop="name">开发问题</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/Flask/" itemprop="url" rel="index"><span itemprop="name">Flask</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/Ajax/" itemprop="url" rel="index"><span itemprop="name">Ajax</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2021/03/10/Ajax-%E8%B7%A8%E5%9F%9F%E9%97%AE%E9%A2%98%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2021/03/10/Ajax-%E8%B7%A8%E5%9F%9F%E9%97%AE%E9%A2%98%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+            <div class="post-description">由于浏览器安全方面的限制，大多数Ajax请求遵守“同源策略”，也就是说无法从不同的域、子域或协议中获取数据。本文主要通过CORS解决Ajax跨域请求的问题。</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>由于浏览器安全方面的限制，大多数Ajax请求遵守“同源策略”，也就是说无法从不同的域、子域或协议中获取数据。本文主要通过CORS解决Ajax跨域请求的问题。<br>
+文中关于CORS的定义主要参考<a href="http://www.ruanyifeng.com/blog/2016/04/cors.html" target="_blank" rel="noopener">廖雪峰–跨域资源共享 CORS 详解</a>，本文使用<code>$.ajax</code>以及<code>flask</code>实现CORS的处理。</p>
+<h2 id="原生CORS方式解决："><a class="header-anchor" href="#原生CORS方式解决：">¶</a>原生CORS方式解决：</h2>
+<p>CORS需要浏览器和服务器同时支持。目前，所有浏览器都支持该功能，IE浏览器不能低于IE10。</p>
+<p>整个CORS通信过程，都是浏览器自动完成，不需要用户参与。对于开发者来说，CORS通信与同源的AJAX通信没有差别，代码完全一样。浏览器一旦发现AJAX请求跨源，就会自动添加一些附加的头信息，有时还会多出一次附加的请求，但用户不会有感觉。<font color="red">因此，实现CORS通信的关键是服务器。只要服务器实现了CORS接口，就可以跨源通信。</font></p>
+<p>浏览器将CORS请求分成两类：简单请求（simple request）和非简单请求（not-so-simple request）。</p>
+<h3 id="简单请求"><a class="header-anchor" href="#简单请求">¶</a>简单请求</h3>
+<p>处理简单的请求的时候，Ajax发送的跨域请求头中会多提供一个<code>Origin</code>字段，用来说明，本次请求来自哪个源<code>（协议+域名+端口）</code>。服务器根据这个值，决定是否同意这次请求。</p>
+<p>此时只要在服务端获取Origin字段判断后是否同意，如果同意跨域，则在返回的响应中添加<code>Access-Control-Allow-Origin</code>字段，值为允许接受的请求的域名，可以使用具体域名，或者<code>&quot;*&quot;</code>表示允许所有的请求。</p>
+<h5 id="flask服务端处理："><a class="header-anchor" href="#flask服务端处理：">¶</a>flask服务端处理：</h5>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> Flask, make_response, jsonify, request</span><br><span class="line"></span><br><span class="line">app = Flask(__name__)</span><br><span class="line">app.config[<span class="string">"JSON_AS_ASCII"</span>] = <span class="literal">False</span>  </span><br><span class="line"><span class="comment"># 用于设置jsonify返回的json数据支持中文</span></span><br><span class="line"><span class="comment"># json.dumps()解决同样的问题可以加入ensure_ascii=False</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@app.route('/index')</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">index</span><span class="params">()</span>:</span></span><br><span class="line">  data = [&#123;<span class="string">"name"</span>:<span class="string">"小杰"</span>, <span class="string">"sex"</span>:<span class="string">"男"</span>, <span class="string">"age"</span>: <span class="number">24</span>&#125;]</span><br><span class="line">  origin = request.headers.get(<span class="string">"Origin"</span>, <span class="literal">None</span>)</span><br><span class="line">  response = jsonify(data)</span><br><span class="line">  <span class="keyword">if</span> origin == <span class="string">"http://localhost:8080"</span>:</span><br><span class="line">    response = make_response(response)</span><br><span class="line">    response.headers[<span class="string">'Access-Control-Allow-Origin'</span>] = <span class="string">'*'</span> <span class="comment"># 处理简单请求的设置</span></span><br><span class="line">  <span class="keyword">return</span> response</span><br></pre></td></tr></table></figure>
+<p>响应头除了必须含有<code>Access-Control-Allow-Origin</code>字段之外，还包括两个可选字段：</p>
+<ul>
+<li>
+<p>Access-Control-Expose-Headers: (可选)<br>
+CORS请求时，XMLHttpRequest对象的getResponseHeader()方法只能拿到6个基本字段：<code>Cache-Control</code>、<code>Content-Language</code>、<code>Content-Type</code>、<code>Expires</code>、<code>Last-Modified</code>、<code>Pragma</code>。如果想拿到其他字段，就必须在Access-Control-Expose-Headers里面指定。</p>
+</li>
+<li>
+<p>Access-Control-Allow-Credentials: (可选)<br>
+它的值是一个布尔值，表示是否允许发送Cookie。默认情况下，Cookie不包括在CORS请求之中。设为true，即表示服务器明确许可，Cookie可以包含在请求中，一起发给服务器。这个值也只能设为true，如果服务器不要浏览器发送Cookie，删除该字段即可。</p>
+<p>只是在服务端设置允许还是不够的，此时还需要对请求进行设置：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> xhr = <span class="keyword">new</span> XMLHttpRequest();</span><br><span class="line">xhr.withCredentials = <span class="literal">true</span>;</span><br></pre></td></tr></table></figure>
+<p>JQuery中ajax的设置如下：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">$.ajax(&#123;</span><br><span class="line">  url: <span class="string">"http://localhost:8080"</span>,</span><br><span class="line">  type: <span class="string">"GET"</span>,</span><br><span class="line">  xhrFields: &#123;</span><br><span class="line">    withCredentials: <span class="literal">true</span></span><br><span class="line">  &#125;,</span><br><span class="line">  crossDomain: <span class="literal">true</span>,</span><br><span class="line">  success: <span class="function"><span class="keyword">function</span> (<span class="params">data</span>) </span>&#123;</span><br><span class="line">    ...</span><br><span class="line">  &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p><code>xhrFields</code>以及<code>crossDomain</code>是必须要设置的。</p>
+<blockquote>
+<p>需要注意的是，如果要发送Cookie，Access-Control-Allow-Origin 就不能设为星号，必须指定明确的、与请求网页一致的域名。同时，Cookie依然遵循同源政策，只有用服务器域名设置的Cookie才会上传，其他域名的Cookie并不会上传，且（跨源）原网页代码中的document.cookie也无法读取服务器域名下的Cookie。<strong>（就是跨源能上传的Cookie，也只是服务器同域名的Cookie）</strong></p>
+</blockquote>
+</li>
+</ul>
+<h3 id="非简单请求"><a class="header-anchor" href="#非简单请求">¶</a>非简单请求</h3>
+<p>非简单请求是那种对服务器有特殊要求的请求，比如请求方法是<code>PUT</code>或<code>DELETE</code>，或者<code>Content-Type</code>字段的类型是<code>application/json</code>。</p>
+<p>非简单请求的CORS请求，会在正式通信之前，会<font color="red"><strong>自动增加</strong></font>一次HTTP查询请求，称为&quot;预检&quot;请求（preflight），在chrome浏览器的network中，该条请求的Type为<code>preflight</code>，请求类型是<code>OPTIONS</code>，包含的关键字除了Origin字段（该字段在简单和非简单请求中都会使用到）之外还有：</p>
+<ul>
+<li>
+<p>Access-Control-Request-Method： (必须)<br>
+​	浏览器CORS请求使用到的请求方法</p>
+</li>
+<li>
+<p>Access-Control-Request-Headers： (可选)<br>
+​	该字段是一个逗号分隔的字符串，指定浏览器CORS请求会额外发送的头信息字段。<br>
+​	在前端，通过对XMLHttpRequest对象采用如下方式进行设置：</p>
+  <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xhr.setRequestHeader(<span class="string">"X-Custom-Header"</span>, <span class="string">"value"</span>)</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h5 id="预检的响应，服务器返回的响应头部需要包含："><a class="header-anchor" href="#预检的响应，服务器返回的响应头部需要包含：">¶</a>预检的响应，服务器返回的响应头部需要包含：</h5>
+<ul>
+<li>
+<p>Access-Control-Allow-Origin： (必须)<br>
+设置允许跨域的源，设置为*表示允许任意的源。</p>
+</li>
+<li>
+<p>Access-Control-Allow-Methods：(必须)<br>
+必须字段，值为逗号分隔的一个字符串，表明服务器支持的所有跨域请求的方法。注意，返回的是所有支持的方法，而不单是浏览器请求的那个方法。这是为了避免多次&quot;预检&quot;请求。</p>
+</li>
+<li>
+<p>Access-Control-Allow-Credentials: (可选)<br>
+为布尔值，和跨域简单请求的一样，表示是否允许发送Cookie。</p>
+</li>
+<li>
+<p>Access-Control-Allow-Headers：(根据请求设置)<br>
+如果浏览器请求包括Access-Control-Request-Headers字段，则Access-Control-Allow-Headers字段是必需的。它也是一个逗号分隔的字符串，表明服务器支持的所有头信息字段，不限于浏览器在&quot;预检&quot;中请求的字段。</p>
+</li>
+<li>
+<p>Access-Control-Max-Age：(可选，不要轻易设置)<br>
+该字段可选，用来指定本次预检请求的有效期，单位为秒。上面结果中，有效期是20天（1728000秒），即允许缓存该条回应1728000秒（即20天），在此期间，不用发出另一条预检请求。</p>
+</li>
+</ul>
+<p><font color="red"><strong>注意：一旦服务器通过了&quot;预检&quot;请求，以后每次浏览器正常的CORS请求，就都跟简单请求一样，会有一个Origin头信息字段。服务器的回应，也都会有一个Access-Control-Allow-Origin头信息字段（该字段每次都会包含，这时简单请求响应的要求）。</strong></font></p>
+<h5 id="实现"><a class="header-anchor" href="#实现">¶</a>实现</h5>
+<p>前端ajax请求：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">$.ajax(&#123;</span><br><span class="line">  url: <span class="string">"http://127.0.0.1:5000/index"</span>,</span><br><span class="line">  type: <span class="string">"put"</span>,</span><br><span class="line">  dataType: <span class="string">"json"</span>,</span><br><span class="line">  beforeSend: <span class="function"><span class="keyword">function</span>(<span class="params">xhr, data</span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(data)</span><br><span class="line">    <span class="built_in">console</span>.log(xhr)  <span class="comment">// 为XMLHttpRequest对象</span></span><br><span class="line">    xhr.setRequestHeader(<span class="string">"X-Custom-Header"</span>, <span class="string">"value"</span>);</span><br><span class="line">  &#125;,</span><br><span class="line">  success: <span class="function"><span class="keyword">function</span>(<span class="params">data, status, xhr</span>)</span>&#123;</span><br><span class="line">    <span class="keyword">var</span> str = <span class="string">""</span>;</span><br><span class="line">    $.each(data, <span class="function"><span class="keyword">function</span>(<span class="params">index, info</span>)</span>&#123;</span><br><span class="line">      str += <span class="string">"姓名："</span> + info[<span class="string">"name"</span>] + <span class="string">"&lt;br/&gt;"</span>;</span><br><span class="line">      str += <span class="string">"性别："</span> + info[<span class="string">"sex"</span>] + <span class="string">"&lt;br/&gt;"</span>;</span><br><span class="line">      str += <span class="string">"年龄："</span> + info[<span class="string">"age"</span>] + <span class="string">"&lt;br/&gt;"</span>;</span><br><span class="line">      str += <span class="string">"&lt;hr/&gt;"</span>;</span><br><span class="line">    &#125;);</span><br><span class="line">    $(<span class="string">"div"</span>).html(str);  <span class="comment">// .html(字符串) 用于对字符串不进行转义，会显示网页效果</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<p>flask代码实现：</p>
+<p>注意：预检会单独发送一次请求，也就是说，一次跨域请求实际上会发生两次请求，第一次是预检，第二次是正常的请求。</p>
+<p>只有第一次预检的时候（发送的是一个<code>OPTIONS</code>请求），请求中包含有<code>Origin: http://127.0.0.1:8080</code>、 <code>Access-Control-Request-Headers</code>以及 <code>Access-Control-Request-Method</code>，此时返回的响应需要设置<code>Access-Control-Allow-Origin</code>，<code>Access-Control-Allow-Methods</code>，<code>Access-Control-Allow-Headers</code>（这一项只有在请求中设置了<code>Access-Control-Request-Headers</code>的时候才需要）。</p>
+<p>在预检通过之后，紧接着会再次向相同的url发送原始的请求，请求中只会发送<code>Origin: http://127.0.0.1:8080</code>， 需要返回的响应头中包含<code>Access-Control-Allow-Origin</code>字段。</p>
+<p>可以使用<code>app.before_request</code>请求钩子完成非简单请求的预检过程，实现如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> Flask, make_response, jsonify, request</span><br><span class="line"></span><br><span class="line">app = Flask(__name__)</span><br><span class="line">app.config[<span class="string">"JSON_AS_ASCII"</span>] = <span class="literal">False</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 通过before_request处理预检过程</span></span><br><span class="line"><span class="meta">@app.before_request</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">handle_cors</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">if</span> request.method != <span class="string">"OPTIONS"</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">None</span></span><br><span class="line">      </span><br><span class="line">    access_control_request_method = request.headers.get(<span class="string">'Access-Control-Request-Method'</span>, <span class="literal">None</span>)</span><br><span class="line">    access_control_request_headers = request.headers.get(<span class="string">"Access-Control-Request-Headers"</span>, <span class="literal">None</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> access_control_request_method:</span><br><span class="line">        response = make_response(<span class="string">''</span>)  <span class="comment"># 预检可以发送任何东西</span></span><br><span class="line">        response.headers[<span class="string">'Access-Control-Allow-Origin'</span>] = <span class="string">'*'</span> <span class="comment"># 处理简单请求的设置</span></span><br><span class="line">        response.headers[<span class="string">'Access-Control-Allow-Methods'</span>] = <span class="string">"DELETE, PUT"</span> <span class="comment"># 注意是methods</span></span><br><span class="line">        response.headers[<span class="string">'Access-Control-Allow-Headers'</span>] = access_control_request_headers</span><br><span class="line">        <span class="comment"># response.headers['Access-Control-Max-Age'] = 1728000</span></span><br><span class="line">        <span class="comment"># response.headers['Access-Control-Allow-Credentials'] = "true"  # 注意使用的是js中true</span></span><br><span class="line">        <span class="keyword">return</span> response        </span><br><span class="line"></span><br><span class="line"><span class="meta">@app.route('/index', methods=['POST', 'GET', 'DELETE', 'PUT', 'OPTIONS'])  </span></span><br><span class="line"><span class="comment"># 注意，该视图函数需要设置预检以及cors请求的类型，否则无法处理delete以及options请求。</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">index</span><span class="params">()</span>:</span></span><br><span class="line">    data = [&#123;<span class="string">"name"</span>:<span class="string">"小杰"</span>, <span class="string">"sex"</span>:<span class="string">"男"</span>, <span class="string">"age"</span>: <span class="number">24</span>&#125;]</span><br><span class="line">    origin = request.headers.get(<span class="string">"Origin"</span>, <span class="literal">None</span>)</span><br><span class="line">    response = jsonify(data)  </span><br><span class="line">    <span class="keyword">if</span> origin == <span class="string">"http://127.0.0.1:8080"</span>:</span><br><span class="line">        response = make_response(response)</span><br><span class="line">        response.headers[<span class="string">'Access-Control-Allow-Origin'</span>] = <span class="string">'*'</span> <span class="comment"># 处理简单请求的设置</span></span><br><span class="line">        <span class="comment"># response.headers['Access-Control-Allow-Credentials'] = "true"  # 注意使用的是js中true</span></span><br><span class="line">    <span class="keyword">return</span> response</span><br></pre></td></tr></table></figure>
+<p>除此以外，还提供了flask还提供了第三方插件，如<code>Flask-Cros</code>插件来完成跨域请求问题。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Ajax/" rel="tag"># Ajax</a>
+              <a href="/tags/Flask/" rel="tag"># Flask</a>
+              <a href="/tags/%E5%89%8D%E5%90%8E%E7%AB%AF%E8%B7%A8%E5%9F%9F/" rel="tag"># 前后端跨域</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/09/13/Python-%E5%85%83%E7%B1%BB%E7%BC%96%E7%A8%8B%E6%80%9D%E8%80%83/" rel="prev" title="Python 元类编程思考">
+      <i class="fa fa-chevron-left"></i> Python 元类编程思考
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#原生CORS方式解决："><span class="nav-number">1.</span> <span class="nav-text">原生CORS方式解决：</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#简单请求"><span class="nav-number">1.1.</span> <span class="nav-text">简单请求</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#flask服务端处理："><span class="nav-number">1.1.0.1.</span> <span class="nav-text">flask服务端处理：</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#非简单请求"><span class="nav-number">1.2.</span> <span class="nav-text">非简单请求</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#预检的响应，服务器返回的响应头部需要包含："><span class="nav-number">1.2.0.1.</span> <span class="nav-text">预检的响应，服务器返回的响应头部需要包含：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#实现"><span class="nav-number">1.2.0.2.</span> <span class="nav-text">实现</span></a></li></ol></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Skylor Tang"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Skylor Tang</p>
+  <div class="site-description" itemprop="description">Your advantages today will be replaced by future trends, so keep learning.</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">32</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">28</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      友情链接
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://kalasearch.cn/" title="https:&#x2F;&#x2F;kalasearch.cn&#x2F;" rel="noopener" target="_blank">卡拉搜索</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2019 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Skylor Tang</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'bva4r4SJYiDLdhU1ALkqpbqw-gzGzoHsz',
+      appKey     : 'bWLTGKg8MzPrXsAvC3YDMehj',
+      placeholder: "欢迎留言",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>
