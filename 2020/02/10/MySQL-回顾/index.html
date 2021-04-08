@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 4.2.0">
+<meta name="generator" content="Hexo 5.4.0">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -35,6 +35,7 @@
 <meta property="article:published_time" content="2020-02-10T12:50:38.000Z">
 <meta property="article:modified_time" content="2020-05-18T14:07:22.902Z">
 <meta property="article:author" content="Skylor Tang">
+<meta property="article:tag" content="工具">
 <meta property="article:tag" content="MySQL">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://i.loli.net/2019/12/10/n9UYL5kAVdH7ozS.png">
@@ -274,7 +275,7 @@
       
         <h2 id="创建数据库"><a class="header-anchor" href="#创建数据库">¶</a>创建数据库</h2>
 <p><code>CREATE DATABASE 数据库名</code>即可创建相应的数据库，命令不限定大小写，注意在创建含有特殊字符的数据库名的数据库的时候，需要使用反标记字符 (`) 用于引用标识符，数据表名同理。</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">create database `my.contacts`</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">create database `my.contacts` </span><br></pre></td></tr></table></figure>
 <p>可以在连接数据库的同时就指定要连接的数据库，如 <code>mysql -uroot -p 数据库名</code>，这样一连接上就进入了该数据库。</p>
 <p>进入mysql后，使用 <code>use 数据库名</code>，进入和切换相应的数据库，使用 <code>SELECT DATABASE();</code> 可以查看当前进入的数据库是哪个，注意需要添加分号。</p>
 <p>数据库被创建为数据目录中的一个目录，使用 <code>SHOW VARIABLES LIKE 'datadir';</code> ，可以查看到该目录所在的文件夹位置。</p>
@@ -330,7 +331,7 @@ WHERE:这是用于过滤的字句。用于筛选出特定的数据。若不添�
 使用场景（类似于update操作，但是是以插入数据的形式进行的）</p>
 </li>
 </ul>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">INSERT INTO payments VALUES ('Mike Christensen', 200) ON DUPLICATE KEY UPDATE payment=payment+VALUES(payment);</span><br><span class="line">INSERT INTO payments VALUES ('Mike Christensen', 300) ON DUPLICATE KEY UPDATE payment=payment+VALUES(payment);</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">INSERT INTO payments VALUES (&#x27;Mike Christensen&#x27;, 200) ON DUPLICATE KEY UPDATE payment=payment+VALUES(payment);</span><br><span class="line">INSERT INTO payments VALUES (&#x27;Mike Christensen&#x27;, 300) ON DUPLICATE KEY UPDATE payment=payment+VALUES(payment);</span><br></pre></td></tr></table></figure>
 <p>解释：<br>
 第一条语句直接在表中创建了一条新的数据，执行第二条语句时会发现customer_name这一项的值重复了，此时ON DUPLICATE KEY UPDATE就会生效，会覆盖原有的值，相当于对数据进行了更新，此时值应该是500。同时，我们发现显示修改了两条数据，这是因为，先删除了原先的记录，又添加了新的记录，所以显示改变了两行。<br>
 VALUES(payment)代表的是INSERT语句给的值，而payment是表中的列的值。</p>
@@ -345,29 +346,29 @@ VALUES(payment)代表的是INSERT语句给的值，而payment是表中的列的�
 <li>equality:</li>
 <li>IN:检查一个值是否再一组值内：找出姓氏为Christ和Lamba的所有员工数</li>
 </ul>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select COUNT(*) from employees where last_name in ('christ','Lamba');</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select COUNT(*) from employees where last_name in (&#x27;christ&#x27;,&#x27;Lamba&#x27;);</span><br></pre></td></tr></table></figure>
 <ul>
 <li>BETWEEN AND: 找出1986年12月入职的员工数</li>
 </ul>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select COUNT(*) FROM employees WHERE hire_date BETWEEN '1986-12-01' AND '1976-12-31';</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select COUNT(*) FROM employees WHERE hire_date BETWEEN &#x27;1986-12-01&#x27; AND &#x27;1976-12-31&#x27;;</span><br></pre></td></tr></table></figure>
 <ul>
 <li>NOT：否定结果，找出不是在1986年12月入职的员工数</li>
 </ul>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select COUNT(*) FROM employees WHERE hire_date NOT BETWEEN '1986-12-01' AND '1976-12-31';</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select COUNT(*) FROM employees WHERE hire_date NOT BETWEEN &#x27;1986-12-01&#x27; AND &#x27;1976-12-31&#x27;;</span><br></pre></td></tr></table></figure>
 <h4 id="简单模式匹配"><a class="header-anchor" href="#简单模式匹配">¶</a>简单模式匹配</h4>
 <p>可以使用LIKE运算符来是实现简单的模式匹配。使用下划线 <code>_</code> 来精准匹配一个字符，使用 <code>%</code> 来匹配任意数量的字符。</p>
 <ul>
 <li>找出名字以Christ开头的所有员工总数</li>
 </ul>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select count(*) from employees where first_name like 'christ%';</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select count(*) from employees where first_name like &#x27;christ%&#x27;;</span><br></pre></td></tr></table></figure>
 <ul>
 <li>找出名字以Christ开头并以ed结尾的所有员工总数</li>
 </ul>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select count(*) from employees where first_name like 'christ%ed';</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select count(*) from employees where first_name like &#x27;christ%ed&#x27;;</span><br></pre></td></tr></table></figure>
 <ul>
 <li>找出名字中包含str的所有员工的数</li>
 </ul>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select count(*) from employees where first_name like '%str%'</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select count(*) from employees where first_name like &#x27;%str%&#x27;</span><br></pre></td></tr></table></figure>
 <ul>
 <li>找出名字中以ser的所有员工的数: <code>%er</code></li>
 <li>以任意两个字符开头、后面跟随ka、再后面跟随任意数字符的所有员工数：<code>like '__ka%'</code></li>
@@ -377,17 +378,17 @@ VALUES(payment)代表的是INSERT语句给的值，而payment是表中的列的�
 <ul>
 <li>查找出姓氏以ba结尾的所有员工数</li>
 </ul>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select count(*) from employees where last_name rlike 'ba$';</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select count(*) from employees where last_name rlike &#x27;ba$&#x27;;</span><br></pre></td></tr></table></figure>
 <ul>
 <li>查找姓氏不包含元音（a、e、i、o和u）的所有员工的人数</li>
 </ul>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select count(*) from employees where last_name not regexp '[aeiou]';</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select count(*) from employees where last_name not regexp &#x27;[aeiou]&#x27;;</span><br></pre></td></tr></table></figure>
 <h4 id="限定结果"><a class="header-anchor" href="#限定结果">¶</a>限定结果</h4>
 <p>使用limit来进行设置</p>
 <ul>
 <li>查询hire_data在1986年之前的任何10名员工的姓名</li>
 </ul>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select first_name, last_name from employees where hire_data &lt; '1996-01-01' limit 10;</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select first_name, last_name from employees where hire_data &lt; &#x27;1996-01-01&#x27; limit 10;</span><br></pre></td></tr></table></figure>
 <h4 id="使用表别名"><a class="header-anchor" href="#使用表别名">¶</a>使用表别名</h4>
 <p>使用AS来设置别名</p>
 <ul>
@@ -441,7 +442,7 @@ VALUES(payment)代表的是INSERT语句给的值，而payment是表中的列的�
 <h2 id="权限管理"><a class="header-anchor" href="#权限管理">¶</a>权限管理</h2>
 <h3 id="创建用户"><a class="header-anchor" href="#创建用户">¶</a>创建用户</h3>
 <p>事实上不应该使用 root 用户连接到 mysql 并执行语句，除非是 localhost 的管理任务。我们应该创建用户，限制访问，限制资源使用等等。创建用户需要拥有 CREATE USER 权限。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 使用 root 连接到 mysql 并执行 create user 命令来创建新用户</span></span><br><span class="line">CREATE USER IF NOT EXISTS <span class="string">'company_read_only'</span>@<span class="string">'localhost'</span> IDENTIFIED WITH mysql_native_password BY <span class="string">'company_pass'</span> WITH MAX_QUERIES_PER_HOUR 500 MAX_UPDATES_FER_HOUR 100;</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 使用 root 连接到 mysql 并执行 create user 命令来创建新用户</span></span><br><span class="line">CREATE USER IF NOT EXISTS <span class="string">&#x27;company_read_only&#x27;</span>@<span class="string">&#x27;localhost&#x27;</span> IDENTIFIED WITH mysql_native_password BY <span class="string">&#x27;company_pass&#x27;</span> WITH MAX_QUERIES_PER_HOUR 500 MAX_UPDATES_FER_HOUR 100;</span><br></pre></td></tr></table></figure>
 <p>参数说明：</p>
 <ul>
 <li>用户名：company_read_only</li>
@@ -484,61 +485,61 @@ VALUES(payment)代表的是INSERT语句给的值，而payment是表中的列的�
 <ul>
 <li>将 READ ONLY（只读权限SELECT）权限授予刚刚创建的company_read_only用户</li>
 </ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">grant select on company.* to <span class="string">'company_read_only'</span>@<span class="string">'localhost'</span>;</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">grant select on company.* to <span class="string">&#x27;company_read_only&#x27;</span>@<span class="string">&#x27;localhost&#x27;</span>;</span><br></pre></td></tr></table></figure>
 <p>该语句表示将对数据库 company 及其所有的表对本地访问的名为 <code>company_read_only</code>的用户授予查询的权限</p>
 <ul>
 <li>将INSERT权限授予新的company_insert_only用户</li>
 </ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">grent insert on company.* to <span class="string">'company_insert_only'</span>@<span class="string">'localhost'</span> indentified by <span class="string">'xxx'</span>;</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">grent insert on company.* to <span class="string">&#x27;company_insert_only&#x27;</span>@<span class="string">&#x27;localhost&#x27;</span> indentified by <span class="string">&#x27;xxx&#x27;</span>;</span><br></pre></td></tr></table></figure>
 <p>该语句在授予权限的时候同时创建新的用户。普通的创建用户的语句格式为</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">create user <span class="string">"username"</span>@<span class="string">"host"</span> identified by <span class="string">"password"</span>;</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">create user <span class="string">&quot;username&quot;</span>@<span class="string">&quot;host&quot;</span> identified by <span class="string">&quot;password&quot;</span>;</span><br></pre></td></tr></table></figure>
 <ul>
 <li>将WRITE（即写权限，INSERT、UPDATE和DELETE）权限授予新建的 company_write 用户</li>
 </ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">grant insert, delete, update on company.* to <span class="string">'company_write'</span>@<span class="string">'%'</span> identified with mysql_native_password by <span class="string">'xxxx'</span>;</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">grant insert, delete, update on company.* to <span class="string">&#x27;company_write&#x27;</span>@<span class="string">&#x27;%&#x27;</span> identified with mysql_native_password by <span class="string">&#x27;xxxx&#x27;</span>;</span><br></pre></td></tr></table></figure>
 <ul>
 <li>限制查询指定的表。将 employees_read_only 用户限制为仅能查询employees表</li>
 </ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">grant select on employees.employees to <span class="string">'employees_read_only'</span>@<span class="string">'%'</span> identified with mysql_native_password by <span class="string">'xxxx'</span>;</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">grant select on employees.employees to <span class="string">&#x27;employees_read_only&#x27;</span>@<span class="string">&#x27;%&#x27;</span> identified with mysql_native_password by <span class="string">&#x27;xxxx&#x27;</span>;</span><br></pre></td></tr></table></figure>
 <ul>
 <li>可以进一步将访问权限设置为仅能查询指定列。</li>
 </ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">grant select(first_name, last_name) on employees.employees to <span class="string">'employees_read_only'</span>@<span class="string">'%'</span> identified with mysql_native_password by <span class="string">'xxx'</span>;</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">grant select(first_name, last_name) on employees.employees to <span class="string">&#x27;employees_read_only&#x27;</span>@<span class="string">&#x27;%&#x27;</span> identified with mysql_native_password by <span class="string">&#x27;xxx&#x27;</span>;</span><br></pre></td></tr></table></figure>
 <blockquote>
 <p>注意：在以上的语句在授予权限的同时都是创建新的用户，但是这是不被推荐的，在8.0.18版本已经不能这样使用了，推荐用法是先创建用户，再赋予权限。</p>
 </blockquote>
 <ul>
 <li>扩展授权。可以通过执行新授权来扩展授权。将权限扩展到employees_col_ro用户，以访问薪资（salaries）表中的薪水</li>
 </ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">grant select(salary) on employees.salaries to <span class="string">'employees_ro'</span>@<span class="string">'%'</span>;</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">grant select(salary) on employees.salaries to <span class="string">&#x27;employees_ro&#x27;</span>@<span class="string">&#x27;%&#x27;</span>;</span><br></pre></td></tr></table></figure>
 <ul>
 <li>创建SUPER用户。需要一个管理员账户来管理该服务器。ALL表示出了GRANT权限之外的所有权限</li>
 </ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">create user <span class="string">'dbadmin'</span>@<span class="string">'%'</span> identified with mysql_native_password by <span class="string">'DB@adln'</span>;</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">create user <span class="string">&#x27;dbadmin&#x27;</span>@<span class="string">&#x27;%&#x27;</span> identified with mysql_native_password by <span class="string">&#x27;DB@adln&#x27;</span>;</span><br></pre></td></tr></table></figure>
 <p>赋予权限</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">grant all on *.* to <span class="string">'dbadmin'</span>@<span class="string">'%'</span>;</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">grant all on *.* to <span class="string">&#x27;dbadmin&#x27;</span>@<span class="string">&#x27;%&#x27;</span>;</span><br></pre></td></tr></table></figure>
 <ul>
 <li>授予 GRENT 权限，用户拥有 GRANT OPTION 权限才能授予其他用户权限。可以将 GRENT 特权扩展到 dbadmin 超级用户</li>
 </ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">grant grant option on *.* to <span class="string">'dbadmin'</span>@<span class="string">'%'</span>;</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">grant grant option on *.* to <span class="string">&#x27;dbadmin&#x27;</span>@<span class="string">&#x27;%&#x27;</span>;</span><br></pre></td></tr></table></figure>
 <p>注意权限的全称为<code>grant option</code>。</p>
 <p>总结：授予权限使用的关键字是<code>grant</code>，必须指明权限能访问的数据库和表<code>on 数据库.表</code>，必须指明授权的对象<code>to 用户</code>。</p>
 <h4 id="检查权限"><a class="header-anchor" href="#检查权限">¶</a>检查权限</h4>
 <p>检查所有用户的授权。检查employee_col_ro用户的授权</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">show grants <span class="keyword">for</span> <span class="string">'employee_col_ro'</span>@<span class="string">'%'</span>;</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">show grants <span class="keyword">for</span> <span class="string">&#x27;employee_col_ro&#x27;</span>@<span class="string">&#x27;%&#x27;</span>;</span><br></pre></td></tr></table></figure>
 <h4 id="撤销权限"><a class="header-anchor" href="#撤销权限">¶</a>撤销权限</h4>
 <p>撤销’company_write’@‘%’用户的DETELE访问权限</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">revoke delete on company.* from <span class="string">'company_write'</span>@<span class="string">'%'</span>;</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">revoke delete on company.* from <span class="string">&#x27;company_write&#x27;</span>@<span class="string">&#x27;%&#x27;</span>;</span><br></pre></td></tr></table></figure>
 <p>撤销employee_ro用户对薪水列的访问权限</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">revoke select(salary) on employees.salaries from <span class="string">'employees_ro'</span>@<span class="string">'%'</span>;</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">revoke select(salary) on employees.salaries from <span class="string">&#x27;employees_ro&#x27;</span>@<span class="string">&#x27;%&#x27;</span>;</span><br></pre></td></tr></table></figure>
 <h4 id="修改mysql-user表"><a class="header-anchor" href="#修改mysql-user表">¶</a>修改mysql.user表</h4>
 <p>所有用户的信息以及权限都存储在mysql.user表中，如果你有权访问mysql.user表，则可以直接通过修改mysql.user表来创建用户并授予权限。<br>
 如果你使用GRANT、REVOKE、SET PASSWORD和RENAME USER等账户管理语句间接修改授权表，则服务器会通知这些更改，并立即再次将授权表加载到内存中。<br>
 如果使用的是INSERT、UPDATE或者DELETE等语句直接修改授权表，则更改不会影响权限检查，除非重新启动服务器或指示其重新加载表。如果直接更改授权表，当忘记了重新加载表，那么在重新启动服务器之前，这些更改无效。<br>
 可以使用查询语句进行查询mysql表，可看到某个用户的具体权限的信息</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select * from mysql.user <span class="built_in">where</span> user=<span class="string">'dbadmin'</span>/G;</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select * from mysql.user <span class="built_in">where</span> user=<span class="string">&#x27;dbadmin&#x27;</span>/G;</span><br></pre></td></tr></table></figure>
 <p>使用update即可对权限进行更新</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">update mysql.user <span class="built_in">set</span> host=<span class="string">'localhost'</span> <span class="built_in">where</span> user=<span class="string">'dbadmin'</span>;</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">update mysql.user <span class="built_in">set</span> host=<span class="string">&#x27;localhost&#x27;</span> <span class="built_in">where</span> user=<span class="string">&#x27;dbadmin&#x27;</span>;</span><br></pre></td></tr></table></figure>
 <p>因为是对mysql表进行操作的，所以想要立即生效，必须使用 <code>flush privileges;</code> 使其立即生效。</p>
 <h4 id="设置用户密码的有效期"><a class="header-anchor" href="#设置用户密码的有效期">¶</a>设置用户密码的有效期</h4>
 <p>可以设置一段时间作为用户密码的有效期，当有效期过后用户需要修改密码</p>
@@ -627,7 +628,7 @@ VALUES(payment)代表的是INSERT语句给的值，而payment是表中的列的�
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#创建数据库"><span class="nav-number">1.</span> <span class="nav-text">创建数据库</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#创建表"><span class="nav-number">2.</span> <span class="nav-text">创建表</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#可以在同一的数据库中创建多个表"><span class="nav-number">2.1.</span> <span class="nav-text">可以在同一的数据库中创建多个表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#列出所有的表"><span class="nav-number">2.2.</span> <span class="nav-text">列出所有的表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#查看表结构"><span class="nav-number">2.3.</span> <span class="nav-text">查看表结构</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#操作数据库"><span class="nav-number">3.</span> <span class="nav-text">操作数据库</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#插入"><span class="nav-number">3.1.</span> <span class="nav-text">插入</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#更新"><span class="nav-number">3.2.</span> <span class="nav-text">更新</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#删除"><span class="nav-number">3.3.</span> <span class="nav-text">删除</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#REPLACE、INSERT和ON-DUPLICATE-KEY-UPDATE"><span class="nav-number">3.4.</span> <span class="nav-text">REPLACE、INSERT和ON DUPLICATE KEY UPDATE</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TRUNCATE-TABLE"><span class="nav-number">3.5.</span> <span class="nav-text">TRUNCATE TABLE</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#查询"><span class="nav-number">3.6.</span> <span class="nav-text">查询</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#操作符"><span class="nav-number">3.6.1.</span> <span class="nav-text">操作符</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#简单模式匹配"><span class="nav-number">3.6.2.</span> <span class="nav-text">简单模式匹配</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#正则表达式"><span class="nav-number">3.6.3.</span> <span class="nav-text">正则表达式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#限定结果"><span class="nav-number">3.6.4.</span> <span class="nav-text">限定结果</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#使用表别名"><span class="nav-number">3.6.5.</span> <span class="nav-text">使用表别名</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#对结果进行排序"><span class="nav-number">3.6.6.</span> <span class="nav-text">对结果进行排序</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#对结果进行分组（聚合函数）"><span class="nav-number">3.6.7.</span> <span class="nav-text">对结果进行分组（聚合函数）</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#权限管理"><span class="nav-number">4.</span> <span class="nav-text">权限管理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#创建用户"><span class="nav-number">4.1.</span> <span class="nav-text">创建用户</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#密码策略修改"><span class="nav-number">4.1.1.</span> <span class="nav-text">密码策略修改</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#授予和撤销用户的访问权限"><span class="nav-number">4.2.</span> <span class="nav-text">授予和撤销用户的访问权限</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#检查权限"><span class="nav-number">4.2.1.</span> <span class="nav-text">检查权限</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#撤销权限"><span class="nav-number">4.2.2.</span> <span class="nav-text">撤销权限</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#修改mysql-user表"><span class="nav-number">4.2.3.</span> <span class="nav-text">修改mysql.user表</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#设置用户密码的有效期"><span class="nav-number">4.2.4.</span> <span class="nav-text">设置用户密码的有效期</span></a></li></ol></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="nav-number">1.</span> <span class="nav-text">创建数据库</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E8%A1%A8"><span class="nav-number">2.</span> <span class="nav-text">创建表</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%AF%E4%BB%A5%E5%9C%A8%E5%90%8C%E4%B8%80%E7%9A%84%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%AD%E5%88%9B%E5%BB%BA%E5%A4%9A%E4%B8%AA%E8%A1%A8"><span class="nav-number">2.1.</span> <span class="nav-text">可以在同一的数据库中创建多个表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%97%E5%87%BA%E6%89%80%E6%9C%89%E7%9A%84%E8%A1%A8"><span class="nav-number">2.2.</span> <span class="nav-text">列出所有的表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E8%A1%A8%E7%BB%93%E6%9E%84"><span class="nav-number">2.3.</span> <span class="nav-text">查看表结构</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%93%8D%E4%BD%9C%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="nav-number">3.</span> <span class="nav-text">操作数据库</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8F%92%E5%85%A5"><span class="nav-number">3.1.</span> <span class="nav-text">插入</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9B%B4%E6%96%B0"><span class="nav-number">3.2.</span> <span class="nav-text">更新</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%A0%E9%99%A4"><span class="nav-number">3.3.</span> <span class="nav-text">删除</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#REPLACE%E3%80%81INSERT%E5%92%8CON-DUPLICATE-KEY-UPDATE"><span class="nav-number">3.4.</span> <span class="nav-text">REPLACE、INSERT和ON DUPLICATE KEY UPDATE</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TRUNCATE-TABLE"><span class="nav-number">3.5.</span> <span class="nav-text">TRUNCATE TABLE</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9F%A5%E8%AF%A2"><span class="nav-number">3.6.</span> <span class="nav-text">查询</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%93%8D%E4%BD%9C%E7%AC%A6"><span class="nav-number">3.6.1.</span> <span class="nav-text">操作符</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AE%80%E5%8D%95%E6%A8%A1%E5%BC%8F%E5%8C%B9%E9%85%8D"><span class="nav-number">3.6.2.</span> <span class="nav-text">简单模式匹配</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="nav-number">3.6.3.</span> <span class="nav-text">正则表达式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%99%90%E5%AE%9A%E7%BB%93%E6%9E%9C"><span class="nav-number">3.6.4.</span> <span class="nav-text">限定结果</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E8%A1%A8%E5%88%AB%E5%90%8D"><span class="nav-number">3.6.5.</span> <span class="nav-text">使用表别名</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AF%B9%E7%BB%93%E6%9E%9C%E8%BF%9B%E8%A1%8C%E6%8E%92%E5%BA%8F"><span class="nav-number">3.6.6.</span> <span class="nav-text">对结果进行排序</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AF%B9%E7%BB%93%E6%9E%9C%E8%BF%9B%E8%A1%8C%E5%88%86%E7%BB%84%EF%BC%88%E8%81%9A%E5%90%88%E5%87%BD%E6%95%B0%EF%BC%89"><span class="nav-number">3.6.7.</span> <span class="nav-text">对结果进行分组（聚合函数）</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9D%83%E9%99%90%E7%AE%A1%E7%90%86"><span class="nav-number">4.</span> <span class="nav-text">权限管理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E7%94%A8%E6%88%B7"><span class="nav-number">4.1.</span> <span class="nav-text">创建用户</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AF%86%E7%A0%81%E7%AD%96%E7%95%A5%E4%BF%AE%E6%94%B9"><span class="nav-number">4.1.1.</span> <span class="nav-text">密码策略修改</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8E%88%E4%BA%88%E5%92%8C%E6%92%A4%E9%94%80%E7%94%A8%E6%88%B7%E7%9A%84%E8%AE%BF%E9%97%AE%E6%9D%83%E9%99%90"><span class="nav-number">4.2.</span> <span class="nav-text">授予和撤销用户的访问权限</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A3%80%E6%9F%A5%E6%9D%83%E9%99%90"><span class="nav-number">4.2.1.</span> <span class="nav-text">检查权限</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%92%A4%E9%94%80%E6%9D%83%E9%99%90"><span class="nav-number">4.2.2.</span> <span class="nav-text">撤销权限</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9mysql-user%E8%A1%A8"><span class="nav-number">4.2.3.</span> <span class="nav-text">修改mysql.user表</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AE%BE%E7%BD%AE%E7%94%A8%E6%88%B7%E5%AF%86%E7%A0%81%E7%9A%84%E6%9C%89%E6%95%88%E6%9C%9F"><span class="nav-number">4.2.4.</span> <span class="nav-text">设置用户密码的有效期</span></a></li></ol></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 

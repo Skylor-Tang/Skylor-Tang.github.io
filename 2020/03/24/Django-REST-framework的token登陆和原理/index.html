@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 4.2.0">
+<meta name="generator" content="Hexo 5.4.0">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -22,17 +22,19 @@
     var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"always","padding":18,"offset":12,"onmobile":true},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="¶drf的登陆验证功能 drf自带的登陆功能（drf Api Root中使用），通过定义路径访问 rest_framework.urls 中设置的路由进行访问 1url(r&#39;^api-auth&#x2F;&#39;, include(&#39;rest_framework.urls&#39;, namespace&#x3D;&#39;rest_framework&#39;)), 从子路径的实现 12url(r&#39;^login&#x2F;$&#39;, views.LoginV">
+  <meta name="description" content="¶drf的登陆验证功能 drf自带的登陆功能（drf Api Root中使用），通过定义路径访问 rest_framework.urls 中设置的路由进行访问 1url(r&amp;#x27;^api-auth&#x2F;&amp;#x27;, include(&amp;#x27;rest_framework.urls&amp;#x27;, namespace&#x3D;&amp;#x27;rest_framework&amp;#x27;)), 从子路径的实现 1">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Django REST framework的token原理和验证登录">
 <meta property="og:url" content="http://yoursite.com/2020/03/24/Django-REST-framework%E7%9A%84token%E7%99%BB%E9%99%86%E5%92%8C%E5%8E%9F%E7%90%86/index.html">
 <meta property="og:site_name" content="Skylor Blog">
-<meta property="og:description" content="¶drf的登陆验证功能 drf自带的登陆功能（drf Api Root中使用），通过定义路径访问 rest_framework.urls 中设置的路由进行访问 1url(r&#39;^api-auth&#x2F;&#39;, include(&#39;rest_framework.urls&#39;, namespace&#x3D;&#39;rest_framework&#39;)), 从子路径的实现 12url(r&#39;^login&#x2F;$&#39;, views.LoginV">
+<meta property="og:description" content="¶drf的登陆验证功能 drf自带的登陆功能（drf Api Root中使用），通过定义路径访问 rest_framework.urls 中设置的路由进行访问 1url(r&amp;#x27;^api-auth&#x2F;&amp;#x27;, include(&amp;#x27;rest_framework.urls&amp;#x27;, namespace&#x3D;&amp;#x27;rest_framework&amp;#x27;)), 从子路径的实现 1">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2020-03-24T03:45:13.000Z">
 <meta property="article:modified_time" content="2021-04-06T00:44:04.691Z">
 <meta property="article:author" content="Skylor Tang">
-<meta property="article:tag" content="Django REST framework的token原理和验证登录">
+<meta property="article:tag" content="前后端跨域">
+<meta property="article:tag" content="Django REST framework">
+<meta property="article:tag" content="token原理">
 <meta name="twitter:card" content="summary">
 
 <link rel="canonical" href="http://yoursite.com/2020/03/24/Django-REST-framework%E7%9A%84token%E7%99%BB%E9%99%86%E5%92%8C%E5%8E%9F%E7%90%86/">
@@ -273,18 +275,18 @@
       
         <h2 id="drf的登陆验证功能"><a class="header-anchor" href="#drf的登陆验证功能">¶</a>drf的登陆验证功能</h2>
 <p>drf自带的登陆功能（drf Api Root中使用），通过定义路径访问 <code>rest_framework.urls</code> 中设置的路由进行访问</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">url(<span class="string">r'^api-auth/'</span>, include(<span class="string">'rest_framework.urls'</span>, namespace=<span class="string">'rest_framework'</span>)),</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">url(<span class="string">r&#x27;^api-auth/&#x27;</span>, include(<span class="string">&#x27;rest_framework.urls&#x27;</span>, namespace=<span class="string">&#x27;rest_framework&#x27;</span>)),</span><br></pre></td></tr></table></figure>
 <p>从子路径的实现</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">url(<span class="string">r'^login/$'</span>, views.LoginView.as_view(template_name=<span class="string">'rest_framework/login.html'</span>), name=<span class="string">'login'</span>),</span><br><span class="line">url(<span class="string">r'^logout/$'</span>, views.LogoutView.as_view(), name=<span class="string">'logout'</span>),</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">url(<span class="string">r&#x27;^login/$&#x27;</span>, views.LoginView.as_view(template_name=<span class="string">&#x27;rest_framework/login.html&#x27;</span>), name=<span class="string">&#x27;login&#x27;</span>),</span><br><span class="line">url(<span class="string">r&#x27;^logout/$&#x27;</span>, views.LogoutView.as_view(), name=<span class="string">&#x27;logout&#x27;</span>),</span><br></pre></td></tr></table></figure>
 <p>可以发现，内部实现实际上是调用了Django的原生类 <code>LoginView</code> 和 <code>LogoutView</code>。<code>LoginView</code> 中添加了 <code>@method_decorator(csrf_protect)</code> 装饰器，所以在drf的API Root页面使用了<code>csrf_token </code> 标签，该标签会在渲染模版的时候替换为 <code>&lt;input type=&quot;hidden&quot; name=&quot;csrfmiddlewaretoken&quot; value=&quot;服务器随机生成的token值&quot;&gt;</code> ，配合  <code>django.middleware.csrf.CsrfViewMiddleware</code> 中间件防止csrf（跨站请求伪造），但是目前是一个前后端分离的系统，就不需要做csrf的验证（因为前后端分离的系统中，已经产生了跨站的问题，app和网站肯定不是一个站点，已经是跨站了），所以在做drf开发的时候，不需要关系csrf验证的问题。<br>
 综上，直接调用 <code>LoginView</code> 进行登录认证是不适合在前后端分离的系统中使用的。</p>
 <h2 id="前后端分离的验证方式"><a class="header-anchor" href="#前后端分离的验证方式">¶</a>前后端分离的验证方式</h2>
-<p>drf中的<a href="https://www.django-rest-framework.org/api-guide/authentication/" target="_blank" rel="noopener">Authentication</a>提供了一种 request 和 用户身份 绑定的机制。<br>
+<p>drf中的<a target="_blank" rel="noopener" href="https://www.django-rest-framework.org/api-guide/authentication/">Authentication</a>提供了一种 request 和 用户身份 绑定的机制。<br>
 使用方式：</p>
 <ol>
 <li>设置setting，设置认证方式，作用方式和Django中的中间件类似。</li>
 </ol>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">REST_FRAMEWORK = &#123;</span><br><span class="line">    <span class="string">'DEFAULT_AUTHENTICATION_CLASSES'</span>: [ <span class="comment"># 设置权限验证的类，默认为以下两个类</span></span><br><span class="line">        <span class="string">'rest_framework.authentication.BasicAuthentication'</span>,</span><br><span class="line">        <span class="string">'rest_framework.authentication.SessionAuthentication'</span>,  </span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">REST_FRAMEWORK = &#123;</span><br><span class="line">    <span class="string">&#x27;DEFAULT_AUTHENTICATION_CLASSES&#x27;</span>: [ <span class="comment"># 设置权限验证的类，默认为以下两个类</span></span><br><span class="line">        <span class="string">&#x27;rest_framework.authentication.BasicAuthentication&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;rest_framework.authentication.SessionAuthentication&#x27;</span>,  </span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p><code>rest_framework.authentication.SessionAuthentication</code> 内部的实现很简单，只是从request中取出了user，实际还是依赖django的django.contrib.sessions.middleware.SessionMiddleware和django.contrib.auth.middleware.AuthenticationMiddleware这两个中间件。</p>
 <ol start="2">
 <li>
@@ -293,7 +295,7 @@
 <ul>
 <li>
 <p>调用提供的 Token 类生成</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> rest_framework.authtoken.models <span class="keyword">import</span> Token</span><br><span class="line"></span><br><span class="line">token = Token.objects.create(user=...)</span><br><span class="line">print(token.key)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> rest_framework.authtoken.models <span class="keyword">import</span> Token</span><br><span class="line"></span><br><span class="line">token = Token.objects.create(user=...)</span><br><span class="line"><span class="built_in">print</span>(token.key)</span><br></pre></td></tr></table></figure>
 </li>
 <li>
 <p>使用官方提供的url，<code>url(r'^api-token-auth/', views.obtain_auth_token)</code>，发送post请求，会返回相应的token，若没有则生成后返回，并自动和相应的用户进行关联（需要注意的该url请求是post请求，需要传递用户名和密码进行验证）。</p>
@@ -309,11 +311,11 @@
 <p>问题：有这样的使用场景，若访问一个公共数据页面，一般的，这种公共页面即使是在用户未登录（没有传递token），或者用户传递的token产生错误的情况下也是可以访问的，该如何解决呢？</p>
 <p>可以通过前端，也可以在后端解决。</p>
 <p>后端的方式：<br>
-其实可以不需要采用在 <a href="http://settings.py" target="_blank" rel="noopener">settings.py</a> 中设置全局的 <code>DEFAULT_AUTHENTICATION_CLASSES</code> 的方式，而是在需要进行token验证的view中使用 <code>authentication_classes</code> 属性指定是否需要使用token验证（该属性在基础类APIView中设置了，authentication_classes = api_settings.DEFAULT_AUTHENTICATION_CLASSES）。</p>
+其实可以不需要采用在 <a target="_blank" rel="noopener" href="http://settings.py">settings.py</a> 中设置全局的 <code>DEFAULT_AUTHENTICATION_CLASSES</code> 的方式，而是在需要进行token验证的view中使用 <code>authentication_classes</code> 属性指定是否需要使用token验证（该属性在基础类APIView中设置了，authentication_classes = api_settings.DEFAULT_AUTHENTICATION_CLASSES）。</p>
 <blockquote>
 <p>drf的配置，多数都可以选择是在settings.py中配置还是在view中进行配置。settings.py中的是全局的配置，view中的设置是局部的，同时设置时，view中的设置优先于全局的设置。</p>
 </blockquote>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> rest_framework.authentication <span class="keyword">import</span> TokenAuthentication</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">GoodsListViewSet</span><span class="params">(mixins.ListModelMixin, viewsets.GenericViewSet)</span>:</span></span><br><span class="line">    <span class="string">"""</span></span><br><span class="line"><span class="string">    商品列表页， 分页， 搜索， 过滤， 排序</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    ...</span><br><span class="line">    <span class="comment"># 注意是classes，可接受多个值，所以采用元组的数据格式，另外，当元组只有一个数据的时候，需要使用逗号</span></span><br><span class="line">    <span class="comment"># view中的局部设置会覆盖全局的设置</span></span><br><span class="line">    authentication_classes = (TokenAuthentication, ) </span><br><span class="line">    permission_classes = (IsAuthenticated,)  <span class="comment"># 只有设置了IsAuthenticated，才会进行身份验证</span></span><br><span class="line">    ...</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> rest_framework.authentication <span class="keyword">import</span> TokenAuthentication</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">GoodsListViewSet</span>(<span class="params">mixins.ListModelMixin, viewsets.GenericViewSet</span>):</span></span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    商品列表页， 分页， 搜索， 过滤， 排序</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    ...</span><br><span class="line">    <span class="comment"># 注意是classes，可接受多个值，所以采用元组的数据格式，另外，当元组只有一个数据的时候，需要使用逗号</span></span><br><span class="line">    <span class="comment"># view中的局部设置会覆盖全局的设置</span></span><br><span class="line">    authentication_classes = (TokenAuthentication, ) </span><br><span class="line">    permission_classes = (IsAuthenticated,)  <span class="comment"># 只有设置了IsAuthenticated，才会进行身份验证</span></span><br><span class="line">    ...</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 <h2 id="问题"><a class="header-anchor" href="#问题">¶</a>问题</h2>
 <ol>
 <li>目前，使用的token验证方式，token值是存储在生成的 <code>authtoken_token</code> 表中，是放在一台服务器上的，若采用分布式的话，还需要做数据的同步操作。</li>
@@ -407,7 +409,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#drf的登陆验证功能"><span class="nav-number">1.</span> <span class="nav-text">drf的登陆验证功能</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#前后端分离的验证方式"><span class="nav-number">2.</span> <span class="nav-text">前后端分离的验证方式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#token的实际应用"><span class="nav-number">3.</span> <span class="nav-text">token的实际应用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#问题"><span class="nav-number">4.</span> <span class="nav-text">问题</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#drf%E7%9A%84%E7%99%BB%E9%99%86%E9%AA%8C%E8%AF%81%E5%8A%9F%E8%83%BD"><span class="nav-number">1.</span> <span class="nav-text">drf的登陆验证功能</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E5%90%8E%E7%AB%AF%E5%88%86%E7%A6%BB%E7%9A%84%E9%AA%8C%E8%AF%81%E6%96%B9%E5%BC%8F"><span class="nav-number">2.</span> <span class="nav-text">前后端分离的验证方式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#token%E7%9A%84%E5%AE%9E%E9%99%85%E5%BA%94%E7%94%A8"><span class="nav-number">3.</span> <span class="nav-text">token的实际应用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%97%AE%E9%A2%98"><span class="nav-number">4.</span> <span class="nav-text">问题</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 

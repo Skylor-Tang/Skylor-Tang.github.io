@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 4.2.0">
+<meta name="generator" content="Hexo 5.4.0">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -32,7 +32,9 @@
 <meta property="article:published_time" content="2020-05-24T02:36:01.000Z">
 <meta property="article:modified_time" content="2020-06-08T01:51:18.342Z">
 <meta property="article:author" content="Skylor Tang">
-<meta property="article:tag" content="Django+Vue 前后端分离项目的跨域请求问题">
+<meta property="article:tag" content="Vue">
+<meta property="article:tag" content="Django">
+<meta property="article:tag" content="跨域请求">
 <meta name="twitter:card" content="summary">
 
 <link rel="canonical" href="http://yoursite.com/2020/05/24/Django-Vue-%E5%89%8D%E5%90%8E%E7%AB%AF%E5%88%86%E7%A6%BB%E9%A1%B9%E7%9B%AE%E7%9A%84%E8%B7%A8%E5%9F%9F%E8%AF%B7%E6%B1%82%E9%97%AE%E9%A2%98/">
@@ -269,9 +271,9 @@
 
       
         <p>产生问题：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Access to XMLHttpRequest at &#39;http:&#x2F;&#x2F;127.0.0.1:8000&#x2F;categorys&#x2F;&#39; from origin &#39;http:&#x2F;&#x2F;localhost:8080&#39; has been blocked by CORS policy: No &#39;Access-Control-Allow-Origin&#39; header is present on the requested resource.</span><br></pre></td></tr></table></figure>
+<figure class="highlight txt"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Access to XMLHttpRequest at &#x27;http://127.0.0.1:8000/categorys/&#x27; from origin &#x27;http://localhost:8080&#x27; has been blocked by CORS policy: No &#x27;Access-Control-Allow-Origin&#x27; header is present on the requested resource.</span><br></pre></td></tr></table></figure>
 <p>分析：<br>
-接口调试的时候，前端 vue 使用的端口是 8080，而请求的后端服务器使用的端口是 8000，两者之间跨端口，这里已经产生前后端<a href="https://blog.csdn.net/ppxin/article/details/94717173" target="_blank" rel="noopener">跨域请求</a>的问题，从浏览器角度是禁止跨域请求的。</p>
+接口调试的时候，前端 vue 使用的端口是 8080，而请求的后端服务器使用的端口是 8000，两者之间跨端口，这里已经产生前后端<a target="_blank" rel="noopener" href="https://blog.csdn.net/ppxin/article/details/94717173">跨域请求</a>的问题，从浏览器角度是禁止跨域请求的。</p>
 <p>解决：</p>
 <ul>
 <li>从前端vue角度进行解决：在 vue 中设置 proxy 代理、</li>
@@ -281,15 +283,15 @@
 <p>本例中主要从后端服务器角度解决跨域请求的问题，使用 <code>django-cors-headers</code> 模块解决跨域问题：</p>
 <ol>
 <li>首先使用 <code>pip install django-cors-headers</code> 进行安装安装</li>
-<li>在 <a href="http://settings.py" target="_blank" rel="noopener">settings.py</a> 中的 INSTALLED_APPS 添加 <code>'corsheaders'</code></li>
+<li>在 <a target="_blank" rel="noopener" href="http://settings.py">settings.py</a> 中的 INSTALLED_APPS 添加 <code>'corsheaders'</code></li>
 <li>在MIDDLEWARE中添加中间件 <code>'corsheaders.middleware.CorsMiddleware'</code>，该中间件需要放在’django.middleware.csrf.CsrfViewMiddleware’ 之前。</li>
 <li>在settings.py进行相关配置<br>
-设置 CORS_ORIGIN_ALLOW_ALL：值为 True 则表示所有域名下都能访问（忽略跨域问题），默认为 False。<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CORS_ORIGIN_ALLOW_ALL = <span class="literal">True</span></span><br></pre></td></tr></table></figure>
-设置 CORS_ORIGIN_WHITELIST：允许访问的白名单，只有在白名单内的可以忽略跨域问题访问（该项的设置只有在CORS_ORIGIN_ALLOW_ALL设置为False时有效）：<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">CORS_ORIGIN_ALLOW_ALL = <span class="literal">False</span>  <span class="comment"># 此时，该值必须设置为False</span></span><br><span class="line">CORS_ORIGIN_WHITELIST = (</span><br><span class="line">    <span class="comment"># 凡是出现在白名单中的域名，都可以访问后端接口</span></span><br><span class="line">    <span class="string">'127.0.0.1:8080'</span>,</span><br><span class="line">    <span class="string">'localhost:8080'</span>,</span><br><span class="line">    <span class="string">'www.meiduo.site:8080'</span>,</span><br><span class="line">    <span class="string">'api.meiduo.site:8000'</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+设置 CORS_ORIGIN_ALLOW_ALL：值为 True 则表示所有域名下都能访问（忽略跨域问题），默认为 False。<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CORS_ORIGIN_ALLOW_ALL = <span class="literal">True</span>    </span><br></pre></td></tr></table></figure>
+设置 CORS_ORIGIN_WHITELIST：允许访问的白名单，只有在白名单内的可以忽略跨域问题访问（该项的设置只有在CORS_ORIGIN_ALLOW_ALL设置为False时有效）：<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">CORS_ORIGIN_ALLOW_ALL = <span class="literal">False</span>  <span class="comment"># 此时，该值必须设置为False</span></span><br><span class="line">CORS_ORIGIN_WHITELIST = (</span><br><span class="line">    <span class="comment"># 凡是出现在白名单中的域名，都可以访问后端接口</span></span><br><span class="line">    <span class="string">&#x27;127.0.0.1:8080&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;localhost:8080&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;www.meiduo.site:8080&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;api.meiduo.site:8000&#x27;</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
 设置 CORS_ALLOW_CREDENTIALS：指明在跨域访问中，后端是否支持对cookie的操作，默认是True。 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CORS_ALLOW_CREDENTIALS = <span class="literal">True</span></span><br></pre></td></tr></table></figure>
 </li>
 </ol>
-<p>django-cors-headers 为开源项目，更多功能配置参考项目地址：<a href="https://github.com/adamchainz/django-cors-headers" target="_blank" rel="noopener">https://github.com/adamchainz/django-cors-headers</a></p>
+<p>django-cors-headers 为开源项目，更多功能配置参考项目地址：<a target="_blank" rel="noopener" href="https://github.com/adamchainz/django-cors-headers">https://github.com/adamchainz/django-cors-headers</a></p>
 
     </div>
 
