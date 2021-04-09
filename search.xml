@@ -1,6 +1,101 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>Ajax 跨域问题解决方案</title>
+    <url>/2021/03/10/Ajax-%E8%B7%A8%E5%9F%9F%E9%97%AE%E9%A2%98%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/</url>
+    <content><![CDATA[<p>由于浏览器安全方面的限制，大多数Ajax请求遵守“同源策略”，也就是说无法从不同的域、子域或协议中获取数据。本文主要通过CORS解决Ajax跨域请求的问题。<br>
+文中关于CORS的定义主要参考<a href="http://www.ruanyifeng.com/blog/2016/04/cors.html">廖雪峰–跨域资源共享 CORS 详解</a>，本文使用<code>$.ajax</code>以及<code>flask</code>实现CORS的处理。</p>
+<h2 id="原生CORS方式解决："><a class="header-anchor" href="#原生CORS方式解决：">¶</a>原生CORS方式解决：</h2>
+<p>CORS需要浏览器和服务器同时支持。目前，所有浏览器都支持该功能，IE浏览器不能低于IE10。</p>
+<p>整个CORS通信过程，都是浏览器自动完成，不需要用户参与。对于开发者来说，CORS通信与同源的AJAX通信没有差别，代码完全一样。浏览器一旦发现AJAX请求跨源，就会自动添加一些附加的头信息，有时还会多出一次附加的请求，但用户不会有感觉。<font color="red">因此，实现CORS通信的关键是服务器。只要服务器实现了CORS接口，就可以跨源通信。</font></p>
+<p>浏览器将CORS请求分成两类：简单请求（simple request）和非简单请求（not-so-simple request）。</p>
+<h3 id="简单请求"><a class="header-anchor" href="#简单请求">¶</a>简单请求</h3>
+<p>处理简单的请求的时候，Ajax发送的跨域请求头中会多提供一个<code>Origin</code>字段，用来说明，本次请求来自哪个源<code>（协议+域名+端口）</code>。服务器根据这个值，决定是否同意这次请求。</p>
+<p>此时只要在服务端获取Origin字段判断后是否同意，如果同意跨域，则在返回的响应中添加<code>Access-Control-Allow-Origin</code>字段，值为允许接受的请求的域名，可以使用具体域名，或者<code>&quot;*&quot;</code>表示允许所有的请求。</p>
+<h5 id="flask服务端处理："><a class="header-anchor" href="#flask服务端处理：">¶</a>flask服务端处理：</h5>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> Flask, make_response, jsonify, request</span><br><span class="line"></span><br><span class="line">app = Flask(__name__)</span><br><span class="line">app.config[<span class="string">&quot;JSON_AS_ASCII&quot;</span>] = <span class="literal">False</span>  </span><br><span class="line"><span class="comment"># 用于设置jsonify返回的json数据支持中文</span></span><br><span class="line"><span class="comment"># json.dumps()解决同样的问题可以加入ensure_ascii=False</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&#x27;/index&#x27;</span></span>)</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">index</span>():</span></span><br><span class="line">  data = [&#123;<span class="string">&quot;name&quot;</span>:<span class="string">&quot;小杰&quot;</span>, <span class="string">&quot;sex&quot;</span>:<span class="string">&quot;男&quot;</span>, <span class="string">&quot;age&quot;</span>: <span class="number">24</span>&#125;]</span><br><span class="line">  origin = request.headers.get(<span class="string">&quot;Origin&quot;</span>, <span class="literal">None</span>)</span><br><span class="line">  response = jsonify(data)</span><br><span class="line">  <span class="keyword">if</span> origin == <span class="string">&quot;http://localhost:8080&quot;</span>:</span><br><span class="line">    response = make_response(response)</span><br><span class="line">    response.headers[<span class="string">&#x27;Access-Control-Allow-Origin&#x27;</span>] = <span class="string">&#x27;*&#x27;</span> <span class="comment"># 处理简单请求的设置</span></span><br><span class="line">  <span class="keyword">return</span> response</span><br></pre></td></tr></table></figure>
+<p>响应头除了必须含有<code>Access-Control-Allow-Origin</code>字段之外，还包括两个可选字段：</p>
+<ul>
+<li>
+<p>Access-Control-Expose-Headers: (可选)<br>
+CORS请求时，XMLHttpRequest对象的getResponseHeader()方法只能拿到6个基本字段：<code>Cache-Control</code>、<code>Content-Language</code>、<code>Content-Type</code>、<code>Expires</code>、<code>Last-Modified</code>、<code>Pragma</code>。如果想拿到其他字段，就必须在Access-Control-Expose-Headers里面指定。</p>
+</li>
+<li>
+<p>Access-Control-Allow-Credentials: (可选)<br>
+它的值是一个布尔值，表示是否允许发送Cookie。默认情况下，Cookie不包括在CORS请求之中。设为true，即表示服务器明确许可，Cookie可以包含在请求中，一起发给服务器。这个值也只能设为true，如果服务器不要浏览器发送Cookie，删除该字段即可。</p>
+<p>只是在服务端设置允许还是不够的，此时还需要对请求进行设置：</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> xhr = <span class="keyword">new</span> XMLHttpRequest();</span><br><span class="line">xhr.withCredentials = <span class="literal">true</span>;</span><br></pre></td></tr></table></figure>
+<p>JQuery中ajax的设置如下：</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">$.ajax(&#123;</span><br><span class="line">  url: <span class="string">&quot;http://localhost:8080&quot;</span>,</span><br><span class="line">  type: <span class="string">&quot;GET&quot;</span>,</span><br><span class="line">  xhrFields: &#123;</span><br><span class="line">    withCredentials: <span class="literal">true</span></span><br><span class="line">  &#125;,</span><br><span class="line">  crossDomain: <span class="literal">true</span>,</span><br><span class="line">  success: <span class="function"><span class="keyword">function</span> (<span class="params">data</span>) </span>&#123;</span><br><span class="line">    ...</span><br><span class="line">  &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p><code>xhrFields</code>以及<code>crossDomain</code>是必须要设置的。</p>
+<blockquote>
+<p>需要注意的是，如果要发送Cookie，Access-Control-Allow-Origin 就不能设为星号，必须指定明确的、与请求网页一致的域名。同时，Cookie依然遵循同源政策，只有用服务器域名设置的Cookie才会上传，其他域名的Cookie并不会上传，且（跨源）原网页代码中的document.cookie也无法读取服务器域名下的Cookie。<strong>（就是跨源能上传的Cookie，也只是服务器同域名的Cookie）</strong></p>
+</blockquote>
+</li>
+</ul>
+<h3 id="非简单请求"><a class="header-anchor" href="#非简单请求">¶</a>非简单请求</h3>
+<p>非简单请求是那种对服务器有特殊要求的请求，比如请求方法是<code>PUT</code>或<code>DELETE</code>，或者<code>Content-Type</code>字段的类型是<code>application/json</code>。</p>
+<p>非简单请求的CORS请求，会在正式通信之前，会<font color="red"><strong>自动增加</strong></font>一次HTTP查询请求，称为&quot;预检&quot;请求（preflight），在chrome浏览器的network中，该条请求的Type为<code>preflight</code>，请求类型是<code>OPTIONS</code>，包含的关键字除了Origin字段（该字段在简单和非简单请求中都会使用到）之外还有：</p>
+<ul>
+<li>
+<p>Access-Control-Request-Method： (必须)<br>
+​	浏览器CORS请求使用到的请求方法</p>
+</li>
+<li>
+<p>Access-Control-Request-Headers： (可选)<br>
+​	该字段是一个逗号分隔的字符串，指定浏览器CORS请求会额外发送的头信息字段。<br>
+​	在前端，通过对XMLHttpRequest对象采用如下方式进行设置：</p>
+  <figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">xhr.setRequestHeader(<span class="string">&quot;X-Custom-Header&quot;</span>, <span class="string">&quot;value&quot;</span>)</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h5 id="预检的响应，服务器返回的响应头部需要包含："><a class="header-anchor" href="#预检的响应，服务器返回的响应头部需要包含：">¶</a>预检的响应，服务器返回的响应头部需要包含：</h5>
+<ul>
+<li>
+<p>Access-Control-Allow-Origin： (必须)<br>
+设置允许跨域的源，设置为*表示允许任意的源。</p>
+</li>
+<li>
+<p>Access-Control-Allow-Methods：(必须)<br>
+必须字段，值为逗号分隔的一个字符串，表明服务器支持的所有跨域请求的方法。注意，返回的是所有支持的方法，而不单是浏览器请求的那个方法。这是为了避免多次&quot;预检&quot;请求。</p>
+</li>
+<li>
+<p>Access-Control-Allow-Credentials: (可选)<br>
+为布尔值，和跨域简单请求的一样，表示是否允许发送Cookie。</p>
+</li>
+<li>
+<p>Access-Control-Allow-Headers：(根据请求设置)<br>
+如果浏览器请求包括Access-Control-Request-Headers字段，则Access-Control-Allow-Headers字段是必需的。它也是一个逗号分隔的字符串，表明服务器支持的所有头信息字段，不限于浏览器在&quot;预检&quot;中请求的字段。</p>
+</li>
+<li>
+<p>Access-Control-Max-Age：(可选，不要轻易设置)<br>
+该字段可选，用来指定本次预检请求的有效期，单位为秒。上面结果中，有效期是20天（1728000秒），即允许缓存该条回应1728000秒（即20天），在此期间，不用发出另一条预检请求。</p>
+</li>
+</ul>
+<p><font color="red"><strong>注意：一旦服务器通过了&quot;预检&quot;请求，以后每次浏览器正常的CORS请求，就都跟简单请求一样，会有一个Origin头信息字段。服务器的回应，也都会有一个Access-Control-Allow-Origin头信息字段（该字段每次都会包含，这时简单请求响应的要求）。</strong></font></p>
+<h5 id="实现"><a class="header-anchor" href="#实现">¶</a>实现</h5>
+<p>前端ajax请求：</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">$.ajax(&#123;</span><br><span class="line">  url: <span class="string">&quot;http://127.0.0.1:5000/index&quot;</span>,</span><br><span class="line">  type: <span class="string">&quot;put&quot;</span>,</span><br><span class="line">  dataType: <span class="string">&quot;json&quot;</span>,</span><br><span class="line">  beforeSend: <span class="function"><span class="keyword">function</span>(<span class="params">xhr, data</span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(data)</span><br><span class="line">    <span class="built_in">console</span>.log(xhr)  <span class="comment">// 为XMLHttpRequest对象</span></span><br><span class="line">    xhr.setRequestHeader(<span class="string">&quot;X-Custom-Header&quot;</span>, <span class="string">&quot;value&quot;</span>);</span><br><span class="line">  &#125;,</span><br><span class="line">  success: <span class="function"><span class="keyword">function</span>(<span class="params">data, status, xhr</span>)</span>&#123;</span><br><span class="line">    <span class="keyword">var</span> str = <span class="string">&quot;&quot;</span>;</span><br><span class="line">    $.each(data, <span class="function"><span class="keyword">function</span>(<span class="params">index, info</span>)</span>&#123;</span><br><span class="line">      str += <span class="string">&quot;姓名：&quot;</span> + info[<span class="string">&quot;name&quot;</span>] + <span class="string">&quot;&lt;br/&gt;&quot;</span>;</span><br><span class="line">      str += <span class="string">&quot;性别：&quot;</span> + info[<span class="string">&quot;sex&quot;</span>] + <span class="string">&quot;&lt;br/&gt;&quot;</span>;</span><br><span class="line">      str += <span class="string">&quot;年龄：&quot;</span> + info[<span class="string">&quot;age&quot;</span>] + <span class="string">&quot;&lt;br/&gt;&quot;</span>;</span><br><span class="line">      str += <span class="string">&quot;&lt;hr/&gt;&quot;</span>;</span><br><span class="line">    &#125;);</span><br><span class="line">    $(<span class="string">&quot;div&quot;</span>).html(str);  <span class="comment">// .html(字符串) 用于对字符串不进行转义，会显示网页效果</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<p>flask代码实现：</p>
+<p>注意：预检会单独发送一次请求，也就是说，一次跨域请求实际上会发生两次请求，第一次是预检，第二次是正常的请求。</p>
+<p>只有第一次预检的时候（发送的是一个<code>OPTIONS</code>请求），请求中包含有<code>Origin: http://127.0.0.1:8080</code>、 <code>Access-Control-Request-Headers</code>以及 <code>Access-Control-Request-Method</code>，此时返回的响应需要设置<code>Access-Control-Allow-Origin</code>，<code>Access-Control-Allow-Methods</code>，<code>Access-Control-Allow-Headers</code>（这一项只有在请求中设置了<code>Access-Control-Request-Headers</code>的时候才需要）。</p>
+<p>在预检通过之后，紧接着会再次向相同的url发送原始的请求，请求中只会发送<code>Origin: http://127.0.0.1:8080</code>， 需要返回的响应头中包含<code>Access-Control-Allow-Origin</code>字段。</p>
+<p>可以使用<code>app.before_request</code>请求钩子完成非简单请求的预检过程，实现如下：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> Flask, make_response, jsonify, request</span><br><span class="line"></span><br><span class="line">app = Flask(__name__)</span><br><span class="line">app.config[<span class="string">&quot;JSON_AS_ASCII&quot;</span>] = <span class="literal">False</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 通过before_request处理预检过程</span></span><br><span class="line"><span class="meta">@app.before_request</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">handle_cors</span>():</span></span><br><span class="line">    <span class="keyword">if</span> request.method != <span class="string">&quot;OPTIONS&quot;</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">None</span></span><br><span class="line">      </span><br><span class="line">    access_control_request_method = request.headers.get(<span class="string">&#x27;Access-Control-Request-Method&#x27;</span>, <span class="literal">None</span>)</span><br><span class="line">    access_control_request_headers = request.headers.get(<span class="string">&quot;Access-Control-Request-Headers&quot;</span>, <span class="literal">None</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> access_control_request_method:</span><br><span class="line">        response = make_response(<span class="string">&#x27;&#x27;</span>)  <span class="comment"># 预检可以发送任何东西</span></span><br><span class="line">        response.headers[<span class="string">&#x27;Access-Control-Allow-Origin&#x27;</span>] = <span class="string">&#x27;*&#x27;</span> <span class="comment"># 处理简单请求的设置</span></span><br><span class="line">        response.headers[<span class="string">&#x27;Access-Control-Allow-Methods&#x27;</span>] = <span class="string">&quot;DELETE, PUT&quot;</span> <span class="comment"># 注意是methods</span></span><br><span class="line">        response.headers[<span class="string">&#x27;Access-Control-Allow-Headers&#x27;</span>] = access_control_request_headers</span><br><span class="line">        <span class="comment"># response.headers[&#x27;Access-Control-Max-Age&#x27;] = 1728000</span></span><br><span class="line">        <span class="comment"># response.headers[&#x27;Access-Control-Allow-Credentials&#x27;] = &quot;true&quot;  # 注意使用的是js中true</span></span><br><span class="line">        <span class="keyword">return</span> response        </span><br><span class="line"></span><br><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&#x27;/index&#x27;</span>, methods=[<span class="string">&#x27;POST&#x27;</span>, <span class="string">&#x27;GET&#x27;</span>, <span class="string">&#x27;DELETE&#x27;</span>, <span class="string">&#x27;PUT&#x27;</span>, <span class="string">&#x27;OPTIONS&#x27;</span>]</span>)  </span></span><br><span class="line"><span class="comment"># 注意，该视图函数需要设置预检以及cors请求的类型，否则无法处理delete以及options请求。</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">index</span>():</span></span><br><span class="line">    data = [&#123;<span class="string">&quot;name&quot;</span>:<span class="string">&quot;小杰&quot;</span>, <span class="string">&quot;sex&quot;</span>:<span class="string">&quot;男&quot;</span>, <span class="string">&quot;age&quot;</span>: <span class="number">24</span>&#125;]</span><br><span class="line">    origin = request.headers.get(<span class="string">&quot;Origin&quot;</span>, <span class="literal">None</span>)</span><br><span class="line">    response = jsonify(data)  </span><br><span class="line">    <span class="keyword">if</span> origin == <span class="string">&quot;http://127.0.0.1:8080&quot;</span>:</span><br><span class="line">        response = make_response(response)</span><br><span class="line">        response.headers[<span class="string">&#x27;Access-Control-Allow-Origin&#x27;</span>] = <span class="string">&#x27;*&#x27;</span> <span class="comment"># 处理简单请求的设置</span></span><br><span class="line">        <span class="comment"># response.headers[&#x27;Access-Control-Allow-Credentials&#x27;] = &quot;true&quot;  # 注意使用的是js中true</span></span><br><span class="line">    <span class="keyword">return</span> response</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>除此以外，还提供了flask还提供了第三方插件，如<code>Flask-Cros</code>插件来完成跨域请求问题。</p>
+]]></content>
+      <categories>
+        <category>计算机</category>
+        <category>开发问题</category>
+        <category>Flask</category>
+        <category>Ajax</category>
+      </categories>
+      <tags>
+        <tag>Ajax</tag>
+        <tag>Flask</tag>
+        <tag>前后端跨域</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Base64 编码</title>
     <url>/2020/07/23/Base64-%E7%BC%96%E7%A0%81/</url>
     <content><![CDATA[<p>Base64 是网络上最常见的用于传输 8Bit 字节码的编码方式之一，Base64 就是一种基于64个可打印字符来表示二进制数据的方法。</p>
@@ -114,101 +209,6 @@ python编码：<a href="https://www.cnblogs.com/yuanchenqi/articles/5956943.html
       <tags>
         <tag>base64 标准库库</tag>
         <tag>编码</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Ajax 跨域问题解决方案</title>
-    <url>/2021/03/10/Ajax-%E8%B7%A8%E5%9F%9F%E9%97%AE%E9%A2%98%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/</url>
-    <content><![CDATA[<p>由于浏览器安全方面的限制，大多数Ajax请求遵守“同源策略”，也就是说无法从不同的域、子域或协议中获取数据。本文主要通过CORS解决Ajax跨域请求的问题。<br>
-文中关于CORS的定义主要参考<a href="http://www.ruanyifeng.com/blog/2016/04/cors.html">廖雪峰–跨域资源共享 CORS 详解</a>，本文使用<code>$.ajax</code>以及<code>flask</code>实现CORS的处理。</p>
-<h2 id="原生CORS方式解决："><a class="header-anchor" href="#原生CORS方式解决：">¶</a>原生CORS方式解决：</h2>
-<p>CORS需要浏览器和服务器同时支持。目前，所有浏览器都支持该功能，IE浏览器不能低于IE10。</p>
-<p>整个CORS通信过程，都是浏览器自动完成，不需要用户参与。对于开发者来说，CORS通信与同源的AJAX通信没有差别，代码完全一样。浏览器一旦发现AJAX请求跨源，就会自动添加一些附加的头信息，有时还会多出一次附加的请求，但用户不会有感觉。<font color="red">因此，实现CORS通信的关键是服务器。只要服务器实现了CORS接口，就可以跨源通信。</font></p>
-<p>浏览器将CORS请求分成两类：简单请求（simple request）和非简单请求（not-so-simple request）。</p>
-<h3 id="简单请求"><a class="header-anchor" href="#简单请求">¶</a>简单请求</h3>
-<p>处理简单的请求的时候，Ajax发送的跨域请求头中会多提供一个<code>Origin</code>字段，用来说明，本次请求来自哪个源<code>（协议+域名+端口）</code>。服务器根据这个值，决定是否同意这次请求。</p>
-<p>此时只要在服务端获取Origin字段判断后是否同意，如果同意跨域，则在返回的响应中添加<code>Access-Control-Allow-Origin</code>字段，值为允许接受的请求的域名，可以使用具体域名，或者<code>&quot;*&quot;</code>表示允许所有的请求。</p>
-<h5 id="flask服务端处理："><a class="header-anchor" href="#flask服务端处理：">¶</a>flask服务端处理：</h5>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> Flask, make_response, jsonify, request</span><br><span class="line"></span><br><span class="line">app = Flask(__name__)</span><br><span class="line">app.config[<span class="string">&quot;JSON_AS_ASCII&quot;</span>] = <span class="literal">False</span>  </span><br><span class="line"><span class="comment"># 用于设置jsonify返回的json数据支持中文</span></span><br><span class="line"><span class="comment"># json.dumps()解决同样的问题可以加入ensure_ascii=False</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&#x27;/index&#x27;</span></span>)</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">index</span>():</span></span><br><span class="line">  data = [&#123;<span class="string">&quot;name&quot;</span>:<span class="string">&quot;小杰&quot;</span>, <span class="string">&quot;sex&quot;</span>:<span class="string">&quot;男&quot;</span>, <span class="string">&quot;age&quot;</span>: <span class="number">24</span>&#125;]</span><br><span class="line">  origin = request.headers.get(<span class="string">&quot;Origin&quot;</span>, <span class="literal">None</span>)</span><br><span class="line">  response = jsonify(data)</span><br><span class="line">  <span class="keyword">if</span> origin == <span class="string">&quot;http://localhost:8080&quot;</span>:</span><br><span class="line">    response = make_response(response)</span><br><span class="line">    response.headers[<span class="string">&#x27;Access-Control-Allow-Origin&#x27;</span>] = <span class="string">&#x27;*&#x27;</span> <span class="comment"># 处理简单请求的设置</span></span><br><span class="line">  <span class="keyword">return</span> response</span><br></pre></td></tr></table></figure>
-<p>响应头除了必须含有<code>Access-Control-Allow-Origin</code>字段之外，还包括两个可选字段：</p>
-<ul>
-<li>
-<p>Access-Control-Expose-Headers: (可选)<br>
-CORS请求时，XMLHttpRequest对象的getResponseHeader()方法只能拿到6个基本字段：<code>Cache-Control</code>、<code>Content-Language</code>、<code>Content-Type</code>、<code>Expires</code>、<code>Last-Modified</code>、<code>Pragma</code>。如果想拿到其他字段，就必须在Access-Control-Expose-Headers里面指定。</p>
-</li>
-<li>
-<p>Access-Control-Allow-Credentials: (可选)<br>
-它的值是一个布尔值，表示是否允许发送Cookie。默认情况下，Cookie不包括在CORS请求之中。设为true，即表示服务器明确许可，Cookie可以包含在请求中，一起发给服务器。这个值也只能设为true，如果服务器不要浏览器发送Cookie，删除该字段即可。</p>
-<p>只是在服务端设置允许还是不够的，此时还需要对请求进行设置：</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> xhr = <span class="keyword">new</span> XMLHttpRequest();</span><br><span class="line">xhr.withCredentials = <span class="literal">true</span>;</span><br></pre></td></tr></table></figure>
-<p>JQuery中ajax的设置如下：</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">$.ajax(&#123;</span><br><span class="line">  url: <span class="string">&quot;http://localhost:8080&quot;</span>,</span><br><span class="line">  type: <span class="string">&quot;GET&quot;</span>,</span><br><span class="line">  xhrFields: &#123;</span><br><span class="line">    withCredentials: <span class="literal">true</span></span><br><span class="line">  &#125;,</span><br><span class="line">  crossDomain: <span class="literal">true</span>,</span><br><span class="line">  success: <span class="function"><span class="keyword">function</span> (<span class="params">data</span>) </span>&#123;</span><br><span class="line">    ...</span><br><span class="line">  &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
-<p><code>xhrFields</code>以及<code>crossDomain</code>是必须要设置的。</p>
-<blockquote>
-<p>需要注意的是，如果要发送Cookie，Access-Control-Allow-Origin 就不能设为星号，必须指定明确的、与请求网页一致的域名。同时，Cookie依然遵循同源政策，只有用服务器域名设置的Cookie才会上传，其他域名的Cookie并不会上传，且（跨源）原网页代码中的document.cookie也无法读取服务器域名下的Cookie。<strong>（就是跨源能上传的Cookie，也只是服务器同域名的Cookie）</strong></p>
-</blockquote>
-</li>
-</ul>
-<h3 id="非简单请求"><a class="header-anchor" href="#非简单请求">¶</a>非简单请求</h3>
-<p>非简单请求是那种对服务器有特殊要求的请求，比如请求方法是<code>PUT</code>或<code>DELETE</code>，或者<code>Content-Type</code>字段的类型是<code>application/json</code>。</p>
-<p>非简单请求的CORS请求，会在正式通信之前，会<font color="red"><strong>自动增加</strong></font>一次HTTP查询请求，称为&quot;预检&quot;请求（preflight），在chrome浏览器的network中，该条请求的Type为<code>preflight</code>，请求类型是<code>OPTIONS</code>，包含的关键字除了Origin字段（该字段在简单和非简单请求中都会使用到）之外还有：</p>
-<ul>
-<li>
-<p>Access-Control-Request-Method： (必须)<br>
-​	浏览器CORS请求使用到的请求方法</p>
-</li>
-<li>
-<p>Access-Control-Request-Headers： (可选)<br>
-​	该字段是一个逗号分隔的字符串，指定浏览器CORS请求会额外发送的头信息字段。<br>
-​	在前端，通过对XMLHttpRequest对象采用如下方式进行设置：</p>
-  <figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">xhr.setRequestHeader(<span class="string">&quot;X-Custom-Header&quot;</span>, <span class="string">&quot;value&quot;</span>)</span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-<h5 id="预检的响应，服务器返回的响应头部需要包含："><a class="header-anchor" href="#预检的响应，服务器返回的响应头部需要包含：">¶</a>预检的响应，服务器返回的响应头部需要包含：</h5>
-<ul>
-<li>
-<p>Access-Control-Allow-Origin： (必须)<br>
-设置允许跨域的源，设置为*表示允许任意的源。</p>
-</li>
-<li>
-<p>Access-Control-Allow-Methods：(必须)<br>
-必须字段，值为逗号分隔的一个字符串，表明服务器支持的所有跨域请求的方法。注意，返回的是所有支持的方法，而不单是浏览器请求的那个方法。这是为了避免多次&quot;预检&quot;请求。</p>
-</li>
-<li>
-<p>Access-Control-Allow-Credentials: (可选)<br>
-为布尔值，和跨域简单请求的一样，表示是否允许发送Cookie。</p>
-</li>
-<li>
-<p>Access-Control-Allow-Headers：(根据请求设置)<br>
-如果浏览器请求包括Access-Control-Request-Headers字段，则Access-Control-Allow-Headers字段是必需的。它也是一个逗号分隔的字符串，表明服务器支持的所有头信息字段，不限于浏览器在&quot;预检&quot;中请求的字段。</p>
-</li>
-<li>
-<p>Access-Control-Max-Age：(可选，不要轻易设置)<br>
-该字段可选，用来指定本次预检请求的有效期，单位为秒。上面结果中，有效期是20天（1728000秒），即允许缓存该条回应1728000秒（即20天），在此期间，不用发出另一条预检请求。</p>
-</li>
-</ul>
-<p><font color="red"><strong>注意：一旦服务器通过了&quot;预检&quot;请求，以后每次浏览器正常的CORS请求，就都跟简单请求一样，会有一个Origin头信息字段。服务器的回应，也都会有一个Access-Control-Allow-Origin头信息字段（该字段每次都会包含，这时简单请求响应的要求）。</strong></font></p>
-<h5 id="实现"><a class="header-anchor" href="#实现">¶</a>实现</h5>
-<p>前端ajax请求：</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">$.ajax(&#123;</span><br><span class="line">  url: <span class="string">&quot;http://127.0.0.1:5000/index&quot;</span>,</span><br><span class="line">  type: <span class="string">&quot;put&quot;</span>,</span><br><span class="line">  dataType: <span class="string">&quot;json&quot;</span>,</span><br><span class="line">  beforeSend: <span class="function"><span class="keyword">function</span>(<span class="params">xhr, data</span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(data)</span><br><span class="line">    <span class="built_in">console</span>.log(xhr)  <span class="comment">// 为XMLHttpRequest对象</span></span><br><span class="line">    xhr.setRequestHeader(<span class="string">&quot;X-Custom-Header&quot;</span>, <span class="string">&quot;value&quot;</span>);</span><br><span class="line">  &#125;,</span><br><span class="line">  success: <span class="function"><span class="keyword">function</span>(<span class="params">data, status, xhr</span>)</span>&#123;</span><br><span class="line">    <span class="keyword">var</span> str = <span class="string">&quot;&quot;</span>;</span><br><span class="line">    $.each(data, <span class="function"><span class="keyword">function</span>(<span class="params">index, info</span>)</span>&#123;</span><br><span class="line">      str += <span class="string">&quot;姓名：&quot;</span> + info[<span class="string">&quot;name&quot;</span>] + <span class="string">&quot;&lt;br/&gt;&quot;</span>;</span><br><span class="line">      str += <span class="string">&quot;性别：&quot;</span> + info[<span class="string">&quot;sex&quot;</span>] + <span class="string">&quot;&lt;br/&gt;&quot;</span>;</span><br><span class="line">      str += <span class="string">&quot;年龄：&quot;</span> + info[<span class="string">&quot;age&quot;</span>] + <span class="string">&quot;&lt;br/&gt;&quot;</span>;</span><br><span class="line">      str += <span class="string">&quot;&lt;hr/&gt;&quot;</span>;</span><br><span class="line">    &#125;);</span><br><span class="line">    $(<span class="string">&quot;div&quot;</span>).html(str);  <span class="comment">// .html(字符串) 用于对字符串不进行转义，会显示网页效果</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
-<p>flask代码实现：</p>
-<p>注意：预检会单独发送一次请求，也就是说，一次跨域请求实际上会发生两次请求，第一次是预检，第二次是正常的请求。</p>
-<p>只有第一次预检的时候（发送的是一个<code>OPTIONS</code>请求），请求中包含有<code>Origin: http://127.0.0.1:8080</code>、 <code>Access-Control-Request-Headers</code>以及 <code>Access-Control-Request-Method</code>，此时返回的响应需要设置<code>Access-Control-Allow-Origin</code>，<code>Access-Control-Allow-Methods</code>，<code>Access-Control-Allow-Headers</code>（这一项只有在请求中设置了<code>Access-Control-Request-Headers</code>的时候才需要）。</p>
-<p>在预检通过之后，紧接着会再次向相同的url发送原始的请求，请求中只会发送<code>Origin: http://127.0.0.1:8080</code>， 需要返回的响应头中包含<code>Access-Control-Allow-Origin</code>字段。</p>
-<p>可以使用<code>app.before_request</code>请求钩子完成非简单请求的预检过程，实现如下：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> Flask, make_response, jsonify, request</span><br><span class="line"></span><br><span class="line">app = Flask(__name__)</span><br><span class="line">app.config[<span class="string">&quot;JSON_AS_ASCII&quot;</span>] = <span class="literal">False</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 通过before_request处理预检过程</span></span><br><span class="line"><span class="meta">@app.before_request</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">handle_cors</span>():</span></span><br><span class="line">    <span class="keyword">if</span> request.method != <span class="string">&quot;OPTIONS&quot;</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">None</span></span><br><span class="line">      </span><br><span class="line">    access_control_request_method = request.headers.get(<span class="string">&#x27;Access-Control-Request-Method&#x27;</span>, <span class="literal">None</span>)</span><br><span class="line">    access_control_request_headers = request.headers.get(<span class="string">&quot;Access-Control-Request-Headers&quot;</span>, <span class="literal">None</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> access_control_request_method:</span><br><span class="line">        response = make_response(<span class="string">&#x27;&#x27;</span>)  <span class="comment"># 预检可以发送任何东西</span></span><br><span class="line">        response.headers[<span class="string">&#x27;Access-Control-Allow-Origin&#x27;</span>] = <span class="string">&#x27;*&#x27;</span> <span class="comment"># 处理简单请求的设置</span></span><br><span class="line">        response.headers[<span class="string">&#x27;Access-Control-Allow-Methods&#x27;</span>] = <span class="string">&quot;DELETE, PUT&quot;</span> <span class="comment"># 注意是methods</span></span><br><span class="line">        response.headers[<span class="string">&#x27;Access-Control-Allow-Headers&#x27;</span>] = access_control_request_headers</span><br><span class="line">        <span class="comment"># response.headers[&#x27;Access-Control-Max-Age&#x27;] = 1728000</span></span><br><span class="line">        <span class="comment"># response.headers[&#x27;Access-Control-Allow-Credentials&#x27;] = &quot;true&quot;  # 注意使用的是js中true</span></span><br><span class="line">        <span class="keyword">return</span> response        </span><br><span class="line"></span><br><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&#x27;/index&#x27;</span>, methods=[<span class="string">&#x27;POST&#x27;</span>, <span class="string">&#x27;GET&#x27;</span>, <span class="string">&#x27;DELETE&#x27;</span>, <span class="string">&#x27;PUT&#x27;</span>, <span class="string">&#x27;OPTIONS&#x27;</span>]</span>)  </span></span><br><span class="line"><span class="comment"># 注意，该视图函数需要设置预检以及cors请求的类型，否则无法处理delete以及options请求。</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">index</span>():</span></span><br><span class="line">    data = [&#123;<span class="string">&quot;name&quot;</span>:<span class="string">&quot;小杰&quot;</span>, <span class="string">&quot;sex&quot;</span>:<span class="string">&quot;男&quot;</span>, <span class="string">&quot;age&quot;</span>: <span class="number">24</span>&#125;]</span><br><span class="line">    origin = request.headers.get(<span class="string">&quot;Origin&quot;</span>, <span class="literal">None</span>)</span><br><span class="line">    response = jsonify(data)  </span><br><span class="line">    <span class="keyword">if</span> origin == <span class="string">&quot;http://127.0.0.1:8080&quot;</span>:</span><br><span class="line">        response = make_response(response)</span><br><span class="line">        response.headers[<span class="string">&#x27;Access-Control-Allow-Origin&#x27;</span>] = <span class="string">&#x27;*&#x27;</span> <span class="comment"># 处理简单请求的设置</span></span><br><span class="line">        <span class="comment"># response.headers[&#x27;Access-Control-Allow-Credentials&#x27;] = &quot;true&quot;  # 注意使用的是js中true</span></span><br><span class="line">    <span class="keyword">return</span> response</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>除此以外，还提供了flask还提供了第三方插件，如<code>Flask-Cros</code>插件来完成跨域请求问题。</p>
-]]></content>
-      <categories>
-        <category>计算机</category>
-        <category>开发问题</category>
-        <category>Flask</category>
-        <category>Ajax</category>
-      </categories>
-      <tags>
-        <tag>Ajax</tag>
-        <tag>Flask</tag>
-        <tag>前后端跨域</tag>
       </tags>
   </entry>
   <entry>
@@ -552,83 +552,6 @@ Django自带了一些注入，如在模板中，直接可以使用<code>&#123; %
       </categories>
       <tags>
         <tag>Django静态资源</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Flask初探</title>
-    <url>/2020/06/01/Flask%E5%88%9D%E6%8E%A2/</url>
-    <content><![CDATA[<h2 id="flask初探"><a class="header-anchor" href="#flask初探">¶</a>flask初探</h2>
-<p>一个最小的应用：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># app.py</span></span><br><span class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> Flask</span><br><span class="line"></span><br><span class="line">app = Flask(__name__)</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&#x27;/&#x27;</span></span>)  </span><span class="comment"># 通过装饰器声明路由</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">hello_world</span>():</span></span><br><span class="line">    <span class="keyword">return</span> <span class="string">&#x27;Hello World!&#x27;</span></span><br></pre></td></tr></table></figure>
-<p>上面的例子中index()函数注册为应用根地址的处理程序。使用<code>app.route()</code>装饰器注册视图函数是首选方法，但不是唯一的方法。Flask还支持一种更传统的方式：使用<code>app.add_url_rule()</code>方法。这个方法最简单的形式接受3个参数：URL、端点名和视图函数。下述示例使用app.add url rule()方法注册index()函数，其作用与前例相同：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">hello_world</span>():</span></span><br><span class="line">    <span class="keyword">return</span> <span class="string">&#x27;Hello World!&#x27;</span></span><br><span class="line">app.add_url_rule(<span class="string">&#x27;/&#x27;</span>, <span class="string">&#x27;index&#x27;</span>, index)</span><br></pre></td></tr></table></figure>
-<h3 id="启动项目"><a class="header-anchor" href="#启动项目">¶</a>启动项目</h3>
-<p>一个完成的应用应该包括一个应用实例、一个路由和一个视图函数，此时运行以上的程序就可以完成一个小型的网页请求：</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> <span class="built_in">export</span> FLASK_APP=app.py</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> flask run</span></span><br><span class="line"> * Running on http://127.0.0.1:5000/</span><br></pre></td></tr></table></figure>
-<p>命令解释：</p>
-<ul>
-<li>
-<p>export FLASK_APP=<a href="http://hello.py">hello.py</a> ：设置环境变量，用于指定运行的应用文件，若没有设置，则默认会在项目根目录下找名为<code>wsgi.py</code> 或者 <code>app.py</code>的文件进行启动，否则会报异常。</p>
-</li>
-<li>
-<p>flask run ：运行项目</p>
-</li>
-</ul>
-<p>此时访问默认路径<code>http://127.0.0.1:5000/</code>即可进行访问，和Django类似，若想被外部服务器、特定的端口访问，可以使用<code>flask run --host=0.0.0.0 --port=5050</code>，此时外部就可以进行访问。</p>
-<p>处理通过 <code>flask run</code> 命令的方式启动项目之外，还可以通过python脚本的方式启动项目</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 以python脚本方式启动项目</span></span><br><span class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> Flask</span><br><span class="line"></span><br><span class="line">app = Flask(__name__)</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&#x27;/&#x27;</span></span>)  </span><span class="comment"># 通过装饰器声明路由</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">hello_world</span>():</span></span><br><span class="line">    <span class="keyword">return</span> <span class="string">&#x27;Hello World!&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">  	app.run()  </span><br></pre></td></tr></table></figure>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> python app.py</span> </span><br></pre></td></tr></table></figure>
-<p>该方式在单元测试中用较多。</p>
-<h3 id="调试模式"><a class="header-anchor" href="#调试模式">¶</a>调试模式</h3>
-<p>通过设置环境变量 <code>export FLASK_ENV=development</code> 启动调试模式，在该模式下，每次修改代码服务器都会自动重启，并且当应用出错的时候，还会提供调试工具。和Django一样，调试模式不应该应用在生产环境中。</p>
-<h2 id="路由"><a class="header-anchor" href="#路由">¶</a>路由</h2>
-<p>通过使用装饰器 <code>@route()</code> 或者 <code>app.add_url_rule()</code>将视图函数绑定到URL中，可以在URL中添加变量，实现动态路由，除了添加变量之外，还可以指定变量的类型。</p>
-<table>
-<thead>
-<tr>
-<th>类型</th>
-<th style="text-align:left">解释</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>string</code></td>
-<td style="text-align:left">（缺省值） 接受任何不包含斜杠的文本</td>
-</tr>
-<tr>
-<td><code>int</code></td>
-<td style="text-align:left">接受正整数</td>
-</tr>
-<tr>
-<td><code>float</code></td>
-<td style="text-align:left">接受正浮点数</td>
-</tr>
-<tr>
-<td><code>path</code></td>
-<td style="text-align:left">类似 <code>string</code> ，但可以包含斜杠</td>
-</tr>
-<tr>
-<td><code>uuid</code></td>
-<td style="text-align:left">接受 UUID 字符串（通用唯一识别码）</td>
-</tr>
-</tbody>
-</table>
-<p>path演示：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> cgi <span class="keyword">import</span> escape</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&#x27;/path/&lt;path:subpath&gt;&#x27;</span></span>)</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">show_subpath</span>(<span class="params">subpath</span>):</span></span><br><span class="line">    <span class="keyword">return</span> <span class="string">&#x27;Subpath %s&#x27;</span> % escape(subpath)  </span><br><span class="line">  </span><br><span class="line"><span class="comment"># 访问 localhost:5000/path/baidu/google</span></span><br><span class="line"><span class="comment"># 返回结果：Subpath baidu/google</span></span><br></pre></td></tr></table></figure>
-<p>uuid演示： UUID是由一组32位数的16进制数字所构成，以连字号分隔的五组来显示，形式为 8-4-4-4-12，总共有 36个字符（即三十二个英数字母和四个连字号）</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&#x27;/uuid/&lt;uuid:uuid&gt;&#x27;</span></span>)</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">show_uuid</span>(<span class="params">uuid</span>):</span></span><br><span class="line">    <span class="keyword">return</span> <span class="string">&#x27;Uuid %s&#x27;</span> % uuid</span><br><span class="line">  </span><br><span class="line"><span class="comment"># 访问 localhost:5000/uuid/123e4567-e89b-12d3-a456-426655440000</span></span><br><span class="line"><span class="comment"># 返回结果：Uuid 123e4567-e89b-12d3-a456-426655440000</span></span><br></pre></td></tr></table></figure>
-<h3 id="关于URL后是否添加-的问题"><a class="header-anchor" href="#关于URL后是否添加-的问题">¶</a>关于URL后是否添加 / 的问题</h3>
-<p>在访问尾部有斜杠的url的时候，若是填写url时没有添加/，则此次的访问会自动重定向到尾部含有斜杠的路径中，所以在访问尾部有斜杠的url的时候，无论手动添加斜杠与否，最终都会访问有斜杠的路径。</p>
-<p>在访问尾部没有斜杠的url的时候，要是手动在末尾添加了斜杠，则得到404错误。</p>
-]]></content>
-      <categories>
-        <category>计算机</category>
-        <category>Flask</category>
-        <category>读书笔记</category>
-      </categories>
-      <tags>
-        <tag>Flask</tag>
-        <tag>工具</tag>
       </tags>
   </entry>
   <entry>
@@ -1291,6 +1214,83 @@ Docker是一个Client-Server结构的系统，Docker守护进程运行在主机�
       </categories>
       <tags>
         <tag>docker</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Flask初探</title>
+    <url>/2020/06/01/Flask%E5%88%9D%E6%8E%A2/</url>
+    <content><![CDATA[<h2 id="flask初探"><a class="header-anchor" href="#flask初探">¶</a>flask初探</h2>
+<p>一个最小的应用：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># app.py</span></span><br><span class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> Flask</span><br><span class="line"></span><br><span class="line">app = Flask(__name__)</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&#x27;/&#x27;</span></span>)  </span><span class="comment"># 通过装饰器声明路由</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">hello_world</span>():</span></span><br><span class="line">    <span class="keyword">return</span> <span class="string">&#x27;Hello World!&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>上面的例子中index()函数注册为应用根地址的处理程序。使用<code>app.route()</code>装饰器注册视图函数是首选方法，但不是唯一的方法。Flask还支持一种更传统的方式：使用<code>app.add_url_rule()</code>方法。这个方法最简单的形式接受3个参数：URL、端点名和视图函数。下述示例使用app.add url rule()方法注册index()函数，其作用与前例相同：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">hello_world</span>():</span></span><br><span class="line">    <span class="keyword">return</span> <span class="string">&#x27;Hello World!&#x27;</span></span><br><span class="line">app.add_url_rule(<span class="string">&#x27;/&#x27;</span>, <span class="string">&#x27;index&#x27;</span>, index)</span><br></pre></td></tr></table></figure>
+<h3 id="启动项目"><a class="header-anchor" href="#启动项目">¶</a>启动项目</h3>
+<p>一个完成的应用应该包括一个应用实例、一个路由和一个视图函数，此时运行以上的程序就可以完成一个小型的网页请求：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> <span class="built_in">export</span> FLASK_APP=app.py</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> flask run</span></span><br><span class="line"> * Running on http://127.0.0.1:5000/</span><br></pre></td></tr></table></figure>
+<p>命令解释：</p>
+<ul>
+<li>
+<p>export FLASK_APP=<a href="http://hello.py">hello.py</a> ：设置环境变量，用于指定运行的应用文件，若没有设置，则默认会在项目根目录下找名为<code>wsgi.py</code> 或者 <code>app.py</code>的文件进行启动，否则会报异常。</p>
+</li>
+<li>
+<p>flask run ：运行项目</p>
+</li>
+</ul>
+<p>此时访问默认路径<code>http://127.0.0.1:5000/</code>即可进行访问，和Django类似，若想被外部服务器、特定的端口访问，可以使用<code>flask run --host=0.0.0.0 --port=5050</code>，此时外部就可以进行访问。</p>
+<p>处理通过 <code>flask run</code> 命令的方式启动项目之外，还可以通过python脚本的方式启动项目</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 以python脚本方式启动项目</span></span><br><span class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> Flask</span><br><span class="line"></span><br><span class="line">app = Flask(__name__)</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&#x27;/&#x27;</span></span>)  </span><span class="comment"># 通过装饰器声明路由</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">hello_world</span>():</span></span><br><span class="line">    <span class="keyword">return</span> <span class="string">&#x27;Hello World!&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">  	app.run()  </span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> python app.py</span> </span><br></pre></td></tr></table></figure>
+<p>该方式在单元测试中用较多。</p>
+<h3 id="调试模式"><a class="header-anchor" href="#调试模式">¶</a>调试模式</h3>
+<p>通过设置环境变量 <code>export FLASK_ENV=development</code> 启动调试模式，在该模式下，每次修改代码服务器都会自动重启，并且当应用出错的时候，还会提供调试工具。和Django一样，调试模式不应该应用在生产环境中。</p>
+<h2 id="路由"><a class="header-anchor" href="#路由">¶</a>路由</h2>
+<p>通过使用装饰器 <code>@route()</code> 或者 <code>app.add_url_rule()</code>将视图函数绑定到URL中，可以在URL中添加变量，实现动态路由，除了添加变量之外，还可以指定变量的类型。</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th style="text-align:left">解释</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>string</code></td>
+<td style="text-align:left">（缺省值） 接受任何不包含斜杠的文本</td>
+</tr>
+<tr>
+<td><code>int</code></td>
+<td style="text-align:left">接受正整数</td>
+</tr>
+<tr>
+<td><code>float</code></td>
+<td style="text-align:left">接受正浮点数</td>
+</tr>
+<tr>
+<td><code>path</code></td>
+<td style="text-align:left">类似 <code>string</code> ，但可以包含斜杠</td>
+</tr>
+<tr>
+<td><code>uuid</code></td>
+<td style="text-align:left">接受 UUID 字符串（通用唯一识别码）</td>
+</tr>
+</tbody>
+</table>
+<p>path演示：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> cgi <span class="keyword">import</span> escape</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&#x27;/path/&lt;path:subpath&gt;&#x27;</span></span>)</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">show_subpath</span>(<span class="params">subpath</span>):</span></span><br><span class="line">    <span class="keyword">return</span> <span class="string">&#x27;Subpath %s&#x27;</span> % escape(subpath)  </span><br><span class="line">  </span><br><span class="line"><span class="comment"># 访问 localhost:5000/path/baidu/google</span></span><br><span class="line"><span class="comment"># 返回结果：Subpath baidu/google</span></span><br></pre></td></tr></table></figure>
+<p>uuid演示： UUID是由一组32位数的16进制数字所构成，以连字号分隔的五组来显示，形式为 8-4-4-4-12，总共有 36个字符（即三十二个英数字母和四个连字号）</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&#x27;/uuid/&lt;uuid:uuid&gt;&#x27;</span></span>)</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">show_uuid</span>(<span class="params">uuid</span>):</span></span><br><span class="line">    <span class="keyword">return</span> <span class="string">&#x27;Uuid %s&#x27;</span> % uuid</span><br><span class="line">  </span><br><span class="line"><span class="comment"># 访问 localhost:5000/uuid/123e4567-e89b-12d3-a456-426655440000</span></span><br><span class="line"><span class="comment"># 返回结果：Uuid 123e4567-e89b-12d3-a456-426655440000</span></span><br></pre></td></tr></table></figure>
+<h3 id="关于URL后是否添加-的问题"><a class="header-anchor" href="#关于URL后是否添加-的问题">¶</a>关于URL后是否添加 / 的问题</h3>
+<p>在访问尾部有斜杠的url的时候，若是填写url时没有添加/，则此次的访问会自动重定向到尾部含有斜杠的路径中，所以在访问尾部有斜杠的url的时候，无论手动添加斜杠与否，最终都会访问有斜杠的路径。</p>
+<p>在访问尾部没有斜杠的url的时候，要是手动在末尾添加了斜杠，则得到404错误。</p>
+]]></content>
+      <categories>
+        <category>计算机</category>
+        <category>Flask</category>
+        <category>读书笔记</category>
+      </categories>
+      <tags>
+        <tag>Flask</tag>
+        <tag>工具</tag>
       </tags>
   </entry>
   <entry>
