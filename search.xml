@@ -2147,6 +2147,25 @@ print(recode.count_1)是以列名的形式打印内容的，因为使用使用CO
       </tags>
   </entry>
   <entry>
+    <title>hexo基础命令</title>
+    <url>/2019/06/14/hello-world/</url>
+    <content><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
+<h2 id="Quick-Start"><a class="header-anchor" href="#Quick-Start">¶</a>Quick Start</h2>
+<h3 id="Create-a-new-post"><a class="header-anchor" href="#Create-a-new-post">¶</a>Create a new post</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/writing.html">Writing</a></p>
+<h3 id="Run-server"><a class="header-anchor" href="#Run-server">¶</a>Run server</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/server.html">Server</a></p>
+<h3 id="Generate-static-files"><a class="header-anchor" href="#Generate-static-files">¶</a>Generate static files</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/generating.html">Generating</a></p>
+<h3 id="Deploy-to-remote-sites"><a class="header-anchor" href="#Deploy-to-remote-sites">¶</a>Deploy to remote sites</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
+]]></content>
+  </entry>
+  <entry>
     <title>Vue基础</title>
     <url>/2019/12/10/Vue%E5%9F%BA%E7%A1%80/</url>
     <content><![CDATA[<h2 id="基本案例"><a class="header-anchor" href="#基本案例">¶</a>基本案例</h2>
@@ -2229,25 +2248,6 @@ print(recode.count_1)是以列名的形式打印内容的，因为使用使用CO
         <tag>Vue</tag>
         <tag>工具</tag>
       </tags>
-  </entry>
-  <entry>
-    <title>hexo基础命令</title>
-    <url>/2019/06/14/hello-world/</url>
-    <content><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
-<h2 id="Quick-Start"><a class="header-anchor" href="#Quick-Start">¶</a>Quick Start</h2>
-<h3 id="Create-a-new-post"><a class="header-anchor" href="#Create-a-new-post">¶</a>Create a new post</h3>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/writing.html">Writing</a></p>
-<h3 id="Run-server"><a class="header-anchor" href="#Run-server">¶</a>Run server</h3>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/server.html">Server</a></p>
-<h3 id="Generate-static-files"><a class="header-anchor" href="#Generate-static-files">¶</a>Generate static files</h3>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/generating.html">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a class="header-anchor" href="#Deploy-to-remote-sites">¶</a>Deploy to remote sites</h3>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
-]]></content>
   </entry>
   <entry>
     <title>pipenv 使用</title>
@@ -2720,6 +2720,118 @@ redis的命令行操作模式会显示他的语法提示，基本使用采用的
       </tags>
   </entry>
   <entry>
+    <title>Go基础之函数</title>
+    <url>/2019/10/14/%E5%87%BD%E6%95%B0function/</url>
+    <content><![CDATA[<p><code>func eval(a,b int, op string) int</code>定义的方式和变量类似，都是函数名在前，返回值类型在后，类型是用来指定函数返回值得类型，若函数没有返回值，则不需要指定函数类型。</p>
+<h2 id="函数返回值"><a class="header-anchor" href="#函数返回值">¶</a>函数返回值</h2>
+<p>Go语言的函数可以返回多个值。（Python也可以），只有一个返回值的时候，可以直接指定返回值的类型，或者使用括号，如<code>func eval(a,b int, op string) (i int)</code>，但是有多个返回值的时候一定要使用括号。</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">div</span><span class="params">(a, b <span class="keyword">int</span>)</span> <span class="params">(q, r <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">  <span class="keyword">return</span> a / b, a % b</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以直接指定函数的返回值类型，而不需要写参数</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 不写返回值参数</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">div</span><span class="params">(a, b <span class="keyword">int</span>)</span> <span class="params">(<span class="keyword">int</span>, <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">  <span class="keyword">return</span> a / b, a % b</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>其实指定返回值的参数，即这里的q，r 没有太大的意义，对调用者而言没有区别，只是起到了提示作用，便捷的地方在调用的时候编辑器会自动帮我们创建生成接受返回值的参数q，r。但是有一种情况，返回值的参数有大用：</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">div</span><span class="params">(a, b <span class="keyword">int</span>)</span> <span class="params">(q, r <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">  q = a / b</span><br><span class="line">  r = a % b</span><br><span class="line">  <span class="keyword">return</span>     <span class="comment">// 此时只要直接return即可返回值</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>注意这个例子中，如果在声明时设置了返回值参数，此时在函数内就可以直接使用了，否则的话需要先声明才能使用。</strong></p>
+<ul>
+<li>但是使用这种方式，只要函数体一长，很容易搞不清赋值情况</li>
+<li>且返回值参数一定要写</li>
+</ul>
+<p>所以建议还是使用第一种方式。</p>
+<p>可以返回多个返回值带来便利的同时也会产生问题，如必须使用相应个数的参数来接受返回值，否则会报错（Go不像Python一样可以使用<code>[下标]</code>的方式来取得值，Python返回的是元组，所以可以使用下标），这就要求我们必须使用与返回值个数匹配的参数去接受，但是Go严格的语法要求<font color="red">函数内</font>所有定义的参数都必须使用到，否则报编译错误，此时我们就可以使用<code>_</code>来接受不需要的返回值。</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 使用_来接受不需要的值</span></span><br><span class="line">q, _ := div(a, b)</span><br></pre></td></tr></table></figure>
+<h2 id="多个返回值的正常用法"><a class="header-anchor" href="#多个返回值的正常用法">¶</a>多个返回值的正常用法</h2>
+<p><font color="red">注意：</font>不要滥用函数的多返回值，一般的常用法是用来定义一个参数用来返回错误<code>error</code>的，即一个正常的返回值，一个出现异常返回的错误值。</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">eval</span><span class="params">(a, b <span class="keyword">int</span>, op <span class="keyword">string</span>)</span> <span class="params">(<span class="keyword">int</span>, error)</span></span> &#123;  <span class="comment">//  f返回值可以直接类型，如这里的int和error</span></span><br><span class="line">  <span class="keyword">switch</span> op &#123;</span><br><span class="line">    <span class="keyword">case</span> <span class="string">&quot;+&quot;</span>:</span><br><span class="line">      <span class="keyword">return</span> a + b, <span class="literal">nil</span></span><br><span class="line">    <span class="keyword">case</span> <span class="string">&quot;-&quot;</span>:</span><br><span class="line">      <span class="keyword">return</span> a - b, <span class="literal">nil</span></span><br><span class="line">    <span class="keyword">case</span> <span class="string">&quot;*&quot;</span>:</span><br><span class="line">      <span class="keyword">return</span> a * b, <span class="literal">nil</span></span><br><span class="line">    <span class="keyword">case</span> <span class="string">&quot;/&quot;</span>:</span><br><span class="line">      q, _ := div(a, b)</span><br><span class="line">      <span class="keyword">return</span> q, <span class="literal">nil</span></span><br><span class="line">    <span class="keyword">default</span>:</span><br><span class="line">      <span class="comment">// 不使用原先的panic()函数，会中断程序的运行，而是采用fmt.Errorf()构造异常</span></span><br><span class="line">      <span class="keyword">return</span> <span class="number">0</span>, fmt.Errorf(  </span><br><span class="line">        <span class="string">&quot;unsupported operation: %s&quot;</span>, op)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">  <span class="keyword">if</span> result, err := eval(<span class="number">3</span>, <span class="number">4</span>, <span class="string">&quot;x&quot;</span>); err != <span class="literal">nil</span> &#123;</span><br><span class="line">  	fmt.Println(<span class="string">&quot;Error:&quot;</span>, err)</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    fmt.Println(result)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="函数式编程"><a class="header-anchor" href="#函数式编程">¶</a>函数式编程</h2>
+<p>Go语言是函数式编程，函数式一等公民：参数，变量，返回值都可以是函数</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">apply</span><span class="params">(op <span class="keyword">func</span>(<span class="keyword">int</span>, <span class="keyword">int</span>)</span> <span class="title">int</span>, <span class="title">a</span>, <span class="title">b</span> <span class="title">int</span>) <span class="title">int</span></span> &#123;</span><br><span class="line">  <span class="comment">// 为了获取函数名</span></span><br><span class="line">  p := reflect.ValueOf(op).Pointer()</span><br><span class="line">  opName := runtime.FuncForPC(p).Name()</span><br><span class="line">  fmt.Printf(<span class="string">&quot;Calling function %s with args &quot;</span> + <span class="string">&quot;(%d, %d)\n&quot;</span>, opName, a, b)</span><br><span class="line">  <span class="keyword">return</span> op(a, b)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 因为自带的math.Pow()方法的参数和返回值要求是float64，所以这里进行重写</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">pow</span><span class="params">(a,b <span class="keyword">int</span>)</span> <span class="title">int</span></span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">int</span>(math.Pow(<span class="keyword">float64</span>(a), <span class="keyword">float64</span>(b)))</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">  fmt.Println(apply(pow, <span class="number">3</span>, <span class="number">4</span>))</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 运行结果</span></span><br><span class="line">Calling function main.pow with args (<span class="number">3</span>, <span class="number">4</span>)</span><br><span class="line"><span class="number">81</span></span><br></pre></td></tr></table></figure>
+<p>除了传递手写的函数，也可以直接使用匿名函数(为省略了函数名的函数，除了函数名其他函数组件一个不能少)</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">  fmt.Println(apply(</span><br><span class="line">    <span class="function"><span class="keyword">func</span><span class="params">(a <span class="keyword">int</span>,b <span class="keyword">int</span>)</span> <span class="title">int</span></span>&#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="keyword">int</span>(math.Pow(</span><br><span class="line">        <span class="keyword">float64</span>(a), <span class="keyword">float64</span>(b)))</span><br><span class="line">    &#125;, <span class="number">3</span>, <span class="number">4</span>))</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 运行结果</span></span><br><span class="line">Calling function main.main.func1 with args (<span class="number">3</span>, <span class="number">4</span>)    </span><br><span class="line"><span class="number">81</span></span><br></pre></td></tr></table></figure>
+<p>第一个main是包名，第二个main是func main()的，由于是匿名的函数，所以第三个是func1。</p>
+<h2 id="其他语言中函数的特性"><a class="header-anchor" href="#其他语言中函数的特性">¶</a>其他语言中函数的特性</h2>
+<p>因为Go的语法较为简洁，一起其他语言的特性都不包含，如默认参数，可选参数，函数重载等。</p>
+<p>但是支持可变参数列表</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">sum</span><span class="params">(numbers ...<span class="keyword">int</span>)</span> <span class="title">int</span></span> &#123;     <span class="comment">// ...为golang的语法糖，此处表示可以接受多个int类型的参数</span></span><br><span class="line">  s := <span class="number">0</span></span><br><span class="line">  <span class="keyword">for</span> i := <span class="keyword">range</span> numbers &#123;</span><br><span class="line">    s += numbers[i]</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> s</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可变参数列表的类型是相应类型的列表形式， 如上面的例子中的可变参数的类型是<code>[]int</code>。</p>
+<p>此外需要注意的是：</p>
+<ul>
+<li>一个函数中只能有一个可变参数列表</li>
+<li>在含有普通参数的情况下，可变参数列表必须放到参数列表的最后一项</li>
+</ul>
+<p>函数在含有参数以及返回值时，一定要对这些参数的类型进行规定（参数名 参数类型， 参数名2 参数类型），当参数类型相同时，可以只在参数列表的最后指明参数类型。<br>
+理论上函数可以返回多个返回值（但是必须在函数的定义中指明这些返回值的类型，指明返回值参数类型时，可以使用参数明，也可以不使用，且使用对应的变量去接受这些返回值），但是一般来说只能返两个参数（正常值，异常值）。</p>
+<h2 id="函数语法要点回顾"><a class="header-anchor" href="#函数语法要点回顾">¶</a>函数语法要点回顾</h2>
+<ul>
+<li>返回值类型写在最后</li>
+<li>可返回多个值</li>
+<li>函数作为参数</li>
+<li>没有默认参数，可选参数</li>
+</ul>
+]]></content>
+      <categories>
+        <category>计算机</category>
+        <category>Golang</category>
+      </categories>
+      <tags>
+        <tag>Golang</tag>
+        <tag>语言基础</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Go基础之包和封装</title>
+    <url>/2019/11/30/%E5%8C%85%E5%92%8C%E5%B0%81%E8%A3%85/</url>
+    <content><![CDATA[<h1>封装</h1>
+<p>通过命名来实现封装</p>
+<ul>
+<li>名字一般使用CamelCase</li>
+<li>首字母大写：public</li>
+<li>首字母小写：private</li>
+</ul>
+<p>相对于 包 而言，若一个外部的包想要访问本包内定义的结构，和  结构的方法（不仅仅是结构，定义的一般方法若想被其他包使用，也是要大写首字母的），这些命名，包括结构内变量的命名都要采用大写。</p>
+<p>但是在同一个包下的内容可以随便调用。</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> tree</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;fmt&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Node <span class="keyword">struct</span> &#123;</span><br><span class="line">	Value       <span class="keyword">int</span></span><br><span class="line">	Left, Right *Node</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(node Node)</span> <span class="title">Print</span><span class="params">()</span></span> &#123;</span><br><span class="line">	fmt.Print(node.Value, <span class="string">&quot; &quot;</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(node *Node)</span> <span class="title">SetValue</span><span class="params">(value <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> node == <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;Setting Value to nil &quot;</span> +</span><br><span class="line">			<span class="string">&quot;node. Ignored.&quot;</span>)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	node.Value = value</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">CreateNode</span><span class="params">(value <span class="keyword">int</span>)</span> *<span class="title">Node</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> &amp;Node&#123;Value: value&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1>包</h1>
+<ul>
+<li>每个目录一个包，只能是同一种包</li>
+<li>main包包含可执行入口-- main函数，只有main包才能有main函数</li>
+<li>为结构定义的方法必须放在同一个包内</li>
+<li>可以是同一个包内的不同文件，对包外来说，只要知道包名，都可以使用，不需要知道文件名</li>
+</ul>
+<p>使用时，import导入的是存放包的目录名，同一个目录下只能有一种包名，用来表示包内文件的关系，以及被其他包使用时的开头 <code>包名.方法或变量</code>。但是为了不产生歧义，最好使用的时候，包名和目录名设置成一致的即可。</p>
+<h2 id="如何扩充系统类型或者别人的类型"><a class="header-anchor" href="#如何扩充系统类型或者别人的类型">¶</a>如何扩充系统类型或者别人的类型</h2>
+<p>在含有继承的语言中，可以通过继承的方式来扩充原有的功能，但是在go中是没有继承的概念的。Go采用以下两种方式来扩充：</p>
+<ul>
+<li>定义别名</li>
+<li>使用组合</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 使用组合的方式来完成    扩充自定义的treeNode结构，增加后序遍历的功能</span></span><br><span class="line"><span class="keyword">type</span> myTreeNode <span class="keyword">struct</span> &#123;</span><br><span class="line">	node *tree.Node</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(myNode *myTreeNode)</span> <span class="title">postOrder</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> myNode == <span class="literal">nil</span> || myNode.node == <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	left := myTreeNode&#123;myNode.node.Left&#125;</span><br><span class="line">	right := myTreeNode&#123;myNode.node.Right&#125;</span><br><span class="line"></span><br><span class="line">	left.postOrder()</span><br><span class="line">	right.postOrder()</span><br><span class="line">	myNode.node.Print()</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 使用别名的方式来完成  扩充[]int切片类型，提供Push、Pop、IsEmpty的功能</span></span><br><span class="line"><span class="keyword">package</span> queue</span><br><span class="line"></span><br><span class="line"><span class="comment">// A FIFO queue.</span></span><br><span class="line"><span class="keyword">type</span> Queue []<span class="keyword">int</span>    <span class="comment">// 使用type 定义了[]int类型的别名 Queue</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// Pushes the element into the queue.</span></span><br><span class="line"><span class="comment">// 		e.g. q.Push(123)</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(q *Queue)</span> <span class="title">Push</span><span class="params">(v <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">	*q = <span class="built_in">append</span>(*q, v)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Pops element from head.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(q *Queue)</span> <span class="title">Pop</span><span class="params">()</span> <span class="title">int</span></span> &#123;</span><br><span class="line">	head := (*q)[<span class="number">0</span>]</span><br><span class="line">	*q = (*q)[<span class="number">1</span>:]</span><br><span class="line">	<span class="keyword">return</span> head</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Returns if the queue is empty or not.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(q *Queue)</span> <span class="title">IsEmpty</span><span class="params">()</span> <span class="title">bool</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="built_in">len</span>(*q) == <span class="number">0</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1>GOPATH环境变量</h1>
+<ul>
+<li>默认在~/go（Unix，Linux）</li>
+<li>官方推荐：所有项目和第三方库都放在同一个GOPATH下</li>
+<li>也可以将每个项目放在不同的GOPATH</li>
+<li>GO在 编译 的时候会自动到每个GOPATN下找到自己所依赖的包</li>
+</ul>
+<p>正常情况下  go get <a href="http://golang.org/x/tools/cmd/goimports">golang.org/x/tools/cmd/goimports</a></p>
+<p>使用gopm来获取无法下载的包</p>
+<p>go get -v <a href="http://github.com/gpmgo/gopm">github.com/gpmgo/gopm</a></p>
+<ul>
+<li>go build 来编译</li>
+<li>go install 产生pkg文件和可执行文件</li>
+<li>go run 直接编译运行</li>
+</ul>
+<p>gopath下三个文件夹，bin 放go install的可执行文件， pkg 存放包文件，src  为项目源代码，也是可以使被掉</p>
+]]></content>
+      <categories>
+        <category>计算机</category>
+        <category>Golang</category>
+      </categories>
+      <tags>
+        <tag>Golang</tag>
+        <tag>语言基础</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Go基础之内建容器</title>
     <url>/2019/10/30/%E5%86%85%E5%BB%BA%E5%AE%B9%E5%99%A8-%E6%95%B0%E7%BB%84%E4%BB%A5%E5%8F%8A%E5%88%87%E7%89%87/</url>
     <content><![CDATA[<h1>数组</h1>
@@ -2852,118 +2964,6 @@ slice的结构中有指向数组的指针，所以实际上是一种引用类型
 <h2 id="案例"><a class="header-anchor" href="#案例">¶</a>案例</h2>
 <figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 寻找最长不含有重复字符的子串</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">lengthOfNonRepeatingSubStr</span><span class="params">(s <span class="keyword">string</span>)</span> <span class="title">int</span></span>&#123;</span><br><span class="line">	lastOccurred := <span class="built_in">make</span>(<span class="keyword">map</span>[<span class="keyword">byte</span>]<span class="keyword">int</span>)</span><br><span class="line">	start := <span class="number">0</span></span><br><span class="line">	maxLength := <span class="number">0</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> i, ch := <span class="keyword">range</span> []<span class="keyword">byte</span>(s) &#123;    <span class="comment">// 将字符串每个字符取出，组成切片</span></span><br><span class="line">    <span class="comment">// 目前该方法只支持英文，若想支持因为之外的其他多字节内容，使用 range []rune(s) </span></span><br><span class="line">		<span class="keyword">if</span> lastI, ok := lastOccurred[ch]; ok &amp;&amp; lastI &gt;= start &#123;    <span class="comment">// 有该值且不是同一字符</span></span><br><span class="line">			start = lastI + <span class="number">1</span></span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">if</span> i-start+<span class="number">1</span> &gt; maxLength &#123;</span><br><span class="line">			maxLength = i - start +<span class="number">1</span></span><br><span class="line">		&#125;</span><br><span class="line">		lastOccurred[ch] = i</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> maxLength</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main </span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">  cache :=  <span class="built_in">make</span>(<span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">string</span>)</span><br><span class="line">  cache[<span class="string">&quot;name&quot;</span>] = <span class="string">&quot;ccmouse&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>计算机</category>
-        <category>Golang</category>
-      </categories>
-      <tags>
-        <tag>Golang</tag>
-        <tag>语言基础</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Go基础之函数</title>
-    <url>/2019/10/14/%E5%87%BD%E6%95%B0function/</url>
-    <content><![CDATA[<p><code>func eval(a,b int, op string) int</code>定义的方式和变量类似，都是函数名在前，返回值类型在后，类型是用来指定函数返回值得类型，若函数没有返回值，则不需要指定函数类型。</p>
-<h2 id="函数返回值"><a class="header-anchor" href="#函数返回值">¶</a>函数返回值</h2>
-<p>Go语言的函数可以返回多个值。（Python也可以），只有一个返回值的时候，可以直接指定返回值的类型，或者使用括号，如<code>func eval(a,b int, op string) (i int)</code>，但是有多个返回值的时候一定要使用括号。</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">div</span><span class="params">(a, b <span class="keyword">int</span>)</span> <span class="params">(q, r <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">  <span class="keyword">return</span> a / b, a % b</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>可以直接指定函数的返回值类型，而不需要写参数</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 不写返回值参数</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">div</span><span class="params">(a, b <span class="keyword">int</span>)</span> <span class="params">(<span class="keyword">int</span>, <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">  <span class="keyword">return</span> a / b, a % b</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>其实指定返回值的参数，即这里的q，r 没有太大的意义，对调用者而言没有区别，只是起到了提示作用，便捷的地方在调用的时候编辑器会自动帮我们创建生成接受返回值的参数q，r。但是有一种情况，返回值的参数有大用：</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">div</span><span class="params">(a, b <span class="keyword">int</span>)</span> <span class="params">(q, r <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">  q = a / b</span><br><span class="line">  r = a % b</span><br><span class="line">  <span class="keyword">return</span>     <span class="comment">// 此时只要直接return即可返回值</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><strong>注意这个例子中，如果在声明时设置了返回值参数，此时在函数内就可以直接使用了，否则的话需要先声明才能使用。</strong></p>
-<ul>
-<li>但是使用这种方式，只要函数体一长，很容易搞不清赋值情况</li>
-<li>且返回值参数一定要写</li>
-</ul>
-<p>所以建议还是使用第一种方式。</p>
-<p>可以返回多个返回值带来便利的同时也会产生问题，如必须使用相应个数的参数来接受返回值，否则会报错（Go不像Python一样可以使用<code>[下标]</code>的方式来取得值，Python返回的是元组，所以可以使用下标），这就要求我们必须使用与返回值个数匹配的参数去接受，但是Go严格的语法要求<font color="red">函数内</font>所有定义的参数都必须使用到，否则报编译错误，此时我们就可以使用<code>_</code>来接受不需要的返回值。</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 使用_来接受不需要的值</span></span><br><span class="line">q, _ := div(a, b)</span><br></pre></td></tr></table></figure>
-<h2 id="多个返回值的正常用法"><a class="header-anchor" href="#多个返回值的正常用法">¶</a>多个返回值的正常用法</h2>
-<p><font color="red">注意：</font>不要滥用函数的多返回值，一般的常用法是用来定义一个参数用来返回错误<code>error</code>的，即一个正常的返回值，一个出现异常返回的错误值。</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">eval</span><span class="params">(a, b <span class="keyword">int</span>, op <span class="keyword">string</span>)</span> <span class="params">(<span class="keyword">int</span>, error)</span></span> &#123;  <span class="comment">//  f返回值可以直接类型，如这里的int和error</span></span><br><span class="line">  <span class="keyword">switch</span> op &#123;</span><br><span class="line">    <span class="keyword">case</span> <span class="string">&quot;+&quot;</span>:</span><br><span class="line">      <span class="keyword">return</span> a + b, <span class="literal">nil</span></span><br><span class="line">    <span class="keyword">case</span> <span class="string">&quot;-&quot;</span>:</span><br><span class="line">      <span class="keyword">return</span> a - b, <span class="literal">nil</span></span><br><span class="line">    <span class="keyword">case</span> <span class="string">&quot;*&quot;</span>:</span><br><span class="line">      <span class="keyword">return</span> a * b, <span class="literal">nil</span></span><br><span class="line">    <span class="keyword">case</span> <span class="string">&quot;/&quot;</span>:</span><br><span class="line">      q, _ := div(a, b)</span><br><span class="line">      <span class="keyword">return</span> q, <span class="literal">nil</span></span><br><span class="line">    <span class="keyword">default</span>:</span><br><span class="line">      <span class="comment">// 不使用原先的panic()函数，会中断程序的运行，而是采用fmt.Errorf()构造异常</span></span><br><span class="line">      <span class="keyword">return</span> <span class="number">0</span>, fmt.Errorf(  </span><br><span class="line">        <span class="string">&quot;unsupported operation: %s&quot;</span>, op)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">  <span class="keyword">if</span> result, err := eval(<span class="number">3</span>, <span class="number">4</span>, <span class="string">&quot;x&quot;</span>); err != <span class="literal">nil</span> &#123;</span><br><span class="line">  	fmt.Println(<span class="string">&quot;Error:&quot;</span>, err)</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    fmt.Println(result)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="函数式编程"><a class="header-anchor" href="#函数式编程">¶</a>函数式编程</h2>
-<p>Go语言是函数式编程，函数式一等公民：参数，变量，返回值都可以是函数</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">apply</span><span class="params">(op <span class="keyword">func</span>(<span class="keyword">int</span>, <span class="keyword">int</span>)</span> <span class="title">int</span>, <span class="title">a</span>, <span class="title">b</span> <span class="title">int</span>) <span class="title">int</span></span> &#123;</span><br><span class="line">  <span class="comment">// 为了获取函数名</span></span><br><span class="line">  p := reflect.ValueOf(op).Pointer()</span><br><span class="line">  opName := runtime.FuncForPC(p).Name()</span><br><span class="line">  fmt.Printf(<span class="string">&quot;Calling function %s with args &quot;</span> + <span class="string">&quot;(%d, %d)\n&quot;</span>, opName, a, b)</span><br><span class="line">  <span class="keyword">return</span> op(a, b)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 因为自带的math.Pow()方法的参数和返回值要求是float64，所以这里进行重写</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">pow</span><span class="params">(a,b <span class="keyword">int</span>)</span> <span class="title">int</span></span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">int</span>(math.Pow(<span class="keyword">float64</span>(a), <span class="keyword">float64</span>(b)))</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">  fmt.Println(apply(pow, <span class="number">3</span>, <span class="number">4</span>))</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 运行结果</span></span><br><span class="line">Calling function main.pow with args (<span class="number">3</span>, <span class="number">4</span>)</span><br><span class="line"><span class="number">81</span></span><br></pre></td></tr></table></figure>
-<p>除了传递手写的函数，也可以直接使用匿名函数(为省略了函数名的函数，除了函数名其他函数组件一个不能少)</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">  fmt.Println(apply(</span><br><span class="line">    <span class="function"><span class="keyword">func</span><span class="params">(a <span class="keyword">int</span>,b <span class="keyword">int</span>)</span> <span class="title">int</span></span>&#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="keyword">int</span>(math.Pow(</span><br><span class="line">        <span class="keyword">float64</span>(a), <span class="keyword">float64</span>(b)))</span><br><span class="line">    &#125;, <span class="number">3</span>, <span class="number">4</span>))</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 运行结果</span></span><br><span class="line">Calling function main.main.func1 with args (<span class="number">3</span>, <span class="number">4</span>)    </span><br><span class="line"><span class="number">81</span></span><br></pre></td></tr></table></figure>
-<p>第一个main是包名，第二个main是func main()的，由于是匿名的函数，所以第三个是func1。</p>
-<h2 id="其他语言中函数的特性"><a class="header-anchor" href="#其他语言中函数的特性">¶</a>其他语言中函数的特性</h2>
-<p>因为Go的语法较为简洁，一起其他语言的特性都不包含，如默认参数，可选参数，函数重载等。</p>
-<p>但是支持可变参数列表</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">sum</span><span class="params">(numbers ...<span class="keyword">int</span>)</span> <span class="title">int</span></span> &#123;     <span class="comment">// ...为golang的语法糖，此处表示可以接受多个int类型的参数</span></span><br><span class="line">  s := <span class="number">0</span></span><br><span class="line">  <span class="keyword">for</span> i := <span class="keyword">range</span> numbers &#123;</span><br><span class="line">    s += numbers[i]</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> s</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>可变参数列表的类型是相应类型的列表形式， 如上面的例子中的可变参数的类型是<code>[]int</code>。</p>
-<p>此外需要注意的是：</p>
-<ul>
-<li>一个函数中只能有一个可变参数列表</li>
-<li>在含有普通参数的情况下，可变参数列表必须放到参数列表的最后一项</li>
-</ul>
-<p>函数在含有参数以及返回值时，一定要对这些参数的类型进行规定（参数名 参数类型， 参数名2 参数类型），当参数类型相同时，可以只在参数列表的最后指明参数类型。<br>
-理论上函数可以返回多个返回值（但是必须在函数的定义中指明这些返回值的类型，指明返回值参数类型时，可以使用参数明，也可以不使用，且使用对应的变量去接受这些返回值），但是一般来说只能返两个参数（正常值，异常值）。</p>
-<h2 id="函数语法要点回顾"><a class="header-anchor" href="#函数语法要点回顾">¶</a>函数语法要点回顾</h2>
-<ul>
-<li>返回值类型写在最后</li>
-<li>可返回多个值</li>
-<li>函数作为参数</li>
-<li>没有默认参数，可选参数</li>
-</ul>
-]]></content>
-      <categories>
-        <category>计算机</category>
-        <category>Golang</category>
-      </categories>
-      <tags>
-        <tag>Golang</tag>
-        <tag>语言基础</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Go基础之包和封装</title>
-    <url>/2019/11/30/%E5%8C%85%E5%92%8C%E5%B0%81%E8%A3%85/</url>
-    <content><![CDATA[<h1>封装</h1>
-<p>通过命名来实现封装</p>
-<ul>
-<li>名字一般使用CamelCase</li>
-<li>首字母大写：public</li>
-<li>首字母小写：private</li>
-</ul>
-<p>相对于 包 而言，若一个外部的包想要访问本包内定义的结构，和  结构的方法（不仅仅是结构，定义的一般方法若想被其他包使用，也是要大写首字母的），这些命名，包括结构内变量的命名都要采用大写。</p>
-<p>但是在同一个包下的内容可以随便调用。</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> tree</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;fmt&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Node <span class="keyword">struct</span> &#123;</span><br><span class="line">	Value       <span class="keyword">int</span></span><br><span class="line">	Left, Right *Node</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(node Node)</span> <span class="title">Print</span><span class="params">()</span></span> &#123;</span><br><span class="line">	fmt.Print(node.Value, <span class="string">&quot; &quot;</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(node *Node)</span> <span class="title">SetValue</span><span class="params">(value <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> node == <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;Setting Value to nil &quot;</span> +</span><br><span class="line">			<span class="string">&quot;node. Ignored.&quot;</span>)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	node.Value = value</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">CreateNode</span><span class="params">(value <span class="keyword">int</span>)</span> *<span class="title">Node</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> &amp;Node&#123;Value: value&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h1>包</h1>
-<ul>
-<li>每个目录一个包，只能是同一种包</li>
-<li>main包包含可执行入口-- main函数，只有main包才能有main函数</li>
-<li>为结构定义的方法必须放在同一个包内</li>
-<li>可以是同一个包内的不同文件，对包外来说，只要知道包名，都可以使用，不需要知道文件名</li>
-</ul>
-<p>使用时，import导入的是存放包的目录名，同一个目录下只能有一种包名，用来表示包内文件的关系，以及被其他包使用时的开头 <code>包名.方法或变量</code>。但是为了不产生歧义，最好使用的时候，包名和目录名设置成一致的即可。</p>
-<h2 id="如何扩充系统类型或者别人的类型"><a class="header-anchor" href="#如何扩充系统类型或者别人的类型">¶</a>如何扩充系统类型或者别人的类型</h2>
-<p>在含有继承的语言中，可以通过继承的方式来扩充原有的功能，但是在go中是没有继承的概念的。Go采用以下两种方式来扩充：</p>
-<ul>
-<li>定义别名</li>
-<li>使用组合</li>
-</ul>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 使用组合的方式来完成    扩充自定义的treeNode结构，增加后序遍历的功能</span></span><br><span class="line"><span class="keyword">type</span> myTreeNode <span class="keyword">struct</span> &#123;</span><br><span class="line">	node *tree.Node</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(myNode *myTreeNode)</span> <span class="title">postOrder</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> myNode == <span class="literal">nil</span> || myNode.node == <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	left := myTreeNode&#123;myNode.node.Left&#125;</span><br><span class="line">	right := myTreeNode&#123;myNode.node.Right&#125;</span><br><span class="line"></span><br><span class="line">	left.postOrder()</span><br><span class="line">	right.postOrder()</span><br><span class="line">	myNode.node.Print()</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 使用别名的方式来完成  扩充[]int切片类型，提供Push、Pop、IsEmpty的功能</span></span><br><span class="line"><span class="keyword">package</span> queue</span><br><span class="line"></span><br><span class="line"><span class="comment">// A FIFO queue.</span></span><br><span class="line"><span class="keyword">type</span> Queue []<span class="keyword">int</span>    <span class="comment">// 使用type 定义了[]int类型的别名 Queue</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// Pushes the element into the queue.</span></span><br><span class="line"><span class="comment">// 		e.g. q.Push(123)</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(q *Queue)</span> <span class="title">Push</span><span class="params">(v <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">	*q = <span class="built_in">append</span>(*q, v)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Pops element from head.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(q *Queue)</span> <span class="title">Pop</span><span class="params">()</span> <span class="title">int</span></span> &#123;</span><br><span class="line">	head := (*q)[<span class="number">0</span>]</span><br><span class="line">	*q = (*q)[<span class="number">1</span>:]</span><br><span class="line">	<span class="keyword">return</span> head</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Returns if the queue is empty or not.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(q *Queue)</span> <span class="title">IsEmpty</span><span class="params">()</span> <span class="title">bool</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="built_in">len</span>(*q) == <span class="number">0</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h1>GOPATH环境变量</h1>
-<ul>
-<li>默认在~/go（Unix，Linux）</li>
-<li>官方推荐：所有项目和第三方库都放在同一个GOPATH下</li>
-<li>也可以将每个项目放在不同的GOPATH</li>
-<li>GO在 编译 的时候会自动到每个GOPATN下找到自己所依赖的包</li>
-</ul>
-<p>正常情况下  go get <a href="http://golang.org/x/tools/cmd/goimports">golang.org/x/tools/cmd/goimports</a></p>
-<p>使用gopm来获取无法下载的包</p>
-<p>go get -v <a href="http://github.com/gpmgo/gopm">github.com/gpmgo/gopm</a></p>
-<ul>
-<li>go build 来编译</li>
-<li>go install 产生pkg文件和可执行文件</li>
-<li>go run 直接编译运行</li>
-</ul>
-<p>gopath下三个文件夹，bin 放go install的可执行文件， pkg 存放包文件，src  为项目源代码，也是可以使被掉</p>
 ]]></content>
       <categories>
         <category>计算机</category>
@@ -3764,6 +3764,11 @@ sudo ln -s 你的目录/Mxonline/conf/nginx/uc_nginx.conf /etc/nginx/conf.d/</p>
       </tags>
   </entry>
   <entry>
+    <title>categories</title>
+    <url>/categories/index.html</url>
+    <content><![CDATA[]]></content>
+  </entry>
+  <entry>
     <title></title>
     <url>/about/index.html</url>
     <content><![CDATA[<html>
@@ -3782,11 +3787,6 @@ window.location.href='https://github.com/Skylor-Tang';
 </html>
 
 ]]></content>
-  </entry>
-  <entry>
-    <title>categories</title>
-    <url>/categories/index.html</url>
-    <content><![CDATA[]]></content>
   </entry>
   <entry>
     <title>tags</title>
