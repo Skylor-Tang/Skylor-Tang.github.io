@@ -212,6 +212,102 @@ python编码：<a href="https://www.cnblogs.com/yuanchenqi/articles/5956943.html
       </tags>
   </entry>
   <entry>
+    <title>Celery 基本使用</title>
+    <url>/2021/03/20/Celery-%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/</url>
+    <content><![CDATA[<p>Celery是Python开发的分布式任务调度模块，本身不含消息服务，它使用第三方消息服务来传递任务，目前，Celery支持的消息服务有RabbitMQ、Redis甚至是数据库。</p>
+<p>celery的5个主要部分：</p>
+<ul>
+<li>
+<p>Task<br>
+任务，有异步任务和定时任务。</p>
+</li>
+<li>
+<p>Beat<br>
+定时任务调度器，根据配置定时将任务发送给Broker。</p>
+</li>
+<li>
+<p>Broker<br>
+中间人，接收生产者发来的消息即 Task，将任务存入队列。任务的消费者是 Worker。<br>
+Celery 本身不提供队列服务，推荐用 Redis 或 RabbitMQ 实现队列服务。</p>
+</li>
+<li>
+<p>Worker<br>
+执行任务的单元，它实时监控消息队列，如果有任务就获取任务并执行它。</p>
+</li>
+<li>
+<p>Backend<br>
+用于存储任务的执行结果，可以使用redis作为存储。</p>
+</li>
+</ul>
+<p>如果使用redis提供存储服务，需要 <code>pip install redis</code> 安装 redis 库。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># tasks.py</span></span><br><span class="line"><span class="keyword">from</span> celery <span class="keyword">import</span> Celery</span><br><span class="line"></span><br><span class="line">broker = <span class="string">&#x27;redis://127.0.0.1:6379/1&#x27;</span></span><br><span class="line">app = Celery(<span class="string">&#x27;demo&#x27;</span>, broker=broker)</span><br><span class="line"></span><br><span class="line"><span class="comment"># celery 任务函数，只是创建了任务</span></span><br><span class="line"><span class="meta">@app.task</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">my_task</span>(<span class="params">task_name</span>):</span></span><br><span class="line">  <span class="built_in">print</span>(<span class="string">&quot;任务%s正在执行&quot;</span> %task_name)</span><br></pre></td></tr></table></figure>
+<p>此时在 <a href="http://tasks.py">tasks.py</a> 所在的目录下运行 <code>celery -A tasks worker --loglevel=info</code>:</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">(celery_venv) (base) ➜  celery celery -A tasks worker --loglevel=info</span><br><span class="line"></span><br><span class="line">-------------- celery@tangmeijiandeMacBook-Pro.local v5.0.5 (singularity)</span><br><span class="line">--- ***** ----- </span><br><span class="line">-- ******* ---- macOS-10.15.7-x86_64-i386-64bit 2021-04-12 12:04:00</span><br><span class="line">- *** --- * --- </span><br><span class="line">- ** ---------- [config]</span><br><span class="line">- ** ---------- .&gt; app:         demo:0x10431dc70</span><br><span class="line">- ** ---------- .&gt; transport:   redis://127.0.0.1:6379/1</span><br><span class="line">- ** ---------- .&gt; results:     disabled://</span><br><span class="line">- *** --- * --- .&gt; concurrency: 16 (prefork)  # workor并发数量. 可以通过 -c 参数指定开启的线程数</span><br><span class="line">-- ******* ---- .&gt; task events: OFF (enable -E to monitor tasks in this worker)</span><br><span class="line">--- ***** ----- </span><br><span class="line">-------------- [queues]</span><br><span class="line">.&gt; celery           exchange=celery(direct) key=celery</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">[tasks]  # 创建的任务列表</span><br><span class="line">. tasks.my_task</span><br><span class="line">	</span><br><span class="line">[2021-04-12 12:04:01,055: INFO/MainProcess] Connected to redis://127.0.0.1:6379/1</span><br><span class="line">[2021-04-12 12:04:01,062: INFO/MainProcess] mingle: searching for neighbors</span><br><span class="line">[2021-04-12 12:04:02,079: INFO/MainProcess] mingle: all alone</span><br><span class="line">[2021-04-12 12:04:02,091: INFO/MainProcess] celery@tangmeijiandeMacBook-Pro.local ready.</span><br></pre></td></tr></table></figure>
+<p>只是启动了 celery，此时就会在 redis 中就会创建以下内容：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6379[1]&gt; keys *</span><br><span class="line">1) &quot;_kombu.binding.celeryev&quot;</span><br><span class="line">2) &quot;_kombu.binding.celery&quot;</span><br><span class="line">3) &quot;_kombu.binding.celery.pidbox&quot;</span><br></pre></td></tr></table></figure>
+<p>调用任务</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> tasks <span class="keyword">import</span> my_task</span><br><span class="line">my_task.delay()  <span class="comment"># 会将任务my_task添加到broker队列中。</span></span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>my_task.delay()  <span class="comment"># 任务调用会有一个返回值，将会返回一个AsyncResult对象，这个对象可以用来检查任务的状态或者获得任务的返回值。</span></span><br><span class="line">&lt;AsyncResult: a65130bb-<span class="number">8223</span>-477e-8f0d-918e9fbb9a9b&gt;</span><br></pre></td></tr></table></figure>
+<p>此时 celery客户端的输出：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">[2021-04-12 12:09:07,650: INFO/MainProcess] Received task: tasks.my_task[a65130bb-8223-477e-8f0d-918e9fbb9a9b] </span><br><span class="line">[2021-04-12 12:09:07,652: WARNING/ForkPoolWorker-16] 任务函数正在执行。。。。 # my_task.delay()添加的任务被Worker发现后，自动取出并运行。</span><br><span class="line">[2021-04-12 12:09:07,653: INFO/ForkPoolWorker-16] Task tasks.my_task[a65130bb-8223-477e-8f0d-918e9fbb9a9b] succeeded in 0.0014049079999836067s: None # 这个None就是任务的返回值，因为这个任务没有返回值，所以为None。</span><br></pre></td></tr></table></figure>
+<p>存储任务的结果：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> celery <span class="keyword">import</span> Celery</span><br><span class="line"></span><br><span class="line"><span class="comment"># broker使用的存储方式</span></span><br><span class="line">broker = <span class="string">&#x27;redis://127.0.0.1:6379/1&#x27;</span></span><br><span class="line"><span class="comment"># 存储结果使用的方式</span></span><br><span class="line">backend = <span class="string">&#x27;redis://127.0.0.1:6379/2&#x27;</span></span><br><span class="line"></span><br><span class="line">app = Celery(<span class="string">&#x27;demo&#x27;</span>, broker=broker, backend=backend)</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.task</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">my_task</span>(<span class="params">a, b</span>):</span>  </span><br><span class="line">  <span class="built_in">print</span>(<span class="string">&#x27;任务函数正在执行。。。。&#x27;</span>)</span><br><span class="line">  <span class="keyword">return</span> a + b   <span class="comment"># 新建的任务有返回值</span></span><br></pre></td></tr></table></figure>
+<p>此时运行celery之后：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">(celery_venv) (base) ➜  celery celery -A tasks worker --loglevel=info</span><br><span class="line"></span><br><span class="line">-------------- celery@tangmeijiandeMacBook-Pro.local v5.0.5 (singularity)</span><br><span class="line">--- ***** ----- </span><br><span class="line">-- ******* ---- macOS-10.15.7-x86_64-i386-64bit 2021-04-12 12:20:50</span><br><span class="line">- *** --- * --- </span><br><span class="line">- ** ---------- [config]</span><br><span class="line">- ** ---------- .&gt; app:         demo:0x102fd2c70</span><br><span class="line">- ** ---------- .&gt; transport:   redis://127.0.0.1:6379/1</span><br><span class="line">- ** ---------- .&gt; results:     redis://127.0.0.1:6379/2    # 区别，设置了结果的存储位置</span><br><span class="line">- *** --- * --- .&gt; concurrency: 16 (prefork)</span><br><span class="line">-- ******* ---- .&gt; task events: OFF (enable -E to monitor tasks in this worker)</span><br><span class="line">--- ***** ----- </span><br><span class="line">-------------- [queues]</span><br><span class="line">.&gt; celery           exchange=celery(direct) key=celery</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">[tasks]</span><br><span class="line">. tasks.my_task</span><br><span class="line"></span><br><span class="line">[2021-04-12 12:20:50,687: INFO/MainProcess] Connected to redis://127.0.0.1:6379/1</span><br><span class="line">[2021-04-12 12:20:50,695: INFO/MainProcess] mingle: searching for neighbors</span><br><span class="line">[2021-04-12 12:20:51,712: INFO/MainProcess] mingle: all alone</span><br><span class="line">[2021-04-12 12:20:51,723: INFO/MainProcess] celery@tangmeijiandeMacBook-Pro.local ready.</span><br></pre></td></tr></table></figure>
+<p>除了增加了result的存储位置，其他没有变化。</p>
+<p>调用任务：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> tasks <span class="keyword">import</span> my_task</span><br><span class="line">res = my_task.delay() <span class="comment"># res 的值为一个AsyncResult对象，这个对象可以用来检查任务的状态或者获得任务的返回值。</span></span><br><span class="line">	</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>res.result  <span class="comment"># 30 </span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>res.failed()  <span class="comment"># False</span></span><br></pre></td></tr></table></figure>
+<p>使用 <code>dir(res)</code> 可以查看 AsyncResult 对象支持的方法。</p>
+<p>在backend设置的存储设置中可以看到任务的返回值：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6379[2]&gt; keys *</span><br><span class="line">celery-task-meta-f63fe60e-6505-413d-b052-44116b95d238</span><br><span class="line">127.0.0.1:6379[2]&gt; get celery-task-meta-f63fe60e-6505-413d-b052-44116b95d238</span><br><span class="line">&#123;&quot;status&quot;: &quot;SUCCESS&quot;, &quot;result&quot;: 30, &quot;traceback&quot;: null, &quot;children&quot;: [], &quot;date_done&quot;: &quot;2021-04-12T04:28:07.373922&quot;, &quot;task_id&quot;: &quot;f63fe60e-6505-413d-b052-44116b95d238&quot;&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="使用小结（基础的使用流程）"><a class="header-anchor" href="#使用小结（基础的使用流程）">¶</a>使用小结（基础的使用流程）</h4>
+<ol>
+<li>
+<p>创建Celery实例：<br>
+创建一个文件，<a href="http://xn--tasks-fg1hl3gxs9i0qya.py">一般使用tasks.py</a> 作为文件名，在内部创建Celery实例。<br>
+Celery实例的配置最基础的三个参数是： app_name, broker, backend (其中backend 如果不需要任务返回值，可以不设置)</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> celery <span class="keyword">import</span> Celery</span><br><span class="line"></span><br><span class="line">broker = <span class="string">&#x27;redis://127.0.0.1:6379/1&#x27;</span></span><br><span class="line">backend = <span class="string">&#x27;redis://127.0.0.1:6379/2&#x27;</span></span><br><span class="line"></span><br><span class="line">app = Celery(<span class="string">&#x27;demo&#x27;</span>, broker=broker, backend=backend)</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>创建任务对象：<br>
+使用Celery的实例对象 app, 通过 @app.task 装饰器，创建任务。 注意只是创建了任务，并没有添加到broker中。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">@app.task</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">my_task</span>(<span class="params">a, b</span>):</span></span><br><span class="line">  <span class="built_in">print</span>(<span class="string">&#x27;任务函数正在执行。。。。&#x27;</span>)</span><br><span class="line">  <span class="keyword">return</span> a + b</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>运行Celery服务：<br>
+使用 <code>celery -A 使用的application的名称 worker --loglevel=info</code><br>
+celer 命令的组成部分：<code>celery OPTIONS COMMAND </code><br>
+OPTIONS 常用 -A 使用的application的名称，如这里的 <a href="http://tasks.py">tasks.py</a> 文件就使用 <code>-A tasks</code> 即可。<br>
+COMMAND 常用 worker ，表示开始运行celery实例。<br>
+COMMAND 也提供了一些options，如 <code>--loglevel=info</code> 用来设置日志等级。</p>
+<blockquote>
+<p>注意：必须通过 -A 指定使用的应用文件，否则不会自动识别文件，会使用默认的celery，使用的是broker是rabbitmq。</p>
+</blockquote>
+<p><code>celery -A tasks worker --loglevel=info </code></p>
+</li>
+<li>
+<p>发送任务到broker中：<br>
+获取创建的任务对象，调用任务对象的delay()方法，如果任务有参数，直接传递到delay中即可。<br>
+将任务发送到broker队列中，Wroker会自动发现队列中的任务，然后自动执行，执行的结果存储到创建Celery实例时backend中指定的存储设备中。<br>
+调用任务对象的 delay() 方法的时候，会返回一个AsyncResult对象，这个对象可以用来检查任务的状态或者获得任务的返回值。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> tasks <span class="keyword">import</span> my_task</span><br><span class="line"></span><br><span class="line">res = my_task.delay(<span class="number">10</span>, <span class="number">20</span>) </span><br><span class="line">res.result  <span class="comment"># 30</span></span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>想要使用 AsyncResult 对象检查任务的状态或者获得任务的返回值则必须在创建 Celery 实例的时候指定backend。<br>
+任务是在 Celery 服务启动的时候一起设置进去的，当调用 <code>任务.delay()</code> 的时候被发送到broker队列中执行。<br>
+任务是可以被重复执行的。只需要调用 <code>任务.delay()</code> 即可。<br>
+任务可以执行失败，但是不会导致 Celery 服务终止，res.result 会返回错误信息（函数调用的错误信息）。</p>
+<p>未完待续。。。</p>
+]]></content>
+      <categories>
+        <category>计算机</category>
+        <category>开发问题</category>
+        <category>分布式</category>
+      </categories>
+      <tags>
+        <tag>Celery</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Django REST framework之JWT用户验证</title>
     <url>/2020/04/03/Django%20REST%20framework%E4%B9%8BJWT%E7%94%A8%E6%88%B7%E9%AA%8C%E8%AF%81/</url>
     <content><![CDATA[<p>在之前的 <a href="/2020/03/24/Django-REST-framework%E7%9A%84token%E7%99%BB%E9%99%86%E5%92%8C%E5%8E%9F%E7%90%86/" title="Django REST framework的token原理和验证登录">Django REST framework的token原理和验证登录</a> 中，使用了drf自带的Token认证类<code>rest_framework.authentication.TokenAuthentication</code> 实现了Token认证，但是drf自带的Token认证有以下几个问题：</p>

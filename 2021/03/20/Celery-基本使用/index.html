@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Monaco:300,300italic,400,400italic,700,700italic|Consolas:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-big-counter.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"always","padding":18,"offset":12,"onmobile":true},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Celery是Python开发的分布式任务调度模块，本身不含消息服务，它使用第三方消息服务来传递任务，目前，Celery支持的消息服务有RabbitMQ、Redis甚至是数据库。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Celery 基本使用">
+<meta property="og:url" content="http://yoursite.com/2021/03/20/Celery-%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/index.html">
+<meta property="og:site_name" content="Skylor Blog">
+<meta property="og:description" content="Celery是Python开发的分布式任务调度模块，本身不含消息服务，它使用第三方消息服务来传递任务，目前，Celery支持的消息服务有RabbitMQ、Redis甚至是数据库。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-03-20T13:09:03.000Z">
+<meta property="article:modified_time" content="2021-04-12T13:45:43.996Z">
+<meta property="article:author" content="Skylor Tang">
+<meta property="article:tag" content="Celery">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://yoursite.com/2021/03/20/Celery-%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Celery 基本使用 | Skylor Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Skylor Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/03/20/Celery-%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Skylor Tang">
+      <meta itemprop="description" content="Your advantages today will be replaced by future trends, so keep learning.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Skylor Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Celery 基本使用
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-03-20 21:09:03" itemprop="dateCreated datePublished" datetime="2021-03-20T21:09:03+08:00">2021-03-20</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-04-12 21:45:43" itemprop="dateModified" datetime="2021-04-12T21:45:43+08:00">2021-04-12</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/" itemprop="url" rel="index"><span itemprop="name">计算机</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/%E5%BC%80%E5%8F%91%E9%97%AE%E9%A2%98/" itemprop="url" rel="index"><span itemprop="name">开发问题</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/%E5%88%86%E5%B8%83%E5%BC%8F/" itemprop="url" rel="index"><span itemprop="name">分布式</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2021/03/20/Celery-%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2021/03/20/Celery-%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+            <div class="post-description">Celery是Python开发的分布式任务调度模块，本身不含消息服务，它使用第三方消息服务来传递任务，目前，Celery支持的消息服务有RabbitMQ、Redis甚至是数据库。</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>Celery是Python开发的分布式任务调度模块，本身不含消息服务，它使用第三方消息服务来传递任务，目前，Celery支持的消息服务有RabbitMQ、Redis甚至是数据库。</p>
+<p>celery的5个主要部分：</p>
+<ul>
+<li>
+<p>Task<br>
+任务，有异步任务和定时任务。</p>
+</li>
+<li>
+<p>Beat<br>
+定时任务调度器，根据配置定时将任务发送给Broker。</p>
+</li>
+<li>
+<p>Broker<br>
+中间人，接收生产者发来的消息即 Task，将任务存入队列。任务的消费者是 Worker。<br>
+Celery 本身不提供队列服务，推荐用 Redis 或 RabbitMQ 实现队列服务。</p>
+</li>
+<li>
+<p>Worker<br>
+执行任务的单元，它实时监控消息队列，如果有任务就获取任务并执行它。</p>
+</li>
+<li>
+<p>Backend<br>
+用于存储任务的执行结果，可以使用redis作为存储。</p>
+</li>
+</ul>
+<p>如果使用redis提供存储服务，需要 <code>pip install redis</code> 安装 redis 库。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># tasks.py</span></span><br><span class="line"><span class="keyword">from</span> celery <span class="keyword">import</span> Celery</span><br><span class="line"></span><br><span class="line">broker = <span class="string">&#x27;redis://127.0.0.1:6379/1&#x27;</span></span><br><span class="line">app = Celery(<span class="string">&#x27;demo&#x27;</span>, broker=broker)</span><br><span class="line"></span><br><span class="line"><span class="comment"># celery 任务函数，只是创建了任务</span></span><br><span class="line"><span class="meta">@app.task</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">my_task</span>(<span class="params">task_name</span>):</span></span><br><span class="line">  <span class="built_in">print</span>(<span class="string">&quot;任务%s正在执行&quot;</span> %task_name)</span><br></pre></td></tr></table></figure>
+<p>此时在 <a target="_blank" rel="noopener" href="http://tasks.py">tasks.py</a> 所在的目录下运行 <code>celery -A tasks worker --loglevel=info</code>:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">(celery_venv) (base) ➜  celery celery -A tasks worker --loglevel=info</span><br><span class="line"></span><br><span class="line">-------------- celery@tangmeijiandeMacBook-Pro.local v5.0.5 (singularity)</span><br><span class="line">--- ***** ----- </span><br><span class="line">-- ******* ---- macOS-10.15.7-x86_64-i386-64bit 2021-04-12 12:04:00</span><br><span class="line">- *** --- * --- </span><br><span class="line">- ** ---------- [config]</span><br><span class="line">- ** ---------- .&gt; app:         demo:0x10431dc70</span><br><span class="line">- ** ---------- .&gt; transport:   redis://127.0.0.1:6379/1</span><br><span class="line">- ** ---------- .&gt; results:     disabled://</span><br><span class="line">- *** --- * --- .&gt; concurrency: 16 (prefork)  # workor并发数量. 可以通过 -c 参数指定开启的线程数</span><br><span class="line">-- ******* ---- .&gt; task events: OFF (enable -E to monitor tasks in this worker)</span><br><span class="line">--- ***** ----- </span><br><span class="line">-------------- [queues]</span><br><span class="line">.&gt; celery           exchange=celery(direct) key=celery</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">[tasks]  # 创建的任务列表</span><br><span class="line">. tasks.my_task</span><br><span class="line">	</span><br><span class="line">[2021-04-12 12:04:01,055: INFO/MainProcess] Connected to redis://127.0.0.1:6379/1</span><br><span class="line">[2021-04-12 12:04:01,062: INFO/MainProcess] mingle: searching for neighbors</span><br><span class="line">[2021-04-12 12:04:02,079: INFO/MainProcess] mingle: all alone</span><br><span class="line">[2021-04-12 12:04:02,091: INFO/MainProcess] celery@tangmeijiandeMacBook-Pro.local ready.</span><br></pre></td></tr></table></figure>
+<p>只是启动了 celery，此时就会在 redis 中就会创建以下内容：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1:6379[1]&gt; keys *</span><br><span class="line">1) &quot;_kombu.binding.celeryev&quot;</span><br><span class="line">2) &quot;_kombu.binding.celery&quot;</span><br><span class="line">3) &quot;_kombu.binding.celery.pidbox&quot;</span><br></pre></td></tr></table></figure>
+<p>调用任务</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> tasks <span class="keyword">import</span> my_task</span><br><span class="line">my_task.delay()  <span class="comment"># 会将任务my_task添加到broker队列中。</span></span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>my_task.delay()  <span class="comment"># 任务调用会有一个返回值，将会返回一个AsyncResult对象，这个对象可以用来检查任务的状态或者获得任务的返回值。</span></span><br><span class="line">&lt;AsyncResult: a65130bb-<span class="number">8223</span>-477e-8f0d-918e9fbb9a9b&gt;</span><br></pre></td></tr></table></figure>
+<p>此时 celery客户端的输出：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[2021-04-12 12:09:07,650: INFO/MainProcess] Received task: tasks.my_task[a65130bb-8223-477e-8f0d-918e9fbb9a9b] </span><br><span class="line">[2021-04-12 12:09:07,652: WARNING/ForkPoolWorker-16] 任务函数正在执行。。。。 # my_task.delay()添加的任务被Worker发现后，自动取出并运行。</span><br><span class="line">[2021-04-12 12:09:07,653: INFO/ForkPoolWorker-16] Task tasks.my_task[a65130bb-8223-477e-8f0d-918e9fbb9a9b] succeeded in 0.0014049079999836067s: None # 这个None就是任务的返回值，因为这个任务没有返回值，所以为None。</span><br></pre></td></tr></table></figure>
+<p>存储任务的结果：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> celery <span class="keyword">import</span> Celery</span><br><span class="line"></span><br><span class="line"><span class="comment"># broker使用的存储方式</span></span><br><span class="line">broker = <span class="string">&#x27;redis://127.0.0.1:6379/1&#x27;</span></span><br><span class="line"><span class="comment"># 存储结果使用的方式</span></span><br><span class="line">backend = <span class="string">&#x27;redis://127.0.0.1:6379/2&#x27;</span></span><br><span class="line"></span><br><span class="line">app = Celery(<span class="string">&#x27;demo&#x27;</span>, broker=broker, backend=backend)</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.task</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">my_task</span>(<span class="params">a, b</span>):</span>  </span><br><span class="line">  <span class="built_in">print</span>(<span class="string">&#x27;任务函数正在执行。。。。&#x27;</span>)</span><br><span class="line">  <span class="keyword">return</span> a + b   <span class="comment"># 新建的任务有返回值</span></span><br></pre></td></tr></table></figure>
+<p>此时运行celery之后：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">(celery_venv) (base) ➜  celery celery -A tasks worker --loglevel=info</span><br><span class="line"></span><br><span class="line">-------------- celery@tangmeijiandeMacBook-Pro.local v5.0.5 (singularity)</span><br><span class="line">--- ***** ----- </span><br><span class="line">-- ******* ---- macOS-10.15.7-x86_64-i386-64bit 2021-04-12 12:20:50</span><br><span class="line">- *** --- * --- </span><br><span class="line">- ** ---------- [config]</span><br><span class="line">- ** ---------- .&gt; app:         demo:0x102fd2c70</span><br><span class="line">- ** ---------- .&gt; transport:   redis://127.0.0.1:6379/1</span><br><span class="line">- ** ---------- .&gt; results:     redis://127.0.0.1:6379/2    # 区别，设置了结果的存储位置</span><br><span class="line">- *** --- * --- .&gt; concurrency: 16 (prefork)</span><br><span class="line">-- ******* ---- .&gt; task events: OFF (enable -E to monitor tasks in this worker)</span><br><span class="line">--- ***** ----- </span><br><span class="line">-------------- [queues]</span><br><span class="line">.&gt; celery           exchange=celery(direct) key=celery</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">[tasks]</span><br><span class="line">. tasks.my_task</span><br><span class="line"></span><br><span class="line">[2021-04-12 12:20:50,687: INFO/MainProcess] Connected to redis://127.0.0.1:6379/1</span><br><span class="line">[2021-04-12 12:20:50,695: INFO/MainProcess] mingle: searching for neighbors</span><br><span class="line">[2021-04-12 12:20:51,712: INFO/MainProcess] mingle: all alone</span><br><span class="line">[2021-04-12 12:20:51,723: INFO/MainProcess] celery@tangmeijiandeMacBook-Pro.local ready.</span><br></pre></td></tr></table></figure>
+<p>除了增加了result的存储位置，其他没有变化。</p>
+<p>调用任务：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> tasks <span class="keyword">import</span> my_task</span><br><span class="line">res = my_task.delay() <span class="comment"># res 的值为一个AsyncResult对象，这个对象可以用来检查任务的状态或者获得任务的返回值。</span></span><br><span class="line">	</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>res.result  <span class="comment"># 30 </span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>res.failed()  <span class="comment"># False</span></span><br></pre></td></tr></table></figure>
+<p>使用 <code>dir(res)</code> 可以查看 AsyncResult 对象支持的方法。</p>
+<p>在backend设置的存储设置中可以看到任务的返回值：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1:6379[2]&gt; keys *</span><br><span class="line">celery-task-meta-f63fe60e-6505-413d-b052-44116b95d238</span><br><span class="line">127.0.0.1:6379[2]&gt; get celery-task-meta-f63fe60e-6505-413d-b052-44116b95d238</span><br><span class="line">&#123;&quot;status&quot;: &quot;SUCCESS&quot;, &quot;result&quot;: 30, &quot;traceback&quot;: null, &quot;children&quot;: [], &quot;date_done&quot;: &quot;2021-04-12T04:28:07.373922&quot;, &quot;task_id&quot;: &quot;f63fe60e-6505-413d-b052-44116b95d238&quot;&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="使用小结（基础的使用流程）"><a class="header-anchor" href="#使用小结（基础的使用流程）">¶</a>使用小结（基础的使用流程）</h4>
+<ol>
+<li>
+<p>创建Celery实例：<br>
+创建一个文件，<a target="_blank" rel="noopener" href="http://xn--tasks-fg1hl3gxs9i0qya.py">一般使用tasks.py</a> 作为文件名，在内部创建Celery实例。<br>
+Celery实例的配置最基础的三个参数是： app_name, broker, backend (其中backend 如果不需要任务返回值，可以不设置)</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> celery <span class="keyword">import</span> Celery</span><br><span class="line"></span><br><span class="line">broker = <span class="string">&#x27;redis://127.0.0.1:6379/1&#x27;</span></span><br><span class="line">backend = <span class="string">&#x27;redis://127.0.0.1:6379/2&#x27;</span></span><br><span class="line"></span><br><span class="line">app = Celery(<span class="string">&#x27;demo&#x27;</span>, broker=broker, backend=backend)</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>创建任务对象：<br>
+使用Celery的实例对象 app, 通过 @app.task 装饰器，创建任务。 注意只是创建了任务，并没有添加到broker中。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@app.task</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">my_task</span>(<span class="params">a, b</span>):</span></span><br><span class="line">  <span class="built_in">print</span>(<span class="string">&#x27;任务函数正在执行。。。。&#x27;</span>)</span><br><span class="line">  <span class="keyword">return</span> a + b</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>运行Celery服务：<br>
+使用 <code>celery -A 使用的application的名称 worker --loglevel=info</code><br>
+celer 命令的组成部分：<code>celery OPTIONS COMMAND </code><br>
+OPTIONS 常用 -A 使用的application的名称，如这里的 <a target="_blank" rel="noopener" href="http://tasks.py">tasks.py</a> 文件就使用 <code>-A tasks</code> 即可。<br>
+COMMAND 常用 worker ，表示开始运行celery实例。<br>
+COMMAND 也提供了一些options，如 <code>--loglevel=info</code> 用来设置日志等级。</p>
+<blockquote>
+<p>注意：必须通过 -A 指定使用的应用文件，否则不会自动识别文件，会使用默认的celery，使用的是broker是rabbitmq。</p>
+</blockquote>
+<p><code>celery -A tasks worker --loglevel=info </code></p>
+</li>
+<li>
+<p>发送任务到broker中：<br>
+获取创建的任务对象，调用任务对象的delay()方法，如果任务有参数，直接传递到delay中即可。<br>
+将任务发送到broker队列中，Wroker会自动发现队列中的任务，然后自动执行，执行的结果存储到创建Celery实例时backend中指定的存储设备中。<br>
+调用任务对象的 delay() 方法的时候，会返回一个AsyncResult对象，这个对象可以用来检查任务的状态或者获得任务的返回值。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> tasks <span class="keyword">import</span> my_task</span><br><span class="line"></span><br><span class="line">res = my_task.delay(<span class="number">10</span>, <span class="number">20</span>) </span><br><span class="line">res.result  <span class="comment"># 30</span></span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>想要使用 AsyncResult 对象检查任务的状态或者获得任务的返回值则必须在创建 Celery 实例的时候指定backend。<br>
+任务是在 Celery 服务启动的时候一起设置进去的，当调用 <code>任务.delay()</code> 的时候被发送到broker队列中执行。<br>
+任务是可以被重复执行的。只需要调用 <code>任务.delay()</code> 即可。<br>
+任务可以执行失败，但是不会导致 Celery 服务终止，res.result 会返回错误信息（函数调用的错误信息）。</p>
+<p>未完待续。。。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Celery/" rel="tag"># Celery</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/03/10/Ajax-%E8%B7%A8%E5%9F%9F%E9%97%AE%E9%A2%98%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/" rel="prev" title="Ajax 跨域问题解决方案">
+      <i class="fa fa-chevron-left"></i> Ajax 跨域问题解决方案
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E5%B0%8F%E7%BB%93%EF%BC%88%E5%9F%BA%E7%A1%80%E7%9A%84%E4%BD%BF%E7%94%A8%E6%B5%81%E7%A8%8B%EF%BC%89"><span class="nav-number">1.</span> <span class="nav-text">使用小结（基础的使用流程）</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Skylor Tang"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Skylor Tang</p>
+  <div class="site-description" itemprop="description">Your advantages today will be replaced by future trends, so keep learning.</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">33</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">18</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">29</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      友情链接
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://kalasearch.cn/" title="https:&#x2F;&#x2F;kalasearch.cn&#x2F;" rel="noopener" target="_blank">卡拉搜索</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2019 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Skylor Tang</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'bva4r4SJYiDLdhU1ALkqpbqw-gzGzoHsz',
+      appKey     : 'bWLTGKg8MzPrXsAvC3YDMehj',
+      placeholder: "欢迎留言",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>
