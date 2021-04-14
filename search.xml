@@ -3765,6 +3765,11 @@ sudo ln -s 你的目录/Mxonline/conf/nginx/uc_nginx.conf /etc/nginx/conf.d/</p>
       </tags>
   </entry>
   <entry>
+    <title>categories</title>
+    <url>/categories/index.html</url>
+    <content><![CDATA[]]></content>
+  </entry>
+  <entry>
     <title></title>
     <url>/about/index.html</url>
     <content><![CDATA[<html>
@@ -3783,11 +3788,6 @@ window.location.href='https://github.com/Skylor-Tang';
 </html>
 
 ]]></content>
-  </entry>
-  <entry>
-    <title>categories</title>
-    <url>/categories/index.html</url>
-    <content><![CDATA[]]></content>
   </entry>
   <entry>
     <title>tags</title>
