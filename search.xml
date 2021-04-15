@@ -1453,7 +1453,7 @@ Docker是一个Client-Server结构的系统，Docker守护进程运行在主机�
 <p>修改分支名称</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git branch -m new_branch_name</span><br></pre></td></tr></table></figure>
 <blockquote>
-<p>修改当前分支的名称，GitHub现在不再使用master作为默认的主分支，改为使用main。</p>
+<p>修改当前分支的名称，GitHub现在不再使用master作为默认的主分支，改为使用main。且在初始化的时候，会提示执行 git config --global init.defaultBranch branch_name 修改默认的分支名。</p>
 </blockquote>
 <p>删除分支</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git branch -d 分支名 </span><br></pre></td></tr></table></figure>
@@ -3770,6 +3770,16 @@ sudo ln -s 你的目录/Mxonline/conf/nginx/uc_nginx.conf /etc/nginx/conf.d/</p>
       </tags>
   </entry>
   <entry>
+    <title>categories</title>
+    <url>/categories/index.html</url>
+    <content><![CDATA[]]></content>
+  </entry>
+  <entry>
+    <title>tags</title>
+    <url>/tags/index.html</url>
+    <content><![CDATA[]]></content>
+  </entry>
+  <entry>
     <title></title>
     <url>/about/index.html</url>
     <content><![CDATA[<html>
@@ -3788,15 +3798,5 @@ window.location.href='https://github.com/Skylor-Tang';
 </html>
 
 ]]></content>
-  </entry>
-  <entry>
-    <title>categories</title>
-    <url>/categories/index.html</url>
-    <content><![CDATA[]]></content>
-  </entry>
-  <entry>
-    <title>tags</title>
-    <url>/tags/index.html</url>
-    <content><![CDATA[]]></content>
   </entry>
 </search>
