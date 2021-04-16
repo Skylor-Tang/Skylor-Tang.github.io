@@ -1342,7 +1342,7 @@ Django自带了一些注入，如在模板中，直接可以使用<code>&#123; %
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-04-08 21:44:02" itemprop="dateModified" datetime="2021-04-08T21:44:02+08:00">2021-04-08</time>
+                <time title="修改时间：2021-04-16 19:35:44" itemprop="dateModified" datetime="2021-04-16T19:35:44+08:00">2021-04-16</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1389,7 +1389,7 @@ Django自带了一些注入，如在模板中，直接可以使用<code>&#123; %
       
           <p>使用 Nginx + uWSGI 部署，Nginx完成端口的转发，uWSGI负责启动 Django</p>
 <h2 id="Nginx、WSGI、uwsgi、uWSGI、django这几个关系"><a class="header-anchor" href="#Nginx、WSGI、uwsgi、uWSGI、django这几个关系">¶</a>Nginx、WSGI、uwsgi、uWSGI、django这几个关系</h2>
-<p>WSGI，全称 Web Server Gateway Interface，或者 Python Web Server Gateway Interface ，是为 Python 语言定义的 Web 服务器和 Web 应用程序或框架之间的一种简单而通用的接口。描述的是Web服务器如何与Web应用间进行通信。它不是服务器、python模块、框架、API或者任何软件，只是一种描述web服务器（如nginx，uWSGI等服务器）如何与web应用程序（如用Django、Flask框架写的程序）通信的规范。</p>
+<p>WSGI，全称 Web Server Gateway Interface，或者 Python Web Server Gateway Interface ，是为 Python 语言定义的 Web 服务器和 Web 应用程序或框架之间的一种简单而通用的接口。描述的是Web服务器如何与Web应用间进行通信。它不是服务器、python模块、框架、API或者任何软件，只是一种描述web服务器（如nginx，uWSGI等服务器）如何与web应用程序（如用Django、Flask框架写的程序）通信的规范。实现了WSGI规范的服务器称为WSGI服务器，是专门用来部署WSGI程序（使用Python语言实现的web程序）的服务器，常见的生产级别的WSGI服务器有uWSGI、Gunicorn、Gevent、Waitress等，可以根据不同的使用场景进行选择。</p>
 <p>uwsgi协议是一个uWSGI服务器自有的协议，它用于定义传输信息的类型（type of information），每一个uwsgi packet前4byte为传输信息类型描述，用于与nginx等代理服务器通信，它与WSGI相比是两样东西。</p>
 <p>uWSGI是实现了uwsgi和WSGI两种协议的Web服务器。</p>
 <blockquote>
