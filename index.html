@@ -192,6 +192,155 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/04/27/RabbitMQ-%E5%9F%BA%E7%A1%80%E9%83%A8%E5%88%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Skylor Tang">
+      <meta itemprop="description" content="Your advantages today will be replaced by future trends, so keep learning.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Skylor Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/04/27/RabbitMQ-%E5%9F%BA%E7%A1%80%E9%83%A8%E5%88%86/" class="post-title-link" itemprop="url">RabbitMQ 基础部分</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-04-27 20:54:09 / 修改时间：20:55:45" itemprop="dateCreated datePublished" datetime="2021-04-27T20:54:09+08:00">2021-04-27</time>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2021/04/27/RabbitMQ-%E5%9F%BA%E7%A1%80%E9%83%A8%E5%88%86/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2021/04/27/RabbitMQ-%E5%9F%BA%E7%A1%80%E9%83%A8%E5%88%86/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>AMQP： Advaced Message Queuing Protocol 高级消息队列协议，RabbitMQ完全满足该协议。</p>
+<p>消息中间件（Message-oriented middleware, MOM）是一种软件或者硬件基础设施，通过它可以在分布式系统中发送和接受消息。RabbitMQ通过高级路由和消息分发工功能巧妙地实现了这一角色，即使需要满足广域网环境下实现可靠性所应达到的容错条件，分布式系统也可以很容易与其他系统进行互连。</p>
+<p>消息中间件使用于需要可靠的数据传送的分布式环境。采用消息中间件的系统中，不同的对象之间通过传递消息来激活对方的事件，以完成相应的操作。发送者将消息发送给消息服务器，消息服务器将消息存放在若干队列中，在合适的时候再将消息转发给接收者。<strong>消息中间件能在不同平台之间通信，它常被用来屏蔽各种平台及协议之间的特性，实现应用程序之间的协同，其优点在于能够在客户和服务器之间提供同步和异步的连接，并且在任何时刻都可以将消息进行传送或者存储转发（这也是比远程过程调用更进步的原因）</strong>。</p>
+<p>本文的所有操作，均采用Python的pika库来完成RabbitMQ的操作。尽管还有其他的第三方库，单是因为都遵循AMQP协议，所以提供的调用方法参数等大致差不多，个别会设置一些独有的参数。</p>
+<h3 id="基本概念"><a class="header-anchor" href="#基本概念">¶</a>基本概念</h3>
+<p>AMQ三个抽象组件：</p>
+<p>交换器<code>Exchange</code>：接收发送到RabbitMQ的消息并决定把它们投递到何处(由Exchange将消息路由到一个或多个队列中（或者丢弃）)。</p>
+<p>队列<code>Queue</code>：负责存储接收到的消息，同时也可能包含处理消息的配置信息。消息可以只存储在内存中，也可以存储在硬盘中，然后以先进先出的顺序进行投递。</p>
+<p>绑定：使用绑定来定义队列和交换器之间的关系。使用绑定或者绑定键（BindingKey）对于某些交换器类型，绑定同时告知交换器如何对消息进行过滤从而决定能够投递到队列的消息。当一条消息到交换器时，应用程序使用路由键（RoutingKey）属性来进行匹配。</p>
+<p>RabbitMQ运转流程：</p>
+<p>生产者发送消息的过程：</p>
+<pre><code>1.生产者连接到RabbitMQ Broker，建立一个连接（Connection），开启一个信道（Channel）。
+2.生产者声明一个交换器（Exchange），并设置相关属性，比如交换机类型、是否持久化等。
+3.生产者声明一个队列并设置相关属性（通过创建的通道开启），比如是否排他、是否持久化、是否自动删除等。
+4.生产者通过绑定键将交换器和队列绑定起来。
+5.生产者发送消息至RabbitMQ Broker，其中包含路由键、交换器等信息。
+6.响应的交换器根据接收到的路由键查找相匹配的队列。
+7.如果找到，则将从生产者发送过来的消息存入相应的队列中。
+8.如果没有找到，则根据生成者配置的属性选择丢弃还是回退给生产者。
+9.关闭信道。
+10.关闭连接。
+</code></pre>
+<p>消费者接收消息的过程：</p>
+<pre><code>1.消费者连接到RabbitMQ Broker，建立一个连接（Connection），开启一个信道（Channel）。
+2.消费者向RabbitMQ Broker请求消费相应队列中的消息，可能会设置相应的回调函数，以及做一些准备工作。
+3.等待 RabbitMQ Broker 回应并投递相应队列中的消息，消费者接收消息。
+4.消费者确认（ack）接收到的消息。
+5.RabbitMQ从队列中删除相应的已经被接收的消息。
+6.关闭信道。
+7.关闭连接。
+</code></pre>
+<h4 id="连接和通道"><a class="header-anchor" href="#连接和通道">¶</a>连接和通道</h4>
+<p>连接和通道：</p>
+<p>无论是生产者和消费者都需要通过TCP连接和RabbitMQ Broker建立连接，一个连接就是一个TCP连接。建立连接之后，用户就可以在连接的基础上建立一个AMQP信道，每个信道会被赋值一个唯一的ID(在各自的连接中不同，不同的连接重新算)，信道是建立在TCP上的虚拟连接，RabbitMQ处理的每条AMQP指令都是通过信道完成的。</p>
+<p>这样设计的理由：<br>
+TCP的创建和销毁是非常消耗资源的，遇到使用高峰，就会遇到性能瓶颈，采用NIO的做法，实现TCP连接复用，不仅可以减少性能开销，同时还便于管理。</p>
+<p>每个线程都把持一个信道，所以信道复用了Conneciton的TCP连接。</p>
+<p>RabbitMQ可以保证每个信道的私密性。当每个信道的流量不是很大的时候，复用单一的Connection可以在产生性能瓶颈的情况下有效地节省TCP的连接资源。但是当信道本身的流量很大的时候，多个信道复用同一个Connection就会产生性能瓶颈，进而整体的流量就会被限制了，此时就需要开辟多个Connection，将这些信道均摊道这些Connection中。</p>
+<p><font color="red">信道不是线程安全的，如果有多个线程，应该保证每个线程独享一个信道。</font></p>
+<h5 id="pika的使用"><a class="header-anchor" href="#pika的使用">¶</a>pika的使用</h5>
+<h6 id="连接Connection以及信道Channel的创建。"><a class="header-anchor" href="#连接Connection以及信道Channel的创建。">¶</a>连接Connection以及信道Channel的创建。</h6>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pika</span><br><span class="line">credential = pika.PlainCredentials(<span class="string">&quot;guest&quot;</span>, <span class="string">&quot;guest&quot;</span>)</span><br><span class="line">connection = pika.BlockingConnection(pika.ConnectionParameters(host=<span class="string">&quot;localhost&quot;</span>, port=<span class="number">55013</span>, credentials=credential))</span><br><span class="line"></span><br><span class="line">channel = connection.channel()  <span class="comment"># 创建一个通道</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>可以创建多个通道，生产者发送消息、创建交换器、交换器和通道的绑定都是通过通道对象来实现的，但是通道只是负责通信，这些操作放到好几个channel对象来做也是没有问题的。（因为channel是非线程安全的，所以多线程中应该保持每个线程独占一个channel。）</p>
+</blockquote>
+<h5 id="交换器exchange和队列queue"><a class="header-anchor" href="#交换器exchange和队列queue">¶</a>交换器exchange和队列queue</h5>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">channel.exchange_declare(exchange=<span class="string">&#x27;hello&#x27;</span>, exchange_type=<span class="string">&#x27;fanout&#x27;</span>,  durable=<span class="literal">True</span>)</span><br><span class="line">channel.queue_declare(queue=<span class="string">&#x27;helloqueue&#x27;</span>, durable=<span class="literal">True</span>)</span><br><span class="line">channel.queue_bind(exchange=<span class="string">&#x27;hello&#x27;</span>, queue=<span class="string">&#x27;helloqueue&#x27;</span>, routing_key=<span class="string">&#x27;xx&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>创建交换器以及队列都是通过信道对象完成，创建的的时候交换器和队列没有直接关系，可以使用多个通道完成（不是说只能通过同一个通道创建的交换器和队列才有关系，信道只是传递操作指令的通道）。</p>
+<p>信道可以声明已经存在的交换器或者队列，如果声明的参数完全匹配现存的交换器或者队列，RabbitMQ就什么都不做，并成功返回，如果参数不一致，则报错<code>pika.exceptions.ChannelClosedByBroker: (406, &quot;PRECONDITION_FAILED - inequivalent arg 'durable' for queue 'hello' in vhost '/': received 'true' but current is 'false'&quot;)</code><strong>也就是说不能出现同名的交换器和队列，交换器和队列都是唯一的</strong>。</p>
+</blockquote>
+<h6 id="交换器声明方法的常用属性："><a class="header-anchor" href="#交换器声明方法的常用属性：">¶</a>交换器声明方法的常用属性：</h6>
+<p><code>channel.exchange_declare(exchange, exchange_type, passive, durable, auto_delete, internal, arguments)</code></p>
+<ul>
+<li><code>exchange</code>:  交换器名称。</li>
+<li><code>exchange_type</code>:  交换器类型（fanout, direct, topic, headers)，默认使用的是direct，为RoutingKey和BindingKey完全匹配。</li>
+<li><code>passive</code>: 默认为False。</li>
+<li><code>durable</code>:  默认为False，用于设置是否持久化，持久化可以将交换器存盘，这样在服务器重启的时候不会丢失相关信息。</li>
+<li><code>auto_delete</code>: 默认为False, 用于设置是否自动删除，自动删除的前提是在交换器至少与一个队列或者交换器绑定后，之后所有的与这个交换器绑定的队列或者交换器都与此解绑，此时这个交换器会自动删除。</li>
+<li><code>internal</code>: 默认为False，用于设置是否是内置的，如果是内置的交换器，客户端无法直接发送消息到这个交换器中，只能通过其他交换器路由到该交换器（设置方式和绑定queue类似，通过channel.exchange_bind()设置）。</li>
+<li><code>arguments</code>: 其他的一些结构化的参数，如alternate-exchange（用于设置备份交换机）。</li>
+</ul>
+<p>与之对应还有一个交换器的删除方法：<code>exchange_delete(self, exchange=None, if_unused=False)</code>，is_unused为True,则表示只有在交换器未被使用的情况下才会被删除。</p>
+<h6 id="队列声明方法的常用属性："><a class="header-anchor" href="#队列声明方法的常用属性：">¶</a>队列声明方法的常用属性：</h6>
+<p><code>channel.queue_declare(queue, passive, durable, exclusive, auto_delete, arguments)</code></p>
+<ul>
+<li><code>queue</code>: 队列名称。</li>
+<li><code>passive</code>: 默认值为False。Only check to see if the queue exists and raise ChannelClosed if it doesn’t.</li>
+<li><code>durable</code>: 默认为False，用于设置是否持久化，如果为True，则会存盘，在RabbitMQ服务重启的时候，队列就不会消失。<em>（信息是存储按照先后顺序存储在队列中的，只要队列不消失，数据就不会消失，和交换器没有关系（交换器只是负责数据的路由的）。交换的的持久化是在硬盘中存储交换器的相关信息，否则一旦重启服务，没有持久化的交换器就会消失。）</em></li>
+<li><code>exclusive</code>: 默认为Flase，用于设置使用当前连接Connection创建的队列是排他队列（该队列只能在当前连接内使用，所以当前的连接内的channle都是能够使用的，然后在连接关闭的时候，该排他队列会自动删除（无论是否设置了durable参数进行持久化，都会被删除），此外，因为排他队列只能当前连接使用，所以此时其他连接中也是不能建立同名的排他队列的（本来是能够获的该队列的，但是由于是排他所以无法使用，要报错。））</li>
+<li><code>auto_delete</code>: 默认为False，设置为True之后，当队列创建之后，所有与该队列连接的消费者都断开的时候，即没有消费者连接该队列的时候，该队列会自动删除。</li>
+<li><code>arguments</code>: 设置队列的一些其他参数，如 x-message-ttl、 x-expires、x-max-length、 x-max-length-bytes、x-dead-letter-exchange、 x-dead-letter-routing-key、 x-max-priority等。</li>
+</ul>
+<p>与之对应队列删除的方法：<code>channel.queue_delete(queue, if_unused=False, if_empty=False) </code>，is_unused为True,则表示只有在队列未被使用的情况下才会被删除。is_empty表示只有当队列为空的时候才能被删除。</p>
+<p><code>channel.queue_purge(queue)</code> 用于清空队列，不会删除队列。</p>
+<h6 id="队列和交换器的绑定"><a class="header-anchor" href="#队列和交换器的绑定">¶</a>队列和交换器的绑定</h6>
+<p><code>channel.queue_bind(queue, exchange, routing_key=None, arguments=None)</code></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/03/20/Celery-%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1531,215 +1680,6 @@ sudo ln -s 你的目录/Mxonline/conf/nginx/uc_nginx.conf /etc/nginx/conf.d/</p>
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/04/03/Django%20REST%20framework%E4%B9%8BJWT%E7%94%A8%E6%88%B7%E9%AA%8C%E8%AF%81/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="Skylor Tang">
-      <meta itemprop="description" content="Your advantages today will be replaced by future trends, so keep learning.">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Skylor Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/04/03/Django%20REST%20framework%E4%B9%8BJWT%E7%94%A8%E6%88%B7%E9%AA%8C%E8%AF%81/" class="post-title-link" itemprop="url">Django REST framework之JWT用户验证</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-04-03 18:20:52" itemprop="dateCreated datePublished" datetime="2020-04-03T18:20:52+08:00">2020-04-03</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-08-28 21:34:10" itemprop="dateModified" datetime="2020-08-28T21:34:10+08:00">2020-08-28</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/" itemprop="url" rel="index"><span itemprop="name">计算机</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/%E5%BC%80%E5%8F%91%E9%97%AE%E9%A2%98/" itemprop="url" rel="index"><span itemprop="name">开发问题</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/Django-REST-framework/" itemprop="url" rel="index"><span itemprop="name">Django REST framework</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2020/04/03/Django%20REST%20framework%E4%B9%8BJWT%E7%94%A8%E6%88%B7%E9%AA%8C%E8%AF%81/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2020/04/03/Django%20REST%20framework%E4%B9%8BJWT%E7%94%A8%E6%88%B7%E9%AA%8C%E8%AF%81/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>在之前的 <a href="/2020/03/24/Django-REST-framework%E7%9A%84token%E7%99%BB%E9%99%86%E5%92%8C%E5%8E%9F%E7%90%86/" title="Django REST framework的token原理和验证登录">Django REST framework的token原理和验证登录</a> 中，使用了drf自带的Token认证类<code>rest_framework.authentication.TokenAuthentication</code> 实现了Token认证，但是drf自带的Token认证有以下几个问题：</p>
-<ol>
-<li>drf自带的token验证方式，token值是存储在生成的 <code>authtoken_token</code> 表中，是放在一台服务器上的，若采用分布式的话，还需要做数据的同步操作。</li>
-<li>相比于 django_session 的设置，没有expire_date属性（过期时间），将是永久有效的，这样的话，一旦泄露将造成很大的安全问题。</li>
-<li>和django_session存储同样的问题，随着用户的增多，token值会占用服务器大量空间，同时也会加大数据库的查询压力，导致性能下降。</li>
-</ol>
-<p>为了解决以上的问题，将使用第三方的开源库<a target="_blank" rel="noopener" href="https://github.com/jpadilla/django-rest-framework-jwt">djangorestframework-jwt</a>完成这一功能。</p>
-<h2 id="JWT原理"><a class="header-anchor" href="#JWT原理">¶</a>JWT原理</h2>
-<p>参考文章：<a target="_blank" rel="noopener" href="https://lion1ou.win/2017/01/18/">前后端分离之JWT用户认证</a></p>
-<h3 id="摘要"><a class="header-anchor" href="#摘要">¶</a>摘要</h3>
-<ol>
-<li>HTTP协议的无状态存储，需要提供用户登录的验证功能。</li>
-<li>前后端分离系统的传统解决方式是：前端登录，后端根据用户信息生成一个<code>token</code>，并保存这个 <code>token</code> 和对应的用户id到数据库或Session中，接着把 <code>token</code> 传给用户，存入浏览器 cookie，之后浏览器请求带上这个cookie，后端根据这个cookie值来查询用户，验证是否过期。</li>
-</ol>
-<p>JWT 是一个开放标准(RFC 7519)，它定义了一种用于简洁，自包含的用于通信双方之间以 JSON 对象的形式安全传递信息的方法。JWT 可以使用 HMAC 算法或者是 RSA 的公钥密钥对进行签名。它具备两个特点：</p>
-<ul>
-<li>简洁(Compact)<br>
-可以通过URL, POST 参数或者在 HTTP header 发送，因为数据量小，传输速度快</li>
-<li>自包含(Self-contained)<br>
-负载中包含了所有用户所需要的信息，避免了多次查询数据库</li>
-</ul>
-<h3 id="组成"><a class="header-anchor" href="#组成">¶</a>组成</h3>
-<p>JWT由三部分组成</p>
-<ul>
-<li>HEAD 头部： 包含了两部分，token 类型和采用的加密算法</li>
-<li>Payload 负载： 我们存放信息的地方了，你可以把用户 ID 等信息放在这里，JWT 规范里面对这部分有进行了比较详细的介绍，常用的由 iss（签发者），exp（过期时间），sub（面向的用户），aud（接收方），iat（签发时间）。<font color="red">默认情况下负载中的内容使用的是 base64 编码方式，是可逆的，所以任何人都可以解读该部分的内容，因此不要构建隐私信息字段，存放保密信息，以防止信息泄露</font>。</li>
-<li>Signature 签名： 保证内容没有被篡改。Signature 需要使用编码后的 header 和 payload 以及我们提供的一个密钥（存放在服务端），然后使用 header 中指定的签名算法（HS256）进行签名。生成的方式：</li>
-</ul>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># python实现 </span></span><br><span class="line">HMACSHA256(base64UrlEncode(header) + <span class="string">&quot;.&quot;</span> + base64UrlEncode(payload), secret)  <span class="comment"># secret密钥保存在服务器端，且不对外公布</span></span><br></pre></td></tr></table></figure>
-<p>完整的JWT构成：<code>base64UrlEncode(header) + &quot;.&quot; + base64UrlEncode(payload) + &quot;.&quot; + Signature 签名</code></p>
-<h3 id="验证过程"><a class="header-anchor" href="#验证过程">¶</a>验证过程</h3>
-<p>由前端和后端共同完成<br>
-<img src="/2020/04/03/Django%20REST%20framework%E4%B9%8BJWT%E7%94%A8%E6%88%B7%E9%AA%8C%E8%AF%81/jwt.jpg" alt="jwt认证过程"></p>
-<ul>
-<li>前端进行登录，提供账号和密码在后端进行验证，后端对其验证通过后生成JWT，再发送给前端，前端保存在本地（一般是存储在本地的cookie中（推荐使用该种方式，只是使用cookie的存储机制），或者是保存在localStorage或sessionStorage上，退出登录时由前端删除保存的JWT即可）</li>
-<li>前端在跳转到登录页或者请求API的时候，会发送JWT，到达后端时被过滤器拦截进行JWT的验证（在Django可以交给中间件完成），验证通过之后请求被传送给view，未通过，返回错误信息（可以交给Django中间件中的process_exception函数处理），跳转到登录页面。（前面的所有的Django中间件的功能都将由即将使用到的 <code>rest_framework_jwt.authentication.JSONWebTokenAuthentication</code> 来完成）</li>
-</ul>
-<h3 id="JWT的优势"><a class="header-anchor" href="#JWT的优势">¶</a>JWT的优势</h3>
-<ul>
-<li>完全使用算法进行验证，加密解密取得用户ID（相较于sessionid，后者还多了向服务器请求对应session_data的步骤），通过用户ID查询到用户信息，这意味着不需要存储token表，也不需要Django之中的session表，会减少服务器的存储压力</li>
-<li>适用于<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/75edcc05acfd">单点登录</a></li>
-</ul>
-<p>JWT详细解读：<a target="_blank" rel="noopener" href="https://www.cnblogs.com/DeadBoy/p/11481146.html">https://www.cnblogs.com/DeadBoy/p/11481146.html</a></p>
-<h2 id="Django-REST-framework实现JWT的验证登录功能"><a class="header-anchor" href="#Django-REST-framework实现JWT的验证登录功能">¶</a>Django REST framework实现JWT的验证登录功能</h2>
-<p>使用第三方库<code>djangorestframework-jwt</code>完成验证，使用方法详见<a target="_blank" rel="noopener" href="https://jpadilla.github.io/django-rest-framework-jwt/">官方文档</a></p>
-<h3 id="安装后的配置过程"><a class="header-anchor" href="#安装后的配置过程">¶</a>安装后的配置过程</h3>
-<ol>
-<li>安装完成后，首先需要在REST_FRAMEWORK的<code>DEFAULT_AUTHENTICATION_CLASSES</code> 中配置</li>
-</ol>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">REST_FRAMEWORK = &#123;</span><br><span class="line">    <span class="string">&#x27;DEFAULT_AUTHENTICATION_CLASSES&#x27;</span>: [</span><br><span class="line">        ...</span><br><span class="line">        <span class="string">&#x27;rest_framework_jwt.authentication.JSONWebTokenAuthentication&#x27;</span>,</span><br><span class="line">    ], </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>和drf自带的token功能使用的<code>rest_framework.authentication.TokenAuthentication</code>作用一致，是对用户post过来的token进行验证，验证完成后返回user。该设置只有在需要用户访问view，发送token进行验证的时候才需要设置，单纯的提供token值是不需要设置的（只需要完成步骤2）。<br>
-另外，这个值，最好不要在settings.py中进行设置，而只在需要使用的view中进行设置，因为有些页面属于公共资源，不需要验证token也可以进行访问。通过设置<code>authentication_classes</code>参数进行配置：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># views.py</span></span><br><span class="line">authentication_classes = (JSONWebTokenAuthentication,)</span><br></pre></td></tr></table></figure>
-<ol start="2">
-<li>在urls.py中添加url</li>
-</ol>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> rest_framework_jwt.views <span class="keyword">import</span> obtain_jwt_token</span><br><span class="line"></span><br><span class="line">url(<span class="string">r&#x27;^api-token-auth/&#x27;</span>, obtain_jwt_token) <span class="comment"># jwt的认证接口，是一个post请求。可以自定义url地址，如jwt-auth</span></span><br><span class="line"><span class="comment"># 这里注意区分url(r&#x27;^api-token-auth/&#x27;, views.obtain_auth_token)，这是drf自带的认证模式</span></span><br><span class="line"><span class="comment"># 自定义的jwt接口</span></span><br><span class="line">url(<span class="string">r&#x27;^jwt-auth/&#x27;</span>, obtain_jwt_token) </span><br></pre></td></tr></table></figure>
-<p>此时访问<code>http://xxx/jwt-auth</code>，使用post请求传递用户信息（用户名和密码），验证通过之后就会直接返回一个jwt，采用的返回方式是k/v形式的json对象：</p>
-<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">&quot;token&quot;</span>: <span class="string">&quot;eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoyLCJ1c2VybmFtZSI6ImFkbWluIiwiZXhwIjoxNTg3NjMyODgzLCJlbWFpbCI6IjEyMzRAcXEuY29tIn0.YIcAYZC3aY0AsoCyRDR78-1D-zdIGN3jHZHqgBWtjxo&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>当传递的用于验证用户的信息（username和password）错误的时候，返回以下JSON数据：</p>
-<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">&quot;non_field_errors&quot;</span>: [</span><br><span class="line">        <span class="string">&quot;无法使用提供的认证信息登录。&quot;</span></span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<ol start="3">
-<li>验证方式（注意和drf自带的token验证方式的不同书写）
-<ul>
-<li>在http Headers中通过 <code>Authorization: JWT &lt;your_token&gt;</code>格式传递获得的JWT</li>
-<li>打断点，请求设置了 <code>authentication_classes = (JSONWebTokenAuthentication,)</code> 的view，查看request属性，可以发现用户存储在request中的user属性中，JWT值存储在auth属性中</li>
-<li>JWT过期之后，返回的JSON格式数据</li>
-</ul>
- <figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">&quot;non_field_errors&quot;</span>: [</span><br><span class="line">        <span class="string">&quot;无法使用提供的认证信息登录。&quot;</span></span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-<h3 id="和前端vue登录功能的集成"><a class="header-anchor" href="#和前端vue登录功能的集成">¶</a>和前端vue登录功能的集成</h3>
-<p>直接将<code>url(r'^api-token-auth/', obtain_jwt_token)</code>的url地址改为<code>url(r'^login/', obtain_jwt_token)</code>，变成登陆接口，前端向后端传递用户名和密码请求登陆，后端接受到请求后验证，验证通过返回JWT，前端保存，之后的每次请求，发送该JWT，验证用户，完成登录。<br>
-详细过程：<br>
-后端验证用户信息返回JWT：<br>
-url 请求的 view 是 rest_framework_jwt 中的 ObtainJSONWebToken，该 view 继承自 JSONWebTokenAPIView，使用的序列化类是 JSONWebTokenSerializer，该序列化类中通过重写 validate() 方法，进行用户的身份校验，验证通过后进行 token 的构建，并和用户名组合为字典存放到 <code>_validated_data</code> 参数中。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 源码位于 rest_framework_jwt/serializers.py</span></span><br><span class="line"><span class="comment"># JSONWebTokenSerializer中的validate()方法</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">validate</span>(<span class="params">self, attrs</span>):</span></span><br><span class="line">    credentials = &#123;</span><br><span class="line">        self.username_field: attrs.get(self.username_field),</span><br><span class="line">        <span class="string">&#x27;password&#x27;</span>: attrs.get(<span class="string">&#x27;password&#x27;</span>)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">all</span>(credentials.values()):</span><br><span class="line">        <span class="comment"># 调用django的用户认证方法进行验证</span></span><br><span class="line">        user = authenticate(**credentials)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> user:</span><br><span class="line">            <span class="keyword">if</span> <span class="keyword">not</span> user.is_active:</span><br><span class="line">                msg = _(<span class="string">&#x27;User account is disabled.&#x27;</span>)</span><br><span class="line">                <span class="keyword">raise</span> serializers.ValidationError(msg)</span><br><span class="line"></span><br><span class="line">            <span class="comment"># 用户认证通过后进行token的构造，以下两个方法也是token构造的主要方法</span></span><br><span class="line">            payload = jwt_payload_handler(user)</span><br><span class="line">            <span class="keyword">return</span> &#123;</span><br><span class="line">                <span class="comment"># 将token和用户对象存储到一起，通过validate()最终返回给 _validated_data</span></span><br><span class="line">                <span class="string">&#x27;token&#x27;</span>: jwt_encode_handler(payload),</span><br><span class="line">                <span class="string">&#x27;user&#x27;</span>: user</span><br><span class="line">            &#125;</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            msg = _(<span class="string">&#x27;Unable to log in with provided credentials.&#x27;</span>)</span><br><span class="line">            <span class="keyword">raise</span> serializers.ValidationError(msg)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        msg = _(<span class="string">&#x27;Must include &quot;&#123;username_field&#125;&quot; and &quot;password&quot;.&#x27;</span>)</span><br><span class="line">        msg = msg.<span class="built_in">format</span>(username_field=self.username_field)</span><br><span class="line">        <span class="keyword">raise</span> serializers.ValidationError(msg)</span><br></pre></td></tr></table></figure>
-<p>JSONWebTokenAPIView 中获取到生成的 token，通过可选的方式（通过判断 api_settings.JWT_AUTH_COOKIE 的值决定是否通过 cookie 的方式进行传递 token 值，默认是 None，也就是不通过 cookie 进行传递值）</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 源码位于 rest_framework_jwt/views.py</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">JSONWebTokenAPIView</span>(<span class="params">APIView</span>):</span></span><br><span class="line">    ...</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">post</span>(<span class="params">self, request, *args, **kwargs</span>):</span></span><br><span class="line">        <span class="comment"># 调用 JSONWebTokenSerializer 进行数据的序列化</span></span><br><span class="line">        serializer = self.get_serializer(data=request.data)   <span class="comment"># request为drf重写，内部通过data属性保存传递过来的值</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> serializer.is_valid():  <span class="comment"># 进行验证（validata中进行了用户验证），验证通过之后，返回生成的token值和user属性</span></span><br><span class="line">            <span class="comment"># serializer.object属性为rest_framework_jwt设置的属性方法，之际返回的是self.validated_data，也就是_validated_data中的值</span></span><br><span class="line">            user = serializer.<span class="built_in">object</span>.get(<span class="string">&#x27;user&#x27;</span>) <span class="keyword">or</span> request.user</span><br><span class="line">            token = serializer.<span class="built_in">object</span>.get(<span class="string">&#x27;token&#x27;</span>)</span><br><span class="line">            <span class="comment"># jwt_response_payload_handler方法用于自定义响应的内容，默认的只是返回&#123;token:&#x27;token值&#x27;&#125; </span></span><br><span class="line">            response_data = jwt_response_payload_handler(token, user, request)</span><br><span class="line">            response = Response(response_data)  </span><br><span class="line">            <span class="comment"># 判断JWT_AUTH_COOKIE是否设置，默认为None,表示不使用cookie的方式，设置的时候为cookie中存储的名称</span></span><br><span class="line">            <span class="keyword">if</span> api_settings.JWT_AUTH_COOKIE:  </span><br><span class="line">                <span class="comment"># 设置过期时间，需要使用到api_settings.JWT_EXPIRATION_DELTA的配置，默认为300s</span></span><br><span class="line">                expiration = (datetime.utcnow() +</span><br><span class="line">                              api_settings.JWT_EXPIRATION_DELTA)  </span><br><span class="line">                <span class="comment"># 设置cookie, 使用WT_AUTH_COOKIE设置的名称，token,过期时间</span></span><br><span class="line">                response.set_cookie(api_settings.JWT_AUTH_COOKIE,</span><br><span class="line">                                    token,</span><br><span class="line">                                    expires=expiration,</span><br><span class="line">                                    httponly=<span class="literal">True</span>)  <span class="comment"># 如果cookie中设置了HttpOnly属性，那么通过js脚本将无法读取到cookie信息，这样能有效的防止XSS攻击，窃取cookie内容，这样就增加了cookie的安全性</span></span><br><span class="line">            <span class="keyword">return</span> response</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)</span><br></pre></td></tr></table></figure>
-<p>vue前端获得返回的JWT：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 登录</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> login = <span class="function"><span class="params">params</span> =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">return</span> axios.post(<span class="string">`<span class="subst">$&#123;host&#125;</span>/login/`</span>, params)</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 登录调用的方法</span></span><br><span class="line">login(&#123;</span><br><span class="line">    <span class="comment">// vue传递 用户名和密码</span></span><br><span class="line">    username:<span class="built_in">this</span>.userName,  </span><br><span class="line">    password:<span class="built_in">this</span>.parseWord</span><br><span class="line">&#125;).then(<span class="function">(<span class="params">response</span>)=&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(response);</span><br><span class="line">    <span class="comment">// 验证通过之后，本地存储返回的信息</span></span><br><span class="line">    <span class="comment">// 当前示例的返回的信息中由于使用的是djangorestframework_jwt默认的jwt_response_payload_handler(token, user, request)，该方法中只返回了token，所以name不通过后端获得，由前端获取</span></span><br><span class="line">    cookie.setCookie(<span class="string">&#x27;name&#x27;</span>,<span class="built_in">this</span>.userName,<span class="number">7</span>);</span><br><span class="line">    <span class="comment">// 设置token，同时设置过期时间，这是因为djangorestframework_jwt使用非cookie形式传递token时，没有传递过期时间值，此时需要设置cookie的过期时间，</span></span><br><span class="line">    <span class="comment">// 但是要注意，传递的token中在编码的时候，是有过期时间这个属性的，用于后端在接收到该token进行过期验证的，和这里的cookie的过期时间无关，token的构造参见 jwt_payload_handler(user) 的实现，由该方法定义。</span></span><br><span class="line">    <span class="comment">// 此处定义的cookie的过期时间是用在前端浏览器中设置cookie保存的时间，JWT也有单独设置的过期时间用于保证JWT的时效性，这是在生成token的时候就定义并存储好的，</span></span><br><span class="line">    <span class="comment">// 另外，此处cookie过期时间最好和JWT设置的过期时间保持一直，应小于等于JWT的值。</span></span><br><span class="line">    cookie.setCookie(<span class="string">&#x27;token&#x27;</span>,response.data.token,<span class="number">7</span>)  </span><br><span class="line">    <span class="comment">// 存储在store，更新store数据</span></span><br><span class="line">    that.$store.dispatch(<span class="string">&#x27;setInfo&#x27;</span>);</span><br><span class="line">    <span class="comment">// 获得返回值，说明用户验证通过，此时跳转到首页</span></span><br><span class="line">    <span class="built_in">this</span>.$router.push(&#123; <span class="attr">name</span>: <span class="string">&#x27;index&#x27;</span>&#125;)  </span><br><span class="line">    &#125;)</span><br><span class="line">    .catch( <span class="function"><span class="keyword">function</span> (<span class="params">error</span>) </span>&#123;</span><br><span class="line">        <span class="comment">// 异常处理</span></span><br><span class="line">        ...</span><br><span class="line">    &#125;);</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>本例中使用的是非cookie传递的方式，后端直接将JWT通过Response进行返回，然后在Vue中通过response.data读取属性的方式获取到JWT并存储在cookie中，这里的cookie只起到了数据存储的作用，vue中之后会使用 cookie.getCookie(‘token’) 的方式读取数据使用。</p>
-</blockquote>
-<p>vue 传递 token 值给后端，用于身份验证：<br>
-根据 djangorestframework_jwt 文档要求，需要以 <code>Authorization: JWT &lt;your_token&gt;</code> 的形式进行传递，所以在前端设置 request拦截器，为 request 请求添加该信息</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// vue设置http request拦截器</span></span><br><span class="line">axios.interceptors.request.use(</span><br><span class="line">  config =&gt; &#123;</span><br><span class="line">    <span class="keyword">if</span> (store.state.userInfo.token) &#123;  <span class="comment">// 判断是否存在token，如果存在的话，则每个http header设置Authorization，添加token值</span></span><br><span class="line">      config.headers.Authorization = <span class="string">`JWT <span class="subst">$&#123;store.state.userInfo.token&#125;</span>`</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> config;</span><br><span class="line">  &#125;,</span><br><span class="line">  err =&gt; &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">Promise</span>.reject(err);</span><br><span class="line">  &#125;);</span><br></pre></td></tr></table></figure>
-<p>通过这种方式向后端传递JWT，<br>
-后端通过设置 authentication_classes = (JSONWebTokenAuthentication,) 进行JWT认证<br>
-JSONWebTokenAuthentication 继承自 BaseJSONWebTokenAuthentication，该父类中提供了 <code>authenticate()</code> 方法用于验证用户，内部通过 <code>get_jwt_value(request)</code> 方法获得前端传递过来的token，内部通过调用 <code>jwt_decode_handler(jwt_value)</code> 反解 token 获得其中的 payload（该操作与之前的 <code>jwt_encode_handler(payload)</code> 相对），再通过 <code>authenticate_credentials(payload)</code> 获得user。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 位于 rest_framework/authentication.py</span></span><br><span class="line"><span class="comment"># JSONWebTokenAuthentication 中的 get_jwt_value 调用该方法获得请求头中的 Authorization 属性</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_authorization_header</span>(<span class="params">request</span>):</span></span><br><span class="line">    auth = request.META.get(<span class="string">&#x27;HTTP_AUTHORIZATION&#x27;</span>, <span class="string">b&#x27;&#x27;</span>)  <span class="comment"># 获得 Authorization 中的值</span></span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">isinstance</span>(auth, <span class="built_in">str</span>):</span><br><span class="line">        <span class="comment"># Work around django test client oddness</span></span><br><span class="line">        auth = auth.encode(HTTP_HEADER_ENCODING)</span><br><span class="line">    <span class="keyword">return</span> auth</span><br><span class="line"></span><br><span class="line"><span class="comment"># 位于 rest_framework_jwt/authentication.py</span></span><br><span class="line"><span class="comment"># JSONWebTokenAuthentication 中的 get_jwt_value   </span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_jwt_value</span>(<span class="params">self, request</span>):</span></span><br><span class="line">    auth = get_authorization_header(request).split() <span class="comment"># 通过split得到列表 [&#x27;JWT&#x27;, &#x27;token值&#x27;]</span></span><br><span class="line">    auth_header_prefix = api_settings.JWT_AUTH_HEADER_PREFIX.lower()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> auth:  <span class="comment"># 如果auth中没有值，则可能是通过cookie传递，查看 JWT_AUTH_COOKIE 是否设置</span></span><br><span class="line">        <span class="keyword">if</span> api_settings.JWT_AUTH_COOKIE:  </span><br><span class="line">        <span class="comment"># 如果通过验证，则说明在之前是通过cookie的方式将JWT传递给前端的，那么这里也就一定会通过cookie返回了token，则之后的请求是一定会带上该cookie的，此时就可以直接获取并返回，不需要再进行下面的验证了。</span></span><br><span class="line">            <span class="keyword">return</span> request.COOKIES.get(api_settings.JWT_AUTH_COOKIE)</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">None</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 验证token 的前缀，这里使用的默认的 JWT</span></span><br><span class="line">    <span class="keyword">if</span> smart_text(auth[<span class="number">0</span>].lower()) != auth_header_prefix:</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">None</span></span><br><span class="line">    <span class="comment"># auth中获得值是 [&#x27;JWT&#x27;, &#x27;token值&#x27;] 形式，长度一定是为2的</span></span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">len</span>(auth) == <span class="number">1</span>:</span><br><span class="line">        msg = _(<span class="string">&#x27;Invalid Authorization header. No credentials provided.&#x27;</span>)</span><br><span class="line">        <span class="keyword">raise</span> exceptions.AuthenticationFailed(msg)</span><br><span class="line">    <span class="keyword">elif</span> <span class="built_in">len</span>(auth) &gt; <span class="number">2</span>:</span><br><span class="line">        msg = _(<span class="string">&#x27;Invalid Authorization header. Credentials string &#x27;</span></span><br><span class="line">                <span class="string">&#x27;should not contain spaces.&#x27;</span>)</span><br><span class="line">        <span class="keyword">raise</span> exceptions.AuthenticationFailed(msg)</span><br><span class="line">    <span class="keyword">return</span> auth[<span class="number">1</span>]  <span class="comment"># 返回token值</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># JSONWebTokenAuthentication 从父类 BaseJSONWebTokenAuthentication 中继承过来的验证方法 autheiticate(self, request)</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">authenticate</span>(<span class="params">self, request</span>):</span></span><br><span class="line">    jwt_value = self.get_jwt_value(request)  <span class="comment"># 获得前端传递过来的token值</span></span><br><span class="line">    <span class="keyword">if</span> jwt_value <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">None</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        <span class="comment"># 调用jwt_decode_handler(jwt_value)反解token获得其中的payload</span></span><br><span class="line">        payload = jwt_decode_handler(jwt_value)  </span><br><span class="line">    <span class="keyword">except</span> jwt.ExpiredSignature:</span><br><span class="line">        msg = _(<span class="string">&#x27;Signature has expired.&#x27;</span>)</span><br><span class="line">        <span class="keyword">raise</span> exceptions.AuthenticationFailed(msg)</span><br><span class="line">    <span class="keyword">except</span> jwt.DecodeError:</span><br><span class="line">        msg = _(<span class="string">&#x27;Error decoding signature.&#x27;</span>)</span><br><span class="line">        <span class="keyword">raise</span> exceptions.AuthenticationFailed(msg)</span><br><span class="line">    <span class="keyword">except</span> jwt.InvalidTokenError:</span><br><span class="line">        <span class="keyword">raise</span> exceptions.AuthenticationFailed()</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 使用反解得到的payload获得存储的用户</span></span><br><span class="line">    user = self.authenticate_credentials(payload)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> (user, jwt_value)</span><br></pre></td></tr></table></figure>
-<h3 id="可以定制的方法"><a class="header-anchor" href="#可以定制的方法">¶</a>可以定制的方法</h3>
-<p>jwt_response_payload_handler(token, user, request)</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">jwt_response_payload_handler</span>(<span class="params">token, user=<span class="literal">None</span>, request=<span class="literal">None</span></span>):</span></span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    可以自定义响应的内容，用于返回，可以定制要返回的数据，用于前端的获取</span></span><br><span class="line"><span class="string">    默认只返回了token值</span></span><br><span class="line"><span class="string">    Example:</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    def jwt_response_payload_handler(token, user=None, request=None):</span></span><br><span class="line"><span class="string">        return &#123;</span></span><br><span class="line"><span class="string">            &#x27;token&#x27;: token,</span></span><br><span class="line"><span class="string">            &#x27;user&#x27;: UserSerializer(user, context=&#123;&#x27;request&#x27;: request&#125;).data</span></span><br><span class="line"><span class="string">        &#125;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">        <span class="string">&#x27;token&#x27;</span>: token</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-<p>可以通过在settings.py中配置，用于定制返回的内容，默认只返回了token值。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">JWT_AUTH = &#123;</span><br><span class="line">    <span class="string">&#x27;JWT_RESPONSE_PAYLOAD_HANDLER&#x27;</span>: <span class="string">&#x27;指定处理函数&#x27;</span>,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="djangorestframework-jwt-配置"><a class="header-anchor" href="#djangorestframework-jwt-配置">¶</a>djangorestframework_jwt 配置</h3>
-<p>提供配置文件的方式，方便定制JWT的某些功能，除了上面的指定方法外，常用的配置还有以下几个：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> datetime</span><br><span class="line"></span><br><span class="line">JWT_AUTH = &#123;</span><br><span class="line">    <span class="string">&#x27;JWT_EXPIRATION_DELTA&#x27;</span>: datetime.timedelta(days=<span class="number">7</span>),  <span class="comment"># 设置JWT的过期时间</span></span><br><span class="line">    <span class="string">&#x27;JWT_AUTH_HEADER_PREFIX&#x27;</span>: <span class="string">&#x27;JWT&#x27;</span>,  <span class="comment"># 指定接受token的前缀，常用的有Token和JWT两种</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>默认的 <code>JWT_AUTH_HEADER_PREFIX</code> 就是设置的 <code>JWT</code> 前缀，该设置在后端传递给前端token时并不其作用，而是在前端传递给后端的时候用到，用于在后端读取前端设置在 headers.Authorization 中的 <code>Authorization: JWT 9944b09199c62bcf9418ad846dd0e4bbdfc6ee4b</code> 时，验证前缀是否为settings.py中设置的前缀，所以该参数的设置只在后台验证的时候才会进行。</p>
-<h3 id="token功能的项目代码内嵌"><a class="header-anchor" href="#token功能的项目代码内嵌">¶</a>token功能的项目代码内嵌</h3>
-<p>有这样一种功能需求，我们在系统的注册功能中，当我们注册之后应该直接完成登录，显示登录状态，可以发现这部分的前端处理逻辑和登录功能的是类似，在跳转页面的时候也需要向后端传递token以完成身份的验证，但是djangorestframework_jwt只提供了login的url，并没有注册的，此时就需要我们手动在注册完成之后，手动构造符合djangorestframework_jwt要求的token并返回。<br>
-通过以上代码的分析，token的构造主要依赖两个方法，<code>jwt_payload_handler(user)</code>和<code>jwt_encode_handler(payload)</code>， 所以我们可以重写注册过程中需要使用到的 mixins.CreateModelMixin 中的create()方法，实现如下：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">create</span>(<span class="params">self, request, *args, **kwargs</span>):</span></span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    为了完成配合前端实现的 注册完成后即自动登录的要求</span></span><br><span class="line"><span class="string">    重载create方法，完成token的返回</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    serializer = self.get_serializer(data=request.data)</span><br><span class="line">    serializer.is_valid(raise_exception=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 重载perform_create方法，使其返回创建的实例对象，这里获取到该返回值</span></span><br><span class="line">    user = self.perform_create(serializer)</span><br><span class="line">    re_dict = serializer.data</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 分析jwt源码，调用源码组件，完成token的构建</span></span><br><span class="line">    payload = jwt_payload_handler(user)</span><br><span class="line">    <span class="comment"># 获取返回的对象serializer.data，并添加token字段，由前端获取到</span></span><br><span class="line">    re_dict[<span class="string">&quot;token&quot;</span>] = jwt_encode_handler(payload)</span><br><span class="line">    re_dict[<span class="string">&quot;name&quot;</span>] = user.name <span class="keyword">if</span> user.name <span class="keyword">else</span> user.username</span><br><span class="line">    headers = self.get_success_headers(serializer.data)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 返回修改后的值</span></span><br><span class="line">    <span class="keyword">return</span> Response(re_dict, status=status.HTTP_201_CREATED, headers=headers)</span><br></pre></td></tr></table></figure>
-<h2 id="登录状态和身份验证的关系"><a class="header-anchor" href="#登录状态和身份验证的关系">¶</a>登录状态和身份验证的关系</h2>
-<p>注意这里要区分 登录状态 和 身份验证的关系:<br>
-身份验证是前端传递相关数据，如用户信息，或者通过session、token等认证机制判断当前用户是谁，以及获得用户的信息。<br>
-登录状态是前端的表现，如用户通过身份认证后会得到相应的信息作为标记，前端通过判断这个标记，显示是否为登录状态。</p>
-<h2 id="session和token的区别"><a class="header-anchor" href="#session和token的区别">¶</a>session和token的区别</h2>
-<ul>
-<li>token 和 session 其实都是为了身份验证，session 一般翻译为会话，而 token 更多的时候是翻译为令牌。</li>
-<li>session 服务器会保存一份，可能保存到缓存，文件，数据库，token 通过算法生成以及验证，后端不进行存储。</li>
-<li>其实 token 与 session 的问题是一种时间与空间的博弈问题，session 是空间换时间，而 token 是时间换空间。两者的选择要看具体情况而定。虽然确实都是“客户端记录，每次访问携带”，但 token 很容易设计为自包含的，也就是说，后端不需要记录什么东西，每次一个无状态请求，每次解密验证，每次当场得出合法/非法的结论。这一切判断依据，除了固化在 CS 两端的一些逻辑之外，整个信息是自包含的。这才是真正的无状态。而 sessionid ，一般都是一段随机字符串，需要到后端去检索 id 的有效性。万一服务器重启导致内存里的 session 没了呢？万一 redis 服务器挂了呢？</li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1811,7 +1751,7 @@ JSONWebTokenAuthentication 继承自 BaseJSONWebTokenAuthentication，该父类�
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">33</span>
+          <span class="site-state-item-count">34</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
