@@ -3191,34 +3191,6 @@ slice的结构中有指向数组的指针，所以实际上是一种引用类型
       </tags>
   </entry>
   <entry>
-    <title>Go基础之指针</title>
-    <url>/2019/10/16/%E6%8C%87%E9%92%88/</url>
-    <content><![CDATA[<p>示例：</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> a <span class="keyword">int</span> = <span class="number">2</span></span><br><span class="line"><span class="keyword">var</span> pa *<span class="keyword">int</span> = &amp;a   <span class="comment">// &amp;a 就是取a的地址</span></span><br><span class="line">*pa = <span class="number">3</span></span><br><span class="line">fmt.Println(a)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 结果</span></span><br><span class="line"><span class="number">3</span></span><br></pre></td></tr></table></figure>
-<p><strong>Go语言中的指针不能进行计算</strong><br>
-注意：这里的Golang指针类型变量不能进行运算指的是指针本身（pa），而不是指针指向的变量值（*pa）。</p>
-<h2 id="参数传递问题"><a class="header-anchor" href="#参数传递问题">¶</a>参数传递问题</h2>
-<p>Python中的参数传递根据参数是否是可变类型非为值传递和引用传递（实际上都是引用传递）。</p>
-<p>Golang:</p>
-<ul>
-<li>Go只有 <strong>值传递</strong> 这一种方式。</li>
-<li>但是这并不意味着Go在传递的时候都要将内容进行拷贝一份，而是可以使用指针类型，传递指针变量的值（指向内容的地址），和c的用法一样。</li>
-</ul>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">swap</span><span class="params">(a,b *<span class="keyword">int</span>)</span></span>&#123;</span><br><span class="line">  *b, *a = *a, *b</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">  a, b := <span class="number">3</span>,<span class="number">4</span></span><br><span class="line">  swap(&amp;a,&amp;b)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>更好的swap实现方式</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">swap</span><span class="params">(a,b <span class="keyword">int</span>)</span><span class="params">(<span class="keyword">int</span>, <span class="keyword">int</span>)</span></span>&#123;</span><br><span class="line">  <span class="keyword">return</span> b,a</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">  a,b := <span class="number">3</span>,<span class="number">4</span></span><br><span class="line">  a,b = swap(a,b) </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>两者的实现原理是不同的，前者本质上使用的是Go语言的“多重赋值”的特性实现的变量交换任务。</p>
-]]></content>
-      <categories>
-        <category>计算机</category>
-        <category>Golang</category>
-      </categories>
-      <tags>
-        <tag>Golang</tag>
-        <tag>语言基础</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Go基础之字符和字符串处理</title>
     <url>/2019/11/01/%E5%AD%97%E7%AC%A6%E5%92%8C%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%A4%84%E7%90%86/</url>
     <content><![CDATA[<p>rune类型就相当于Go语言中的char，占4个字节，为int32别名</p>
@@ -3237,6 +3209,34 @@ slice的结构中有指向数组的指针，所以实际上是一种引用类型
 <li>ToLower ToUpper</li>
 <li>Trim TrimRight TrimLeft</li>
 </ul>
+]]></content>
+      <categories>
+        <category>计算机</category>
+        <category>Golang</category>
+      </categories>
+      <tags>
+        <tag>Golang</tag>
+        <tag>语言基础</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Go基础之指针</title>
+    <url>/2019/10/16/%E6%8C%87%E9%92%88/</url>
+    <content><![CDATA[<p>示例：</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> a <span class="keyword">int</span> = <span class="number">2</span></span><br><span class="line"><span class="keyword">var</span> pa *<span class="keyword">int</span> = &amp;a   <span class="comment">// &amp;a 就是取a的地址</span></span><br><span class="line">*pa = <span class="number">3</span></span><br><span class="line">fmt.Println(a)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 结果</span></span><br><span class="line"><span class="number">3</span></span><br></pre></td></tr></table></figure>
+<p><strong>Go语言中的指针不能进行计算</strong><br>
+注意：这里的Golang指针类型变量不能进行运算指的是指针本身（pa），而不是指针指向的变量值（*pa）。</p>
+<h2 id="参数传递问题"><a class="header-anchor" href="#参数传递问题">¶</a>参数传递问题</h2>
+<p>Python中的参数传递根据参数是否是可变类型非为值传递和引用传递（实际上都是引用传递）。</p>
+<p>Golang:</p>
+<ul>
+<li>Go只有 <strong>值传递</strong> 这一种方式。</li>
+<li>但是这并不意味着Go在传递的时候都要将内容进行拷贝一份，而是可以使用指针类型，传递指针变量的值（指向内容的地址），和c的用法一样。</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">swap</span><span class="params">(a,b *<span class="keyword">int</span>)</span></span>&#123;</span><br><span class="line">  *b, *a = *a, *b</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">  a, b := <span class="number">3</span>,<span class="number">4</span></span><br><span class="line">  swap(&amp;a,&amp;b)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>更好的swap实现方式</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">swap</span><span class="params">(a,b <span class="keyword">int</span>)</span><span class="params">(<span class="keyword">int</span>, <span class="keyword">int</span>)</span></span>&#123;</span><br><span class="line">  <span class="keyword">return</span> b,a</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">  a,b := <span class="number">3</span>,<span class="number">4</span></span><br><span class="line">  a,b = swap(a,b) </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>两者的实现原理是不同的，前者本质上使用的是Go语言的“多重赋值”的特性实现的变量交换任务。</p>
 ]]></content>
       <categories>
         <category>计算机</category>
@@ -3577,6 +3577,30 @@ k表示数字的位数，代码中的it。</p>
         <tag>排序算法</tag>
         <tag>数据结构</tag>
         <tag>算法</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>终端神器tmux命令提示</title>
+    <url>/20210/06/01/%E7%BB%88%E7%AB%AF%E7%A5%9E%E5%99%A8tmux/</url>
+    <content><![CDATA[<blockquote>
+<p>命令行的典型使用方式是，打开一个终端窗口（terminal window，以下简称&quot;窗口&quot;），在里面输入命令。用户与计算机的这种临时的交互，称为一次&quot;会话&quot;（session）。会话的一个重要特点是，窗口与其中启动的进程是连在一起的。打开窗口，会话开始；关闭窗口，会话结束，会话内部的进程也会随之终止，不管有没有运行完。一个典型的例子就是，SSH 登录远程计算机，打开一个远程窗口执行命令。这时，网络突然断线，再次登录的时候，是找不回上一次执行的命令的。因为上一次 SSH 会话已经终止了，里面的进程也随之消失了。</p>
+</blockquote>
+<p>为了解决这个问题，会话与窗口可以&quot;解绑&quot;：窗口关闭时，会话并不终止，而是继续运行，等到以后需要的时候，再让会话&quot;绑定&quot;其他窗口。尤其是在登录服务器修改项目的时候，通过ssh远程登录，得到的是一次会话，此时如果意外断开连接导致会话断开，则本次的工作环境将全部丢失，tmux很好的解决了这个问题，提供了强大的终端复用以及会话保存功能。</p>
+<p>常用的命令提示：<br>
+<code>prefix = Ctr-b</code></p>
+<p>session:</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">tmux new -s session_name  </span><br><span class="line">tmux a  连接到最近一次的session</span><br><span class="line">tmux attach-session -t session_name</span><br><span class="line">tmux list-session</span><br><span class="line"></span><br><span class="line">prefix s 列出所有会话</span><br><span class="line">prefix $ 会话重命名</span><br><span class="line"></span><br><span class="line">prefix d 关闭session</span><br></pre></td></tr></table></figure>
+<p>窗口：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">prefix c  新的窗口</span><br><span class="line">prefix w 列出所有会话以及窗口</span><br><span class="line">prefix 0-9 切换</span><br><span class="line"></span><br><span class="line">prefix n下一个窗口</span><br><span class="line">prefix p 上一个窗口  </span><br><span class="line">这两个命令有问题，可能是快捷键冲突了</span><br><span class="line"></span><br><span class="line">prefix f　根据显示的内容搜索窗格</span><br><span class="line">prefix ,  窗口重命名</span><br></pre></td></tr></table></figure>
+<p>窗格：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">prefix % 左右分</span><br><span class="line">prefix &quot; 上下分</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>计算机</category>
+        <category>Linux</category>
+      </categories>
+      <tags>
+        <tag>工具</tag>
+        <tag>Linux</tag>
       </tags>
   </entry>
   <entry>
