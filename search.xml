@@ -1918,6 +1918,14 @@ TCP的创建和销毁是非常消耗资源的，遇到使用高峰，就会遇�
 <h6 id="队列和交换器的绑定"><a class="header-anchor" href="#队列和交换器的绑定">¶</a>队列和交换器的绑定</h6>
 <p><code>channel.queue_bind(queue, exchange, routing_key=None, arguments=None)</code></p>
 ]]></content>
+      <categories>
+        <category>计算机</category>
+        <category>消息队列</category>
+      </categories>
+      <tags>
+        <tag>工具</tag>
+        <tag>消息队列</tag>
+      </tags>
   </entry>
   <entry>
     <title>Vue基础</title>
@@ -2319,6 +2327,25 @@ print(recode.count_1)是以列名的形式打印内容的，因为使用使用CO
       </tags>
   </entry>
   <entry>
+    <title>hexo基础命令</title>
+    <url>/2019/06/14/hello-world/</url>
+    <content><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
+<h2 id="Quick-Start"><a class="header-anchor" href="#Quick-Start">¶</a>Quick Start</h2>
+<h3 id="Create-a-new-post"><a class="header-anchor" href="#Create-a-new-post">¶</a>Create a new post</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/writing.html">Writing</a></p>
+<h3 id="Run-server"><a class="header-anchor" href="#Run-server">¶</a>Run server</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/server.html">Server</a></p>
+<h3 id="Generate-static-files"><a class="header-anchor" href="#Generate-static-files">¶</a>Generate static files</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/generating.html">Generating</a></p>
+<h3 id="Deploy-to-remote-sites"><a class="header-anchor" href="#Deploy-to-remote-sites">¶</a>Deploy to remote sites</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
+]]></content>
+  </entry>
+  <entry>
     <title>pipenv 使用</title>
     <url>/2019/11/01/pipenv%E4%BD%BF%E7%94%A8/</url>
     <content><![CDATA[<h3 id="优势"><a class="header-anchor" href="#优势">¶</a>优势</h3>
@@ -2407,25 +2434,6 @@ print(recode.count_1)是以列名的形式打印内容的，因为使用使用CO
         <tag>工具</tag>
         <tag>python</tag>
       </tags>
-  </entry>
-  <entry>
-    <title>hexo基础命令</title>
-    <url>/2019/06/14/hello-world/</url>
-    <content><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
-<h2 id="Quick-Start"><a class="header-anchor" href="#Quick-Start">¶</a>Quick Start</h2>
-<h3 id="Create-a-new-post"><a class="header-anchor" href="#Create-a-new-post">¶</a>Create a new post</h3>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/writing.html">Writing</a></p>
-<h3 id="Run-server"><a class="header-anchor" href="#Run-server">¶</a>Run server</h3>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/server.html">Server</a></p>
-<h3 id="Generate-static-files"><a class="header-anchor" href="#Generate-static-files">¶</a>Generate static files</h3>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/generating.html">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a class="header-anchor" href="#Deploy-to-remote-sites">¶</a>Deploy to remote sites</h3>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
-]]></content>
   </entry>
   <entry>
     <title>Redis 使用之安装篇</title>
@@ -2541,6 +2549,223 @@ redis 默认只能本机访问，需要修改一些配置<br>
 </li>
 </ul>
 <p>protected-mode 的配置是 redis 的安全保护措施，不建议设置为no，且为了安全使用，最好再同时设置bind和访问密码。私有云配置bind时，绑定的应该是私有IP地址。</p>
+]]></content>
+      <categories>
+        <category>计算机</category>
+        <category>Redis</category>
+      </categories>
+      <tags>
+        <tag>工具</tag>
+        <tag>Redis</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Redis 使用之操作篇</title>
+    <url>/2019/11/25/redis-%E4%BD%BF%E7%94%A8%E4%B9%8B%E6%93%8D%E4%BD%9C%E7%AF%87/</url>
+    <content><![CDATA[<h2 id="概述"><a class="header-anchor" href="#概述">¶</a>概述</h2>
+<p>redis的几种数据类型：STRING SET HASH LIST<br>
+redis的命令行操作模式会显示他的语法提示，基本使用采用的是k/v值的形式，即通过key设置value的方式。<br>
+对redis数据库的操作可分为两种方式，第一种采用redis-cli进行访问，第二种采用编程语言，如 Python、Java等。本文中使用 redis-cli 的方式进行数据的访问，首先需要启动redis，连接上 redis-server，这在上节已经进行了详细的讲解，此处不再赘述。</p>
+<p>redis-cli 在使用时提供了命令提示，方便我们操作。<br>
+<a href="http://doc.redisfans.com/index.html">Redis 命令参考</a></p>
+<h2 id="使用redis-cli对redis进行字符串string操作"><a class="header-anchor" href="#使用redis-cli对redis进行字符串string操作">¶</a>使用redis-cli对redis进行字符串string操作</h2>
+<h3 id="添加"><a class="header-anchor" href="#添加">¶</a>添加</h3>
+<p><code>set key value</code> ，value 为string类型，可以不使用引号<br>
+示例：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ 127.0.0.1:6379&gt; <span class="built_in">set</span> username tmj</span><br><span class="line">OK</span><br></pre></td></tr></table></figure>
+<p>将字符串值 value 关联到 key ，如果 key 已经持有其他值，set 命令就覆写旧值，无视其类型。并且默认的过期时间是永久（即使之前的 key 快过期了），即永久不会过期。</p>
+<h4 id="批量添加"><a class="header-anchor" href="#批量添加">¶</a>批量添加</h4>
+<p><code>mset key1 value1 key2 value2 ... ...</code></p>
+<h3 id="删除"><a class="header-anchor" href="#删除">¶</a>删除</h3>
+<p><code>del key</code><br>
+示例：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ 127.0.0.1:6379&gt; del username</span><br><span class="line">(<span class="built_in">integer</span>) 1</span><br></pre></td></tr></table></figure>
+<h3 id="设置过期时间"><a class="header-anchor" href="#设置过期时间">¶</a>设置过期时间</h3>
+<p><code>expire key timeout</code> 时间单位为秒<br>
+示例：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ 127.0.0.1:6379&gt; expire username 60</span><br><span class="line">(<span class="built_in">integer</span>) 1</span><br></pre></td></tr></table></figure>
+<p>可以对已经设置过过期时间的 key 重新设置过期时间,将覆盖原值。也可以在设置 key 时，同时指定过期时间，使用 <code>EX</code> 参数</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ 127.0.0.1:6379&gt; <span class="built_in">set</span> age 18 EX 800</span><br><span class="line">OK</span><br></pre></td></tr></table></figure>
+<p>等价方式，使用 <code>setex key timeout value</code>：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ 127.0.0.1:6379&gt; setex age 800 18</span><br><span class="line">OK</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>注意：<code>expire key timeout</code> 指令是通用的，适用于各种类型的key,下面的两中方式只适用于string类型。</p>
+</blockquote>
+<h3 id="查看过期时间"><a class="header-anchor" href="#查看过期时间">¶</a>查看过期时间</h3>
+<p><code>ttl key</code><br>
+过期时间的查询结果有一下几种：</p>
+<ul>
+<li>大于0的正整数：此key存在，且还剩下正整数的时间过期</li>
+<li>-1 ： 此key存在，且没有设置过期时间，即永久不会过期</li>
+<li>-2 ： 此key不存在，或存在但是过期了，总之就是现在不存在了。</li>
+</ul>
+<p>示例：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ 127.0.0.1:6379&gt; ttl username</span><br><span class="line">(<span class="built_in">integer</span>) 796</span><br></pre></td></tr></table></figure>
+<h3 id="查看某个string类型key的值"><a class="header-anchor" href="#查看某个string类型key的值">¶</a>查看某个string类型key的值</h3>
+<p><code>get key</code></p>
+<h4 id="批量查看多个string类型key的值"><a class="header-anchor" href="#批量查看多个string类型key的值">¶</a>批量查看多个string类型key的值</h4>
+<p><code>mget key1 key2 key3 ...</code></p>
+<h3 id="查看当前redis中所有类型的key"><a class="header-anchor" href="#查看当前redis中所有类型的key">¶</a>查看当前redis中所有类型的key</h3>
+<p><code>keys *</code></p>
+<h3 id="查看key的类型"><a class="header-anchor" href="#查看key的类型">¶</a>查看key的类型</h3>
+<p>因为redis中所有类型的key是存在一起的，但是每中类型的key的查看的方式都是不同的，一旦使用的查询命令不对就会报错，此时可以使用 <code>type key</code> 查看key的类型<br>
+示例：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ 127.0.0.1:6379&gt; <span class="built_in">type</span> username</span><br><span class="line">string</span><br></pre></td></tr></table></figure>
+<h2 id="使用redis-cli对redis进行列表list操作"><a class="header-anchor" href="#使用redis-cli对redis进行列表list操作">¶</a>使用redis-cli对redis进行列表list操作</h2>
+<p>Redis列表 是简单的字符串列表，按照插入顺序排序。你可以添加一个元素到列表的头部（左边）或者尾部（右边）。</p>
+<h3 id="添加-v2"><a class="header-anchor" href="#添加-v2">¶</a>添加</h3>
+<p>添加到头部（左边）使用 <code>lpush key value</code>，添加到尾部（右边）使用 <code>rpush key value</code>。如果key不存在，一个空的列表会被创建并执行lpush（rpush）操作，当key存在，但不是列表类型时，返回错误。<br>
+示例：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ 127.0.0.1:6379&gt; lpush language python</span><br><span class="line">(<span class="built_in">integer</span>) 1    <span class="comment"># 返回值为当前列表中值的个数</span></span><br></pre></td></tr></table></figure>
+<p>列表中可以添加多个值，且可以是重复值</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ 127.0.0.1:6379&gt; lpush language python python</span><br><span class="line">(<span class="built_in">integer</span>) 3    <span class="comment"># 添加了两个重复的值，目前一共三个值</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>注意：当一次添加多个 value 的时候，最后一个 value 是第一个被添加的，如上面的例子中，最后一个 python 是第一被添加的。</p>
+</blockquote>
+<h3 id="查看列表中的的元素（是一个区间中的元素）"><a class="header-anchor" href="#查看列表中的的元素（是一个区间中的元素）">¶</a>查看列表中的的元素（是一个区间中的元素）</h3>
+<p><code>lrange key start stop</code>，指令中的 l 代表的是列表list的意思，返回列表key中指定区间内的元素，区间以偏移量start和stop指定，如果要左边的第一个到最后的一个 <code>lrange key 0 -1</code>（列表的第一项下标是 0，左后一项为 -1）。若只想查看某个值，则start 和 stop 指定一样的下标即可。<br>
+示例：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ 127.0.0.1:6379&gt; lrange language 0 -1</span><br><span class="line">1) <span class="string">&quot;python&quot;</span></span><br><span class="line">2) <span class="string">&quot;python&quot;</span></span><br><span class="line">3) <span class="string">&quot;python&quot;</span></span><br></pre></td></tr></table></figure>
+<h4 id="返回指定下标的元素"><a class="header-anchor" href="#返回指定下标的元素">¶</a>返回指定下标的元素</h4>
+<p>使用 <code>lindex key index</code>，指令中的 l 代表的是列表list的意思，将返回key这个列表中，索引为index的这个元素，若是请求的索引不存在，返回 (nil)。<br>
+示例：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ 127.0.0.1:6379&gt; lindex language 0</span><br><span class="line"><span class="string">&quot;python&quot;</span></span><br></pre></td></tr></table></figure>
+<h3 id="修改指定下标的元素"><a class="header-anchor" href="#修改指定下标的元素">¶</a>修改指定下标的元素</h3>
+<p>使用 <code>lset key index value</code>，将列表 key 下标为 index 的元素的值设置为 value 。当 index 参数超出范围，或对一个空列表(key不存在)进行 LSET 时，返回一个错误。<br>
+示例：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ 127.0.0.1:6379&gt; lset language 0 Golang</span><br><span class="line">OK   <span class="comment"># 修改成功，返回OK</span></span><br></pre></td></tr></table></figure>
+<h3 id="移除列表中的元素"><a class="header-anchor" href="#移除列表中的元素">¶</a>移除列表中的元素</h3>
+<p>同理增加值的方式，使用<code>lpop key</code> 和 <code>rpop key</code> 移除列表头部或者尾部的元素，使用这两条命令移除列表元素的同时还会返回移除的值。<br>
+示例：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ 127.0.0.1:6379&gt; lpop language</span><br><span class="line"><span class="string">&quot;python&quot;</span>  <span class="comment"># 返回了被移除的头部元素</span></span><br></pre></td></tr></table></figure>
+<h4 id="移除指定个数的单个元素"><a class="header-anchor" href="#移除指定个数的单个元素">¶</a>移除指定个数的单个元素</h4>
+<p>使用 <code>lrem key count value</code>，指令中的 l 代表的是列表list的意思，删除列表key中count个值为value的元素。<br>
+示例：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ 127.0.0.1:6379&gt; lrem language 4 python</span><br><span class="line">(<span class="built_in">integer</span>) 1  <span class="comment"># 返回的值为 实际 删除的个数，若为0表示不存在该元素</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>注意：返回的是实际删除掉的 values 的个数，使用的时候 count 的大小是可以超过实际个数大小的，但是删除时的返回值是实际删除掉的个数。</p>
+</blockquote>
+<h4 id="移除指定位置index的元素"><a class="header-anchor" href="#移除指定位置index的元素">¶</a>移除指定位置index的元素</h4>
+<p>命令里没有根据 index 删除元素的命令，如果想要删除指定index的值，可以采用组合命令的方式，即通过 <code>lset key index value</code> 来修改要删除的位置的元素为某个标志，然后使用 <code>lrem key 0 value</code> 删除所有值为标记的元素（也即是需要删除的位置）：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ 127.0.0.1:6379&gt; lset language 1 del  <span class="comment"># 将要删除的下表的元素设置为 &quot;del&quot;</span></span><br><span class="line">OK</span><br><span class="line">$ 127.0.0.1:6379&gt; lrem language 0 del  <span class="comment"># 删除值为 &quot;del&quot; 的所有的元素，就相当于删除了指定index上的值</span></span><br><span class="line">(<span class="built_in">integer</span>) 1</span><br></pre></td></tr></table></figure>
+<p>同理删除多个位置上的值，就可以通过 <code>lset key index value</code> 修改多个需要删除的位置上的值为标志值，然后使用 <code>lrem key 0 value</code> 统一删除。</p>
+<h4 id="移除区间之外的元素"><a class="header-anchor" href="#移除区间之外的元素">¶</a>移除区间之外的元素</h4>
+<p>使用 <code>ltrim key start stop</code> 对列表进行修剪(trim)，即让列表只保留指定区间内的元素，不在指定区间之内的元素都将被删除。<br>
+示例：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ 127.0.0.1:6379&gt; ltrim language 0 1</span><br><span class="line">OK   <span class="comment"># 保留了前两个元素</span></span><br></pre></td></tr></table></figure>
+<p>注意，作用的范围是闭区间。</p>
+<h3 id="获取列表中的元素的个数"><a class="header-anchor" href="#获取列表中的元素的个数">¶</a>获取列表中的元素的个数</h3>
+<p><code>llen key</code></p>
+<h3 id="只有单条的指令可以通过正负值来指定操作的方向"><a class="header-anchor" href="#只有单条的指令可以通过正负值来指定操作的方向">¶</a>只有单条的指令可以通过正负值来指定操作的方向</h3>
+<p>命令中的 l 代表list的指令（即不使用通过l和r来区分操作方向的指令），都可以通过负值来表示反向操作。<br>
+如移除指定个数的元素 <code>lrem key count value</code> 命令根据参数count的值，移除列表中与参数value相等的元素。count的值可以是一下几种：</p>
+<ul>
+<li>count &gt; 0 ：从表头开始向表尾搜索，移除与value相等的元素，数量为count。</li>
+<li>count &lt; 0 ：从表尾开始向表头搜索，移除与value相等的元素，数量为count的绝对值。</li>
+<li>count = 0 : 移除表中所有与value相等的值。</li>
+</ul>
+<h2 id="使用redis-cli对redis进行集合set操作"><a class="header-anchor" href="#使用redis-cli对redis进行集合set操作">¶</a>使用redis-cli对redis进行集合set操作</h2>
+<p>集合和列表相似，是用来存储元素的，不同在于，集合是无序的，且元素同一元素只能保存一份，集合中的元素是唯一的。</p>
+<h3 id="添加-v3"><a class="header-anchor" href="#添加-v3">¶</a>添加</h3>
+<p>使用 <code>sadd key member1 member2 ...</code> ，因为元素是无序且唯一的，所以不存在左右添加的区别。<br>
+示例：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ 127.0.0.1:6379&gt; sadd team xiaoming xiaowang</span><br><span class="line">(<span class="built_in">integer</span>) 2</span><br><span class="line">$ 127.0.0.1:6379&gt; sadd team xiaoming  </span><br><span class="line">(<span class="built_in">integer</span>) 0   <span class="comment"># 添加了重复值返回0，表示没有本次没有添加的内容</span></span><br><span class="line">$ 127.0.0.1:6379&gt; sadd team xiaotang</span><br><span class="line">(<span class="built_in">integer</span>) 1</span><br></pre></td></tr></table></figure>
+<p>与列表的添加不同，返回的结果不会显示目前集合中元素个数，只会显示本次添加操作中成功添加的个数，重复添加相同的值，则返回0。一次性添加的多个成员中含有集合中已经存在的成员直接无视，添加未存在的。</p>
+<blockquote>
+<p>注意：集合中存储的成员的顺序于添加顺序无关</p>
+</blockquote>
+<h3 id="查看集合中的成员"><a class="header-anchor" href="#查看集合中的成员">¶</a>查看集合中的成员</h3>
+<p><code>smembers key</code></p>
+<h3 id="移除集合中的成员"><a class="header-anchor" href="#移除集合中的成员">¶</a>移除集合中的成员</h3>
+<p>使用 <code>srem key member1 member2 ...</code> 进行删除，因为集合是没有下标，且集合中的值唯一，所以直接指定需要删除的成员即可。</p>
+<h4 id="移除并返回一个随机成员"><a class="header-anchor" href="#移除并返回一个随机成员">¶</a>移除并返回一个随机成员</h4>
+<p>使用 <code>spop key</code> ，会随机删除并返回一个元素<br>
+示例：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ 127.0.0.1:6379&gt; sadd team xiaoming xiaowang</span><br><span class="line">(<span class="built_in">integer</span>) 2</span><br><span class="line">$ 127.0.0.1:6379&gt; spop team</span><br><span class="line"><span class="string">&quot;xiaowang&quot;</span></span><br><span class="line">$ 127.0.0.1:6379&gt; smembers team</span><br><span class="line">1) <span class="string">&quot;xiaoming&quot;</span></span><br></pre></td></tr></table></figure>
+<h4 id="随机获取一个元素不移除"><a class="header-anchor" href="#随机获取一个元素不移除">¶</a>随机获取一个元素不移除</h4>
+<p>使用 <code>srandmember key [count]</code>，从 Redis2.6 版本开始， srandmember 命令接受可选的 count 参数：</p>
+<ul>
+<li>如果 count 为正数，且小于集合基数，那么命令返回一个包含 count 个元素的数组，数组中的元素各不相同。如果 count 大于等于集合基数，那么返回整个集合。</li>
+<li>如果 count 为负数，那么命令返回一个数组，数组中的元素可能会重复出现多次，而数组的长度为 count 的绝对值。</li>
+</ul>
+<h3 id="查看集合中的成员的个数"><a class="header-anchor" href="#查看集合中的成员的个数">¶</a>查看集合中的成员的个数</h3>
+<p>使用 <code>scard key</code> 进行查看<br>
+示例：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ 127.0.0.1:6379&gt; scard team</span><br><span class="line">(<span class="built_in">integer</span>) 5   </span><br></pre></td></tr></table></figure>
+<h3 id="集合之间的操作"><a class="header-anchor" href="#集合之间的操作">¶</a>集合之间的操作</h3>
+<h4 id="获取集合的交集"><a class="header-anchor" href="#获取集合的交集">¶</a>获取集合的交集</h4>
+<p><code>sinter key1 key2</code></p>
+<h4 id="获取集合的并集"><a class="header-anchor" href="#获取集合的并集">¶</a>获取集合的并集</h4>
+<p><code>sunion key1 key2</code></p>
+<h4 id="获取集合的差集"><a class="header-anchor" href="#获取集合的差集">¶</a>获取集合的差集</h4>
+<p><code>sdiff key1 key2</code></p>
+<h2 id="使用redis-cli对redis进哈希表hash操作"><a class="header-anchor" href="#使用redis-cli对redis进哈希表hash操作">¶</a>使用redis-cli对redis进哈希表hash操作</h2>
+<p>哈希表类似python中的字典，采用k/v值的形式。</p>
+<h3 id="添加-v4"><a class="header-anchor" href="#添加-v4">¶</a>添加</h3>
+<p>使用 <code>hset key field value</code> 进行创建，将哈希表 key 中的域 field 的值设为 value。<br>
+示例：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ 127.0.0.1:6379&gt; hset website baidu www.baidu.com</span><br><span class="line">(<span class="built_in">integer</span>) 1</span><br><span class="line">$ 127.0.0.1:6379&gt; hset website google www.google.com</span><br><span class="line">(<span class="built_in">integer</span>) 1</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>返回的内容和string操作时类似，用来显示成功与否，不显示添加的数量</p>
+</blockquote>
+<p>数据的存储样式是：<br>
+<img src="/2019/11/25/redis-%E4%BD%BF%E7%94%A8%E4%B9%8B%E6%93%8D%E4%BD%9C%E7%AF%87/redis_hash.png" alt="redis_hash"><br>
+如果域 field 已经存在于哈希表中，旧值将被覆盖。<br>
+示例：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ 127.0.0.1:6379&gt; hset website google google.com</span><br><span class="line">(<span class="built_in">integer</span>) 0   <span class="comment"># 注意返回值的形式，是0而不是1</span></span><br><span class="line">$ 127.0.0.1:6379&gt; hget website google</span><br><span class="line"><span class="string">&quot;google.com&quot;</span>   <span class="comment"># 查看后发现域field的值被修改了</span></span><br></pre></td></tr></table></figure>
+<h4 id="批量添加-v2"><a class="header-anchor" href="#批量添加-v2">¶</a>批量添加</h4>
+<p>使用<code>hmset key field1 value1 field2 value2 ... ...</code><br>
+示例：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ 39.106.84.56:6379&gt; hmset website apple www.apple.com huawei www.hauwei.com</span><br><span class="line">OK</span><br></pre></td></tr></table></figure>
+<h3 id="获取哈希表中的field对应的值"><a class="header-anchor" href="#获取哈希表中的field对应的值">¶</a>获取哈希表中的field对应的值</h3>
+<p><code>hget key field</code></p>
+<h4 id="批量查看哈希表中的某些field对应的值"><a class="header-anchor" href="#批量查看哈希表中的某些field对应的值">¶</a>批量查看哈希表中的某些field对应的值</h4>
+<p><code>hmget key field1 field2 ...</code></p>
+<h3 id="删除field中的某个field"><a class="header-anchor" href="#删除field中的某个field">¶</a>删除field中的某个field</h3>
+<p><code>hdel key field</code></p>
+<h3 id="获取哈希中的所有的field和value"><a class="header-anchor" href="#获取哈希中的所有的field和value">¶</a>获取哈希中的所有的field和value</h3>
+<p>使用 <code>hgetall key</code> 进行获取，打印的样式是 field value 这样一个间隔一个的样式<br>
+示例：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ 127.0.0.1:6379&gt; hgetall website</span><br><span class="line">1) <span class="string">&quot;baidu&quot;</span></span><br><span class="line">2) <span class="string">&quot;www.baidu.com&quot;</span></span><br><span class="line">3) <span class="string">&quot;google&quot;</span></span><br><span class="line">4) <span class="string">&quot;www.google.com&quot;</span></span><br></pre></td></tr></table></figure>
+<h3 id="获取某个哈希中所有的field"><a class="header-anchor" href="#获取某个哈希中所有的field">¶</a>获取某个哈希中所有的field</h3>
+<p><code>hkeys key</code></p>
+<h3 id="获取某个哈希中所有的值"><a class="header-anchor" href="#获取某个哈希中所有的值">¶</a>获取某个哈希中所有的值</h3>
+<p><code>hvals key</code></p>
+<h3 id="判断哈希中是否存在某个field"><a class="header-anchor" href="#判断哈希中是否存在某个field">¶</a>判断哈希中是否存在某个field</h3>
+<p>使用 <code>hexists key field</code><br>
+示例：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ 127.0.0.1:6379&gt; hexists website google</span><br><span class="line">(<span class="built_in">integer</span>) 1   <span class="comment"># 存在返回1</span></span><br><span class="line">$ 127.0.0.1:6379&gt; hexists website googl</span><br><span class="line">(<span class="built_in">integer</span>) 0   <span class="comment"># 不存在返回0</span></span><br></pre></td></tr></table></figure>
+<h3 id="获取哈希表中的键值对个数"><a class="header-anchor" href="#获取哈希表中的键值对个数">¶</a>获取哈希表中的键值对个数</h3>
+<p>使用 <code>hlen key</code><br>
+示例：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ 127.0.0.1:6379&gt; hlen website</span><br><span class="line">(<span class="built_in">integer</span>) 2</span><br></pre></td></tr></table></figure>
+<h3 id="为哈希表中的-字段值-加上指定增量值"><a class="header-anchor" href="#为哈希表中的-字段值-加上指定增量值">¶</a>为哈希表中的 字段值 加上指定增量值</h3>
+<p>通过 <code>hincrby key field num</code> 的方式，给hash表中field对应的value增加或者减少相应的数量，注意此操作只能用来对value是数值形式的field进行。</p>
+<h2 id="事务"><a class="header-anchor" href="#事务">¶</a>事务</h2>
+<p>Redis事务可以一次执行多个命令，事务具有以下特征：</p>
+<ul>
+<li>隔离操作：事务中的所有命令都会序列化、按顺序的执行，不会被其他命令打扰。</li>
+<li>原子操作：事务中的命令要么全部被执行，要么全部不执行。</li>
+</ul>
+<h3 id="开启一个事务"><a class="header-anchor" href="#开启一个事务">¶</a>开启一个事务</h3>
+<p><code>multi</code><br>
+以后执行的所有的命令，都在这个事务中执行。</p>
+<h3 id="执行事务"><a class="header-anchor" href="#执行事务">¶</a>执行事务</h3>
+<p><code>exec</code><br>
+会将在multi和exec中的操作一并提交。</p>
+<h3 id="取消事务"><a class="header-anchor" href="#取消事务">¶</a>取消事务</h3>
+<p><code>discard</code><br>
+会将multi后的所有命令取消。</p>
+<h3 id="监视一个或者多个key"><a class="header-anchor" href="#监视一个或者多个key">¶</a>监视一个或者多个key</h3>
+<p><code>watch key [key ...]</code><br>
+监视一个（或者多个）key，如果在事务执行之前这个（或这些）key被其他命令所改动，那么事务将被打断。</p>
+<h3 id="取消所有key的监视"><a class="header-anchor" href="#取消所有key的监视">¶</a>取消所有key的监视</h3>
+<p><code>unwatch</code></p>
+<h2 id="发布-订阅操作"><a class="header-anchor" href="#发布-订阅操作">¶</a>发布/订阅操作</h2>
+<h3 id="给某个频道发布消息"><a class="header-anchor" href="#给某个频道发布消息">¶</a>给某个频道发布消息</h3>
+<p><code>publish channel message</code></p>
+<h3 id="订阅某个频道的消息"><a class="header-anchor" href="#订阅某个频道的消息">¶</a>订阅某个频道的消息</h3>
+<p><code>subscribe channel</code></p>
 ]]></content>
       <categories>
         <category>计算机</category>
@@ -2843,223 +3068,6 @@ slice的结构中有指向数组的指针，所以实际上是一种引用类型
       <tags>
         <tag>Golang</tag>
         <tag>语言基础</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Redis 使用之操作篇</title>
-    <url>/2019/11/25/redis-%E4%BD%BF%E7%94%A8%E4%B9%8B%E6%93%8D%E4%BD%9C%E7%AF%87/</url>
-    <content><![CDATA[<h2 id="概述"><a class="header-anchor" href="#概述">¶</a>概述</h2>
-<p>redis的几种数据类型：STRING SET HASH LIST<br>
-redis的命令行操作模式会显示他的语法提示，基本使用采用的是k/v值的形式，即通过key设置value的方式。<br>
-对redis数据库的操作可分为两种方式，第一种采用redis-cli进行访问，第二种采用编程语言，如 Python、Java等。本文中使用 redis-cli 的方式进行数据的访问，首先需要启动redis，连接上 redis-server，这在上节已经进行了详细的讲解，此处不再赘述。</p>
-<p>redis-cli 在使用时提供了命令提示，方便我们操作。<br>
-<a href="http://doc.redisfans.com/index.html">Redis 命令参考</a></p>
-<h2 id="使用redis-cli对redis进行字符串string操作"><a class="header-anchor" href="#使用redis-cli对redis进行字符串string操作">¶</a>使用redis-cli对redis进行字符串string操作</h2>
-<h3 id="添加"><a class="header-anchor" href="#添加">¶</a>添加</h3>
-<p><code>set key value</code> ，value 为string类型，可以不使用引号<br>
-示例：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ 127.0.0.1:6379&gt; <span class="built_in">set</span> username tmj</span><br><span class="line">OK</span><br></pre></td></tr></table></figure>
-<p>将字符串值 value 关联到 key ，如果 key 已经持有其他值，set 命令就覆写旧值，无视其类型。并且默认的过期时间是永久（即使之前的 key 快过期了），即永久不会过期。</p>
-<h4 id="批量添加"><a class="header-anchor" href="#批量添加">¶</a>批量添加</h4>
-<p><code>mset key1 value1 key2 value2 ... ...</code></p>
-<h3 id="删除"><a class="header-anchor" href="#删除">¶</a>删除</h3>
-<p><code>del key</code><br>
-示例：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ 127.0.0.1:6379&gt; del username</span><br><span class="line">(<span class="built_in">integer</span>) 1</span><br></pre></td></tr></table></figure>
-<h3 id="设置过期时间"><a class="header-anchor" href="#设置过期时间">¶</a>设置过期时间</h3>
-<p><code>expire key timeout</code> 时间单位为秒<br>
-示例：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ 127.0.0.1:6379&gt; expire username 60</span><br><span class="line">(<span class="built_in">integer</span>) 1</span><br></pre></td></tr></table></figure>
-<p>可以对已经设置过过期时间的 key 重新设置过期时间,将覆盖原值。也可以在设置 key 时，同时指定过期时间，使用 <code>EX</code> 参数</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ 127.0.0.1:6379&gt; <span class="built_in">set</span> age 18 EX 800</span><br><span class="line">OK</span><br></pre></td></tr></table></figure>
-<p>等价方式，使用 <code>setex key timeout value</code>：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ 127.0.0.1:6379&gt; setex age 800 18</span><br><span class="line">OK</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>注意：<code>expire key timeout</code> 指令是通用的，适用于各种类型的key,下面的两中方式只适用于string类型。</p>
-</blockquote>
-<h3 id="查看过期时间"><a class="header-anchor" href="#查看过期时间">¶</a>查看过期时间</h3>
-<p><code>ttl key</code><br>
-过期时间的查询结果有一下几种：</p>
-<ul>
-<li>大于0的正整数：此key存在，且还剩下正整数的时间过期</li>
-<li>-1 ： 此key存在，且没有设置过期时间，即永久不会过期</li>
-<li>-2 ： 此key不存在，或存在但是过期了，总之就是现在不存在了。</li>
-</ul>
-<p>示例：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ 127.0.0.1:6379&gt; ttl username</span><br><span class="line">(<span class="built_in">integer</span>) 796</span><br></pre></td></tr></table></figure>
-<h3 id="查看某个string类型key的值"><a class="header-anchor" href="#查看某个string类型key的值">¶</a>查看某个string类型key的值</h3>
-<p><code>get key</code></p>
-<h4 id="批量查看多个string类型key的值"><a class="header-anchor" href="#批量查看多个string类型key的值">¶</a>批量查看多个string类型key的值</h4>
-<p><code>mget key1 key2 key3 ...</code></p>
-<h3 id="查看当前redis中所有类型的key"><a class="header-anchor" href="#查看当前redis中所有类型的key">¶</a>查看当前redis中所有类型的key</h3>
-<p><code>keys *</code></p>
-<h3 id="查看key的类型"><a class="header-anchor" href="#查看key的类型">¶</a>查看key的类型</h3>
-<p>因为redis中所有类型的key是存在一起的，但是每中类型的key的查看的方式都是不同的，一旦使用的查询命令不对就会报错，此时可以使用 <code>type key</code> 查看key的类型<br>
-示例：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ 127.0.0.1:6379&gt; <span class="built_in">type</span> username</span><br><span class="line">string</span><br></pre></td></tr></table></figure>
-<h2 id="使用redis-cli对redis进行列表list操作"><a class="header-anchor" href="#使用redis-cli对redis进行列表list操作">¶</a>使用redis-cli对redis进行列表list操作</h2>
-<p>Redis列表 是简单的字符串列表，按照插入顺序排序。你可以添加一个元素到列表的头部（左边）或者尾部（右边）。</p>
-<h3 id="添加-v2"><a class="header-anchor" href="#添加-v2">¶</a>添加</h3>
-<p>添加到头部（左边）使用 <code>lpush key value</code>，添加到尾部（右边）使用 <code>rpush key value</code>。如果key不存在，一个空的列表会被创建并执行lpush（rpush）操作，当key存在，但不是列表类型时，返回错误。<br>
-示例：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ 127.0.0.1:6379&gt; lpush language python</span><br><span class="line">(<span class="built_in">integer</span>) 1    <span class="comment"># 返回值为当前列表中值的个数</span></span><br></pre></td></tr></table></figure>
-<p>列表中可以添加多个值，且可以是重复值</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ 127.0.0.1:6379&gt; lpush language python python</span><br><span class="line">(<span class="built_in">integer</span>) 3    <span class="comment"># 添加了两个重复的值，目前一共三个值</span></span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>注意：当一次添加多个 value 的时候，最后一个 value 是第一个被添加的，如上面的例子中，最后一个 python 是第一被添加的。</p>
-</blockquote>
-<h3 id="查看列表中的的元素（是一个区间中的元素）"><a class="header-anchor" href="#查看列表中的的元素（是一个区间中的元素）">¶</a>查看列表中的的元素（是一个区间中的元素）</h3>
-<p><code>lrange key start stop</code>，指令中的 l 代表的是列表list的意思，返回列表key中指定区间内的元素，区间以偏移量start和stop指定，如果要左边的第一个到最后的一个 <code>lrange key 0 -1</code>（列表的第一项下标是 0，左后一项为 -1）。若只想查看某个值，则start 和 stop 指定一样的下标即可。<br>
-示例：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ 127.0.0.1:6379&gt; lrange language 0 -1</span><br><span class="line">1) <span class="string">&quot;python&quot;</span></span><br><span class="line">2) <span class="string">&quot;python&quot;</span></span><br><span class="line">3) <span class="string">&quot;python&quot;</span></span><br></pre></td></tr></table></figure>
-<h4 id="返回指定下标的元素"><a class="header-anchor" href="#返回指定下标的元素">¶</a>返回指定下标的元素</h4>
-<p>使用 <code>lindex key index</code>，指令中的 l 代表的是列表list的意思，将返回key这个列表中，索引为index的这个元素，若是请求的索引不存在，返回 (nil)。<br>
-示例：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ 127.0.0.1:6379&gt; lindex language 0</span><br><span class="line"><span class="string">&quot;python&quot;</span></span><br></pre></td></tr></table></figure>
-<h3 id="修改指定下标的元素"><a class="header-anchor" href="#修改指定下标的元素">¶</a>修改指定下标的元素</h3>
-<p>使用 <code>lset key index value</code>，将列表 key 下标为 index 的元素的值设置为 value 。当 index 参数超出范围，或对一个空列表(key不存在)进行 LSET 时，返回一个错误。<br>
-示例：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ 127.0.0.1:6379&gt; lset language 0 Golang</span><br><span class="line">OK   <span class="comment"># 修改成功，返回OK</span></span><br></pre></td></tr></table></figure>
-<h3 id="移除列表中的元素"><a class="header-anchor" href="#移除列表中的元素">¶</a>移除列表中的元素</h3>
-<p>同理增加值的方式，使用<code>lpop key</code> 和 <code>rpop key</code> 移除列表头部或者尾部的元素，使用这两条命令移除列表元素的同时还会返回移除的值。<br>
-示例：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ 127.0.0.1:6379&gt; lpop language</span><br><span class="line"><span class="string">&quot;python&quot;</span>  <span class="comment"># 返回了被移除的头部元素</span></span><br></pre></td></tr></table></figure>
-<h4 id="移除指定个数的单个元素"><a class="header-anchor" href="#移除指定个数的单个元素">¶</a>移除指定个数的单个元素</h4>
-<p>使用 <code>lrem key count value</code>，指令中的 l 代表的是列表list的意思，删除列表key中count个值为value的元素。<br>
-示例：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ 127.0.0.1:6379&gt; lrem language 4 python</span><br><span class="line">(<span class="built_in">integer</span>) 1  <span class="comment"># 返回的值为 实际 删除的个数，若为0表示不存在该元素</span></span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>注意：返回的是实际删除掉的 values 的个数，使用的时候 count 的大小是可以超过实际个数大小的，但是删除时的返回值是实际删除掉的个数。</p>
-</blockquote>
-<h4 id="移除指定位置index的元素"><a class="header-anchor" href="#移除指定位置index的元素">¶</a>移除指定位置index的元素</h4>
-<p>命令里没有根据 index 删除元素的命令，如果想要删除指定index的值，可以采用组合命令的方式，即通过 <code>lset key index value</code> 来修改要删除的位置的元素为某个标志，然后使用 <code>lrem key 0 value</code> 删除所有值为标记的元素（也即是需要删除的位置）：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ 127.0.0.1:6379&gt; lset language 1 del  <span class="comment"># 将要删除的下表的元素设置为 &quot;del&quot;</span></span><br><span class="line">OK</span><br><span class="line">$ 127.0.0.1:6379&gt; lrem language 0 del  <span class="comment"># 删除值为 &quot;del&quot; 的所有的元素，就相当于删除了指定index上的值</span></span><br><span class="line">(<span class="built_in">integer</span>) 1</span><br></pre></td></tr></table></figure>
-<p>同理删除多个位置上的值，就可以通过 <code>lset key index value</code> 修改多个需要删除的位置上的值为标志值，然后使用 <code>lrem key 0 value</code> 统一删除。</p>
-<h4 id="移除区间之外的元素"><a class="header-anchor" href="#移除区间之外的元素">¶</a>移除区间之外的元素</h4>
-<p>使用 <code>ltrim key start stop</code> 对列表进行修剪(trim)，即让列表只保留指定区间内的元素，不在指定区间之内的元素都将被删除。<br>
-示例：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ 127.0.0.1:6379&gt; ltrim language 0 1</span><br><span class="line">OK   <span class="comment"># 保留了前两个元素</span></span><br></pre></td></tr></table></figure>
-<p>注意，作用的范围是闭区间。</p>
-<h3 id="获取列表中的元素的个数"><a class="header-anchor" href="#获取列表中的元素的个数">¶</a>获取列表中的元素的个数</h3>
-<p><code>llen key</code></p>
-<h3 id="只有单条的指令可以通过正负值来指定操作的方向"><a class="header-anchor" href="#只有单条的指令可以通过正负值来指定操作的方向">¶</a>只有单条的指令可以通过正负值来指定操作的方向</h3>
-<p>命令中的 l 代表list的指令（即不使用通过l和r来区分操作方向的指令），都可以通过负值来表示反向操作。<br>
-如移除指定个数的元素 <code>lrem key count value</code> 命令根据参数count的值，移除列表中与参数value相等的元素。count的值可以是一下几种：</p>
-<ul>
-<li>count &gt; 0 ：从表头开始向表尾搜索，移除与value相等的元素，数量为count。</li>
-<li>count &lt; 0 ：从表尾开始向表头搜索，移除与value相等的元素，数量为count的绝对值。</li>
-<li>count = 0 : 移除表中所有与value相等的值。</li>
-</ul>
-<h2 id="使用redis-cli对redis进行集合set操作"><a class="header-anchor" href="#使用redis-cli对redis进行集合set操作">¶</a>使用redis-cli对redis进行集合set操作</h2>
-<p>集合和列表相似，是用来存储元素的，不同在于，集合是无序的，且元素同一元素只能保存一份，集合中的元素是唯一的。</p>
-<h3 id="添加-v3"><a class="header-anchor" href="#添加-v3">¶</a>添加</h3>
-<p>使用 <code>sadd key member1 member2 ...</code> ，因为元素是无序且唯一的，所以不存在左右添加的区别。<br>
-示例：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ 127.0.0.1:6379&gt; sadd team xiaoming xiaowang</span><br><span class="line">(<span class="built_in">integer</span>) 2</span><br><span class="line">$ 127.0.0.1:6379&gt; sadd team xiaoming  </span><br><span class="line">(<span class="built_in">integer</span>) 0   <span class="comment"># 添加了重复值返回0，表示没有本次没有添加的内容</span></span><br><span class="line">$ 127.0.0.1:6379&gt; sadd team xiaotang</span><br><span class="line">(<span class="built_in">integer</span>) 1</span><br></pre></td></tr></table></figure>
-<p>与列表的添加不同，返回的结果不会显示目前集合中元素个数，只会显示本次添加操作中成功添加的个数，重复添加相同的值，则返回0。一次性添加的多个成员中含有集合中已经存在的成员直接无视，添加未存在的。</p>
-<blockquote>
-<p>注意：集合中存储的成员的顺序于添加顺序无关</p>
-</blockquote>
-<h3 id="查看集合中的成员"><a class="header-anchor" href="#查看集合中的成员">¶</a>查看集合中的成员</h3>
-<p><code>smembers key</code></p>
-<h3 id="移除集合中的成员"><a class="header-anchor" href="#移除集合中的成员">¶</a>移除集合中的成员</h3>
-<p>使用 <code>srem key member1 member2 ...</code> 进行删除，因为集合是没有下标，且集合中的值唯一，所以直接指定需要删除的成员即可。</p>
-<h4 id="移除并返回一个随机成员"><a class="header-anchor" href="#移除并返回一个随机成员">¶</a>移除并返回一个随机成员</h4>
-<p>使用 <code>spop key</code> ，会随机删除并返回一个元素<br>
-示例：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ 127.0.0.1:6379&gt; sadd team xiaoming xiaowang</span><br><span class="line">(<span class="built_in">integer</span>) 2</span><br><span class="line">$ 127.0.0.1:6379&gt; spop team</span><br><span class="line"><span class="string">&quot;xiaowang&quot;</span></span><br><span class="line">$ 127.0.0.1:6379&gt; smembers team</span><br><span class="line">1) <span class="string">&quot;xiaoming&quot;</span></span><br></pre></td></tr></table></figure>
-<h4 id="随机获取一个元素不移除"><a class="header-anchor" href="#随机获取一个元素不移除">¶</a>随机获取一个元素不移除</h4>
-<p>使用 <code>srandmember key [count]</code>，从 Redis2.6 版本开始， srandmember 命令接受可选的 count 参数：</p>
-<ul>
-<li>如果 count 为正数，且小于集合基数，那么命令返回一个包含 count 个元素的数组，数组中的元素各不相同。如果 count 大于等于集合基数，那么返回整个集合。</li>
-<li>如果 count 为负数，那么命令返回一个数组，数组中的元素可能会重复出现多次，而数组的长度为 count 的绝对值。</li>
-</ul>
-<h3 id="查看集合中的成员的个数"><a class="header-anchor" href="#查看集合中的成员的个数">¶</a>查看集合中的成员的个数</h3>
-<p>使用 <code>scard key</code> 进行查看<br>
-示例：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ 127.0.0.1:6379&gt; scard team</span><br><span class="line">(<span class="built_in">integer</span>) 5   </span><br></pre></td></tr></table></figure>
-<h3 id="集合之间的操作"><a class="header-anchor" href="#集合之间的操作">¶</a>集合之间的操作</h3>
-<h4 id="获取集合的交集"><a class="header-anchor" href="#获取集合的交集">¶</a>获取集合的交集</h4>
-<p><code>sinter key1 key2</code></p>
-<h4 id="获取集合的并集"><a class="header-anchor" href="#获取集合的并集">¶</a>获取集合的并集</h4>
-<p><code>sunion key1 key2</code></p>
-<h4 id="获取集合的差集"><a class="header-anchor" href="#获取集合的差集">¶</a>获取集合的差集</h4>
-<p><code>sdiff key1 key2</code></p>
-<h2 id="使用redis-cli对redis进哈希表hash操作"><a class="header-anchor" href="#使用redis-cli对redis进哈希表hash操作">¶</a>使用redis-cli对redis进哈希表hash操作</h2>
-<p>哈希表类似python中的字典，采用k/v值的形式。</p>
-<h3 id="添加-v4"><a class="header-anchor" href="#添加-v4">¶</a>添加</h3>
-<p>使用 <code>hset key field value</code> 进行创建，将哈希表 key 中的域 field 的值设为 value。<br>
-示例：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ 127.0.0.1:6379&gt; hset website baidu www.baidu.com</span><br><span class="line">(<span class="built_in">integer</span>) 1</span><br><span class="line">$ 127.0.0.1:6379&gt; hset website google www.google.com</span><br><span class="line">(<span class="built_in">integer</span>) 1</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>返回的内容和string操作时类似，用来显示成功与否，不显示添加的数量</p>
-</blockquote>
-<p>数据的存储样式是：<br>
-<img src="/2019/11/25/redis-%E4%BD%BF%E7%94%A8%E4%B9%8B%E6%93%8D%E4%BD%9C%E7%AF%87/redis_hash.png" alt="redis_hash"><br>
-如果域 field 已经存在于哈希表中，旧值将被覆盖。<br>
-示例：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ 127.0.0.1:6379&gt; hset website google google.com</span><br><span class="line">(<span class="built_in">integer</span>) 0   <span class="comment"># 注意返回值的形式，是0而不是1</span></span><br><span class="line">$ 127.0.0.1:6379&gt; hget website google</span><br><span class="line"><span class="string">&quot;google.com&quot;</span>   <span class="comment"># 查看后发现域field的值被修改了</span></span><br></pre></td></tr></table></figure>
-<h4 id="批量添加-v2"><a class="header-anchor" href="#批量添加-v2">¶</a>批量添加</h4>
-<p>使用<code>hmset key field1 value1 field2 value2 ... ...</code><br>
-示例：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ 39.106.84.56:6379&gt; hmset website apple www.apple.com huawei www.hauwei.com</span><br><span class="line">OK</span><br></pre></td></tr></table></figure>
-<h3 id="获取哈希表中的field对应的值"><a class="header-anchor" href="#获取哈希表中的field对应的值">¶</a>获取哈希表中的field对应的值</h3>
-<p><code>hget key field</code></p>
-<h4 id="批量查看哈希表中的某些field对应的值"><a class="header-anchor" href="#批量查看哈希表中的某些field对应的值">¶</a>批量查看哈希表中的某些field对应的值</h4>
-<p><code>hmget key field1 field2 ...</code></p>
-<h3 id="删除field中的某个field"><a class="header-anchor" href="#删除field中的某个field">¶</a>删除field中的某个field</h3>
-<p><code>hdel key field</code></p>
-<h3 id="获取哈希中的所有的field和value"><a class="header-anchor" href="#获取哈希中的所有的field和value">¶</a>获取哈希中的所有的field和value</h3>
-<p>使用 <code>hgetall key</code> 进行获取，打印的样式是 field value 这样一个间隔一个的样式<br>
-示例：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ 127.0.0.1:6379&gt; hgetall website</span><br><span class="line">1) <span class="string">&quot;baidu&quot;</span></span><br><span class="line">2) <span class="string">&quot;www.baidu.com&quot;</span></span><br><span class="line">3) <span class="string">&quot;google&quot;</span></span><br><span class="line">4) <span class="string">&quot;www.google.com&quot;</span></span><br></pre></td></tr></table></figure>
-<h3 id="获取某个哈希中所有的field"><a class="header-anchor" href="#获取某个哈希中所有的field">¶</a>获取某个哈希中所有的field</h3>
-<p><code>hkeys key</code></p>
-<h3 id="获取某个哈希中所有的值"><a class="header-anchor" href="#获取某个哈希中所有的值">¶</a>获取某个哈希中所有的值</h3>
-<p><code>hvals key</code></p>
-<h3 id="判断哈希中是否存在某个field"><a class="header-anchor" href="#判断哈希中是否存在某个field">¶</a>判断哈希中是否存在某个field</h3>
-<p>使用 <code>hexists key field</code><br>
-示例：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ 127.0.0.1:6379&gt; hexists website google</span><br><span class="line">(<span class="built_in">integer</span>) 1   <span class="comment"># 存在返回1</span></span><br><span class="line">$ 127.0.0.1:6379&gt; hexists website googl</span><br><span class="line">(<span class="built_in">integer</span>) 0   <span class="comment"># 不存在返回0</span></span><br></pre></td></tr></table></figure>
-<h3 id="获取哈希表中的键值对个数"><a class="header-anchor" href="#获取哈希表中的键值对个数">¶</a>获取哈希表中的键值对个数</h3>
-<p>使用 <code>hlen key</code><br>
-示例：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ 127.0.0.1:6379&gt; hlen website</span><br><span class="line">(<span class="built_in">integer</span>) 2</span><br></pre></td></tr></table></figure>
-<h3 id="为哈希表中的-字段值-加上指定增量值"><a class="header-anchor" href="#为哈希表中的-字段值-加上指定增量值">¶</a>为哈希表中的 字段值 加上指定增量值</h3>
-<p>通过 <code>hincrby key field num</code> 的方式，给hash表中field对应的value增加或者减少相应的数量，注意此操作只能用来对value是数值形式的field进行。</p>
-<h2 id="事务"><a class="header-anchor" href="#事务">¶</a>事务</h2>
-<p>Redis事务可以一次执行多个命令，事务具有以下特征：</p>
-<ul>
-<li>隔离操作：事务中的所有命令都会序列化、按顺序的执行，不会被其他命令打扰。</li>
-<li>原子操作：事务中的命令要么全部被执行，要么全部不执行。</li>
-</ul>
-<h3 id="开启一个事务"><a class="header-anchor" href="#开启一个事务">¶</a>开启一个事务</h3>
-<p><code>multi</code><br>
-以后执行的所有的命令，都在这个事务中执行。</p>
-<h3 id="执行事务"><a class="header-anchor" href="#执行事务">¶</a>执行事务</h3>
-<p><code>exec</code><br>
-会将在multi和exec中的操作一并提交。</p>
-<h3 id="取消事务"><a class="header-anchor" href="#取消事务">¶</a>取消事务</h3>
-<p><code>discard</code><br>
-会将multi后的所有命令取消。</p>
-<h3 id="监视一个或者多个key"><a class="header-anchor" href="#监视一个或者多个key">¶</a>监视一个或者多个key</h3>
-<p><code>watch key [key ...]</code><br>
-监视一个（或者多个）key，如果在事务执行之前这个（或这些）key被其他命令所改动，那么事务将被打断。</p>
-<h3 id="取消所有key的监视"><a class="header-anchor" href="#取消所有key的监视">¶</a>取消所有key的监视</h3>
-<p><code>unwatch</code></p>
-<h2 id="发布-订阅操作"><a class="header-anchor" href="#发布-订阅操作">¶</a>发布/订阅操作</h2>
-<h3 id="给某个频道发布消息"><a class="header-anchor" href="#给某个频道发布消息">¶</a>给某个频道发布消息</h3>
-<p><code>publish channel message</code></p>
-<h3 id="订阅某个频道的消息"><a class="header-anchor" href="#订阅某个频道的消息">¶</a>订阅某个频道的消息</h3>
-<p><code>subscribe channel</code></p>
-]]></content>
-      <categories>
-        <category>计算机</category>
-        <category>Redis</category>
-      </categories>
-      <tags>
-        <tag>工具</tag>
-        <tag>Redis</tag>
       </tags>
   </entry>
   <entry>
