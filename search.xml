@@ -2243,6 +2243,53 @@ print(recode.count_1)是以列名的形式打印内容的，因为使用使用CO
       </tags>
   </entry>
   <entry>
+    <title>UUID的python实现</title>
+    <url>/2020/10/06/UUID%E7%9A%84python%E5%AE%9E%E7%8E%B0/</url>
+    <content><![CDATA[<h1>概述</h1>
+<p>UUID 是通用唯一识别码（Universally Unique Identifier）的缩写，是一种软件建构的标准，亦为开放软件基金会组织在分布式计算环境领域的一部分。</p>
+<p>UUID是一个128比特的数值，这个数值可以通过一定的算法计算出来。UUID用来识别属性类型，在所有空间和时间上被视为唯一的标识。一般来说，可以保证这个值是真正唯一的任何地方产生的任意一个UUID都不会有相同的值。使用UUID的一个好处是可以为新的服务创建新的标识符。这样一来，客户端在查找一个服务时，只需要在它的服务查找请求中指出与某类服务（或某个特定服务）有关的UUID，如果服务的提供者能将可用的服务与这个UUID相匹配，就返回一个响应。</p>
+<h1>组成</h1>
+<p>UUID由以下几部分的组合：<br>
+（1）基于时间戳，当前日期和时间，UUID的第一个部分与时间有关。<br>
+（2）时钟序列。<br>
+（3）全局唯一的IEEE机器识别号，如果有网卡，从网卡MAC地址获得，没有网卡以其他方式获得。</p>
+<p>UUID是一个128比特的数值，使用16进制表示，就是一个32个16进制数组成的字符串（标准的分配格式是8-4-4-4-12，如<code>'b85fa97e-ad39-11eb-9b9a-acde48001122'</code>）。</p>
+<p>uuid的标准有<code>uuid1</code>,<code>uuid2</code>, <code>uuid3</code>, <code>uuid4</code>，<code>uuid5</code>这五个版本，python中支持除<code>uuid2</code>以外的其他版本。</p>
+<h1>python中使用</h1>
+<p>Python 内置了uuid库，通过<code>import uuid</code> 导入，提供了<code>uuid1</code>，<code>uuid3</code>， <code>uuid4</code>， <code>uuid5</code> 对应的同名函数供使用，函数的返回值类型是<code>UUID</code>。</p>
+<p><code>uuid1(node, clock_seq)</code>:<br>
+使用的变量因子是 时间戳＋时钟序列＋节点信息（Mac地址），最后的12个字符对应的就是MAC地址，因为是MAC地址，同一台机器上产生的uuid1的后12个字符完全一致，但是生成后暴露了MAC地址这就很不好了。node参数用来设置最后12个字符（48个二进制位）的值（传递的是十进制会自动进行转换）。</p>
+<p><code>uuid3(namespace, name)</code>:<br>
+需要传递命名空间和自定义字符串生成UUID，使用MD5哈希产生。</p>
+<p><code>uuid4()</code>:<br>
+基于随机数产生，极小概率产生重复。</p>
+<p><code>uuid5(namespace, name)</code>:<br>
+和uuid3用法相同，但是使用SHA-1哈希生成UUID。由于SHA-1产生的数据大小为20个字节，而uuid只需要16个字节，所以uuid在使用的时候，只截取了SHA-1产生的前16个字节。</p>
+<p>uuid库提供了namespace的可选项如下，可直接通过 <code>uuid.NAMESPACE_DNS</code> 调用：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">NAMESPACE_DNS = UUID(<span class="string">&#x27;6ba7b810-9dad-11d1-80b4-00c04fd430c8&#x27;</span>)</span><br><span class="line">NAMESPACE_URL = UUID(<span class="string">&#x27;6ba7b811-9dad-11d1-80b4-00c04fd430c8&#x27;</span>)</span><br><span class="line">NAMESPACE_OID = UUID(<span class="string">&#x27;6ba7b812-9dad-11d1-80b4-00c04fd430c8&#x27;</span>)</span><br><span class="line">NAMESPACE_X500 = UUID(<span class="string">&#x27;6ba7b814-9dad-11d1-80b4-00c04fd430c8&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>使用uuid3以及uuid5得到的uuid唯一且可复现，使用同样的<code>namespace</code>以及<code>name</code>可以得到同样的值，因为uuid3和uuid5使用的分别是MD5和SHA-1来产生的，传递的key一样，所以得到的uuid值不变。</p>
+</blockquote>
+<p>uuid版本的选择可以根据实际情况进行选择。</p>
+<p>此外UUID类还提供了属性方法，用于得到相应格式的uuid：</p>
+<pre><code>uuid_obj.bytes 得到16字节的字符串
+uuid_obj.fields 得到元组类型
+uuid_obje.hex UUID为32个字符的十六进制字符串，就是去除‘-’的uuid。
+uuid_obj.int 得到对应的十进制数。
+通过uuid_obj.version 查看uuid的版本。
+使用str(uuid_obje)可以得到对应的字符串形式，UUID类内部手动实现了`__str__`。</code></pre>
+]]></content>
+      <categories>
+        <category>计算机</category>
+        <category>Python</category>
+        <category>网络传输</category>
+      </categories>
+      <tags>
+        <tag>工具</tag>
+        <tag>python</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Vue基础</title>
     <url>/2019/12/10/Vue%E5%9F%BA%E7%A1%80/</url>
     <content><![CDATA[<h2 id="基本案例"><a class="header-anchor" href="#基本案例">¶</a>基本案例</h2>
