@@ -31,7 +31,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://yoursite.com/2020/10/16/Flask%E5%92%8CDjango%E7%9A%84%E5%AF%86%E6%96%87%E7%94%9F%E6%88%90%E5%88%86%E6%9E%90/pbkdf2.png">
 <meta property="article:published_time" content="2020-10-16T03:21:36.000Z">
-<meta property="article:modified_time" content="2021-05-08T12:39:33.093Z">
+<meta property="article:modified_time" content="2021-05-08T12:52:52.869Z">
 <meta property="article:author" content="Skylor Tang">
 <meta property="article:tag" content="Django 源码解读">
 <meta property="article:tag" content="python">
@@ -230,7 +230,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-08 20:39:33" itemprop="dateModified" datetime="2021-05-08T20:39:33+08:00">2021-05-08</time>
+                <time title="修改时间：2021-05-08 20:52:52" itemprop="dateModified" datetime="2021-05-08T20:52:52+08:00">2021-05-08</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -331,7 +331,7 @@ Flask提供了对应的验证函数<code>check_password_hash(pwhash, password)</
 <p>此外，Django提供了完善的用户认证系统，提供<code>django.contrib.auth.authenticate()</code>方法用于用户的身份验证，默认使用的认证类<code>django.contrib.auth.backends.ModelBackend</code>中就是通过调用<code>user.check_password(password)</code>来验证用户的。<br>
 关于Django详细的认证流程参考<a href="/2020/03/20/Django%E8%87%AA%E5%AE%9A%E4%B9%89%E7%94%A8%E6%88%B7%E8%AE%A4%E8%AF%81%E7%B3%BB%E7%BB%9F/">Django自定义用户认证系统</a>。</p>
 <h1>小结</h1>
-<p>Flask以及Django默认的密文生成方式均采用PDKDF2，该算法通过增加迭代次数的方式增加的被强行破解的难度，此外Flask以及Django在实现的时候都采用的不固定式的随机盐，大大增强了安全性，这已经能够胜任绝大多数的使用场景了。<br>
+<p>Flask以及Django默认的密文生成方式均采用PDKDF2，该函数通过增加迭代次数的方式增加的被强行破解的难度，此外Flask以及Django在实现的时候都采用的不固定式的随机盐，大大增强了安全性，这已经能够胜任绝大多数的使用场景了。<br>
 如果需要更安全的密码机制，两者都提供了采用Bcrypt生成密文的方法，Django中通过在<code>PASSWORD_HASHERS</code>中设置：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">PASSWORD_HASHERS = [</span><br><span class="line">    <span class="string">&#x27;django.contrib.auth.hashers.BCryptSHA256PasswordHasher&#x27;</span>,   <span class="comment"># 放在第一个位置</span></span><br><span class="line">    <span class="string">&#x27;django.contrib.auth.hashers.BCryptPasswordHasher&#x27;</span>, </span><br><span class="line">    <span class="string">&#x27;django.contrib.auth.hashers.PBKDF2PasswordHasher&#x27;</span>, </span><br><span class="line">    <span class="string">&#x27;django.contrib.auth.hashers.PBKDF2SHA1PasswordHasher&#x27;</span>,</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
 <p>Flask中也提供了第三方扩展<code>Flask-Bcrypt</code>来实现，具体使用参考<a target="_blank" rel="noopener" href="https://flask-bcrypt-docs-zh.readthedocs.io/zh/latest/">官方文档</a>。</p>

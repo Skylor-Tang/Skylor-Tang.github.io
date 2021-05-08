@@ -1440,7 +1440,7 @@ Flask提供了对应的验证函数<code>check_password_hash(pwhash, password)</
 <p>此外，Django提供了完善的用户认证系统，提供<code>django.contrib.auth.authenticate()</code>方法用于用户的身份验证，默认使用的认证类<code>django.contrib.auth.backends.ModelBackend</code>中就是通过调用<code>user.check_password(password)</code>来验证用户的。<br>
 关于Django详细的认证流程参考<a href="/2020/03/20/Django%E8%87%AA%E5%AE%9A%E4%B9%89%E7%94%A8%E6%88%B7%E8%AE%A4%E8%AF%81%E7%B3%BB%E7%BB%9F/">Django自定义用户认证系统</a>。</p>
 <h1>小结</h1>
-<p>Flask以及Django默认的密文生成方式均采用PDKDF2，该算法通过增加迭代次数的方式增加的被强行破解的难度，此外Flask以及Django在实现的时候都采用的不固定式的随机盐，大大增强了安全性，这已经能够胜任绝大多数的使用场景了。<br>
+<p>Flask以及Django默认的密文生成方式均采用PDKDF2，该函数通过增加迭代次数的方式增加的被强行破解的难度，此外Flask以及Django在实现的时候都采用的不固定式的随机盐，大大增强了安全性，这已经能够胜任绝大多数的使用场景了。<br>
 如果需要更安全的密码机制，两者都提供了采用Bcrypt生成密文的方法，Django中通过在<code>PASSWORD_HASHERS</code>中设置：</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line">PASSWORD_HASHERS = [</span><br><span class="line">    <span class="string">&#x27;django.contrib.auth.hashers.BCryptSHA256PasswordHasher&#x27;</span>,   <span class="comment"># 放在第一个位置</span></span><br><span class="line">    <span class="string">&#x27;django.contrib.auth.hashers.BCryptPasswordHasher&#x27;</span>, </span><br><span class="line">    <span class="string">&#x27;django.contrib.auth.hashers.PBKDF2PasswordHasher&#x27;</span>, </span><br><span class="line">    <span class="string">&#x27;django.contrib.auth.hashers.PBKDF2SHA1PasswordHasher&#x27;</span>,</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
 <p>Flask中也提供了第三方扩展<code>Flask-Bcrypt</code>来实现，具体使用参考<a href="https://flask-bcrypt-docs-zh.readthedocs.io/zh/latest/">官方文档</a>。</p>
@@ -2444,6 +2444,25 @@ uuid_obj.int 得到对应的十进制数。
       </tags>
   </entry>
   <entry>
+    <title>hexo基础命令</title>
+    <url>/2019/06/14/hello-world/</url>
+    <content><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
+<h2 id="Quick-Start"><a class="header-anchor" href="#Quick-Start">¶</a>Quick Start</h2>
+<h3 id="Create-a-new-post"><a class="header-anchor" href="#Create-a-new-post">¶</a>Create a new post</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/writing.html">Writing</a></p>
+<h3 id="Run-server"><a class="header-anchor" href="#Run-server">¶</a>Run server</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/server.html">Server</a></p>
+<h3 id="Generate-static-files"><a class="header-anchor" href="#Generate-static-files">¶</a>Generate static files</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/generating.html">Generating</a></p>
+<h3 id="Deploy-to-remote-sites"><a class="header-anchor" href="#Deploy-to-remote-sites">¶</a>Deploy to remote sites</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
+]]></content>
+  </entry>
+  <entry>
     <title>pipenv 使用</title>
     <url>/2019/11/01/pipenv%E4%BD%BF%E7%94%A8/</url>
     <content><![CDATA[<h3 id="优势"><a class="header-anchor" href="#优势">¶</a>优势</h3>
@@ -2532,25 +2551,6 @@ uuid_obj.int 得到对应的十进制数。
         <tag>工具</tag>
         <tag>python</tag>
       </tags>
-  </entry>
-  <entry>
-    <title>hexo基础命令</title>
-    <url>/2019/06/14/hello-world/</url>
-    <content><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
-<h2 id="Quick-Start"><a class="header-anchor" href="#Quick-Start">¶</a>Quick Start</h2>
-<h3 id="Create-a-new-post"><a class="header-anchor" href="#Create-a-new-post">¶</a>Create a new post</h3>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/writing.html">Writing</a></p>
-<h3 id="Run-server"><a class="header-anchor" href="#Run-server">¶</a>Run server</h3>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/server.html">Server</a></p>
-<h3 id="Generate-static-files"><a class="header-anchor" href="#Generate-static-files">¶</a>Generate static files</h3>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/generating.html">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a class="header-anchor" href="#Deploy-to-remote-sites">¶</a>Deploy to remote sites</h3>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
-]]></content>
   </entry>
   <entry>
     <title>Redis 使用之安装篇</title>
@@ -3224,22 +3224,6 @@ slice的结构中有指向数组的指针，所以实际上是一种引用类型
       </tags>
   </entry>
   <entry>
-    <title>Go踩坑</title>
-    <url>/2019/11/30/%E5%9D%91%E7%82%B9/</url>
-    <content><![CDATA[<p>在go 1.13中使用了全新的包导入机制</p>
-<p>在设置了go env -w GO111MODULE=on 之后，所有的报名导入的时候都要保证是以域名开头的包，所以暂时不进行设置，</p>
-<p>导入包的时候在设置</p>
-]]></content>
-      <categories>
-        <category>计算机</category>
-        <category>Golang</category>
-      </categories>
-      <tags>
-        <tag>Golang</tag>
-        <tag>语言基础</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Go基础之变量</title>
     <url>/2019/10/11/%E5%8F%98%E9%87%8F/</url>
     <content><![CDATA[<p>在Go语言中只存在值类型。</p>
@@ -3352,23 +3336,11 @@ slice的结构中有指向数组的指针，所以实际上是一种引用类型
       </tags>
   </entry>
   <entry>
-    <title>Go基础之指针</title>
-    <url>/2019/10/16/%E6%8C%87%E9%92%88/</url>
-    <content><![CDATA[<p>示例：</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> a <span class="keyword">int</span> = <span class="number">2</span></span><br><span class="line"><span class="keyword">var</span> pa *<span class="keyword">int</span> = &amp;a   <span class="comment">// &amp;a 就是取a的地址</span></span><br><span class="line">*pa = <span class="number">3</span></span><br><span class="line">fmt.Println(a)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 结果</span></span><br><span class="line"><span class="number">3</span></span><br></pre></td></tr></table></figure>
-<p><strong>Go语言中的指针不能进行计算</strong><br>
-注意：这里的Golang指针类型变量不能进行运算指的是指针本身（pa），而不是指针指向的变量值（*pa）。</p>
-<h2 id="参数传递问题"><a class="header-anchor" href="#参数传递问题">¶</a>参数传递问题</h2>
-<p>Python中的参数传递根据参数是否是可变类型非为值传递和引用传递（实际上都是引用传递）。</p>
-<p>Golang:</p>
-<ul>
-<li>Go只有 <strong>值传递</strong> 这一种方式。</li>
-<li>但是这并不意味着Go在传递的时候都要将内容进行拷贝一份，而是可以使用指针类型，传递指针变量的值（指向内容的地址），和c的用法一样。</li>
-</ul>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">swap</span><span class="params">(a,b *<span class="keyword">int</span>)</span></span>&#123;</span><br><span class="line">  *b, *a = *a, *b</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">  a, b := <span class="number">3</span>,<span class="number">4</span></span><br><span class="line">  swap(&amp;a,&amp;b)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>更好的swap实现方式</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">swap</span><span class="params">(a,b <span class="keyword">int</span>)</span><span class="params">(<span class="keyword">int</span>, <span class="keyword">int</span>)</span></span>&#123;</span><br><span class="line">  <span class="keyword">return</span> b,a</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">  a,b := <span class="number">3</span>,<span class="number">4</span></span><br><span class="line">  a,b = swap(a,b) </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>两者的实现原理是不同的，前者本质上使用的是Go语言的“多重赋值”的特性实现的变量交换任务。</p>
+    <title>Go踩坑</title>
+    <url>/2019/11/30/%E5%9D%91%E7%82%B9/</url>
+    <content><![CDATA[<p>在go 1.13中使用了全新的包导入机制</p>
+<p>在设置了go env -w GO111MODULE=on 之后，所有的报名导入的时候都要保证是以域名开头的包，所以暂时不进行设置，</p>
+<p>导入包的时候在设置</p>
 ]]></content>
       <categories>
         <category>计算机</category>
@@ -3398,6 +3370,34 @@ slice的结构中有指向数组的指针，所以实际上是一种引用类型
 <li>ToLower ToUpper</li>
 <li>Trim TrimRight TrimLeft</li>
 </ul>
+]]></content>
+      <categories>
+        <category>计算机</category>
+        <category>Golang</category>
+      </categories>
+      <tags>
+        <tag>Golang</tag>
+        <tag>语言基础</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Go基础之指针</title>
+    <url>/2019/10/16/%E6%8C%87%E9%92%88/</url>
+    <content><![CDATA[<p>示例：</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> a <span class="keyword">int</span> = <span class="number">2</span></span><br><span class="line"><span class="keyword">var</span> pa *<span class="keyword">int</span> = &amp;a   <span class="comment">// &amp;a 就是取a的地址</span></span><br><span class="line">*pa = <span class="number">3</span></span><br><span class="line">fmt.Println(a)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 结果</span></span><br><span class="line"><span class="number">3</span></span><br></pre></td></tr></table></figure>
+<p><strong>Go语言中的指针不能进行计算</strong><br>
+注意：这里的Golang指针类型变量不能进行运算指的是指针本身（pa），而不是指针指向的变量值（*pa）。</p>
+<h2 id="参数传递问题"><a class="header-anchor" href="#参数传递问题">¶</a>参数传递问题</h2>
+<p>Python中的参数传递根据参数是否是可变类型非为值传递和引用传递（实际上都是引用传递）。</p>
+<p>Golang:</p>
+<ul>
+<li>Go只有 <strong>值传递</strong> 这一种方式。</li>
+<li>但是这并不意味着Go在传递的时候都要将内容进行拷贝一份，而是可以使用指针类型，传递指针变量的值（指向内容的地址），和c的用法一样。</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">swap</span><span class="params">(a,b *<span class="keyword">int</span>)</span></span>&#123;</span><br><span class="line">  *b, *a = *a, *b</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">  a, b := <span class="number">3</span>,<span class="number">4</span></span><br><span class="line">  swap(&amp;a,&amp;b)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>更好的swap实现方式</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">swap</span><span class="params">(a,b <span class="keyword">int</span>)</span><span class="params">(<span class="keyword">int</span>, <span class="keyword">int</span>)</span></span>&#123;</span><br><span class="line">  <span class="keyword">return</span> b,a</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">  a,b := <span class="number">3</span>,<span class="number">4</span></span><br><span class="line">  a,b = swap(a,b) </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>两者的实现原理是不同的，前者本质上使用的是Go语言的“多重赋值”的特性实现的变量交换任务。</p>
 ]]></content>
       <categories>
         <category>计算机</category>
