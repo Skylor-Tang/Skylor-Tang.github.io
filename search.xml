@@ -2274,11 +2274,12 @@ print(recode.count_1)是以列名的形式打印内容的，因为使用使用CO
 <p>此外UUID类还提供了属性方法，用于得到相应格式的uuid：</p>
 <pre><code>uuid_obj.bytes 得到16字节的字符串
 uuid_obj.fields 得到元组类型
-uuid_obje.hex UUID为32个字符的十六进制字符串，就是去除‘-’的uuid。
+uuid_obje.hex UUID为32个字符的十六进制字符串，就是去除'-'的uuid。
 uuid_obj.int 得到对应的十进制数。
 通过uuid_obj.version 查看uuid的版本。
-使用str(uuid_obje)可以得到对应的字符串形式，UUID类内部手动实现了`__str__`。</code></pre>
-]]></content>
+使用str(uuid_obje)可以得到对应的字符串形式，UUID类内部手动实现了'__str__'。
+</code></pre>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> uuid</span><br><span class="line"></span><br><span class="line">uuid3 = uuid.uuid3(namespace=uuid.NAMESPACE_URL, name=<span class="string">&#x27;hello&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(uuid3)</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">type</span>(uuid3))</span><br><span class="line"><span class="built_in">print</span>(uuid3.<span class="built_in">hex</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">type</span>(uuid3.<span class="built_in">hex</span>))</span><br><span class="line"><span class="built_in">print</span>(uuid3.<span class="built_in">bytes</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">type</span>(uuid3.<span class="built_in">bytes</span>))</span><br><span class="line"></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">cf3741de-a2dd-36f7-a791-8736e42c4c2f</span></span><br><span class="line"><span class="string">&lt;class &#x27;uuid.UUID&#x27;&gt;</span></span><br><span class="line"><span class="string">cf3741dea2dd36f7a7918736e42c4c2f</span></span><br><span class="line"><span class="string">&lt;class &#x27;str&#x27;&gt;</span></span><br><span class="line"><span class="string">b&#x27;\xcf7A\xde\xa2\xdd6\xf7\xa7\x91\x876\xe4,L/&#x27;</span></span><br><span class="line"><span class="string">&lt;class &#x27;bytes&#x27;&gt;</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br></pre></td></tr></table></figure>]]></content>
       <categories>
         <category>计算机</category>
         <category>Python</category>
