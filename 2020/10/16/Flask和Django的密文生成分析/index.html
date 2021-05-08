@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Monaco:300,300italic,400,400italic,700,700italic|Consolas:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-big-counter.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"always","padding":18,"offset":12,"onmobile":true},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Flask以及Django内置的密文生成方式均采用PDKDF2（Password-Based Key Derivation Function），是一种基于迭代复杂度保证密码安全的密文生成方式，PBKDF2通过指定伪随机函数（伪随机数生成器是指通过特定算法生成一系列的数字，使得这一系列的数字看起来是随机的，但是实际是确定的如信息摘要算法MD5、SHA-256等）以及随机盐值处理输入值，并进行该过程的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Flask和Django的密文生成分析--厉害的PBKDF2">
+<meta property="og:url" content="http://yoursite.com/2020/10/16/Flask%E5%92%8CDjango%E7%9A%84%E5%AF%86%E6%96%87%E7%94%9F%E6%88%90%E5%88%86%E6%9E%90/index.html">
+<meta property="og:site_name" content="Skylor Blog">
+<meta property="og:description" content="Flask以及Django内置的密文生成方式均采用PDKDF2（Password-Based Key Derivation Function），是一种基于迭代复杂度保证密码安全的密文生成方式，PBKDF2通过指定伪随机函数（伪随机数生成器是指通过特定算法生成一系列的数字，使得这一系列的数字看起来是随机的，但是实际是确定的如信息摘要算法MD5、SHA-256等）以及随机盐值处理输入值，并进行该过程的">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-10-16T03:21:36.000Z">
+<meta property="article:modified_time" content="2021-05-08T12:20:28.955Z">
+<meta property="article:author" content="Skylor Tang">
+<meta property="article:tag" content="Django 源码解读">
+<meta property="article:tag" content="python">
+<meta property="article:tag" content="Flask 源码解读">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://yoursite.com/2020/10/16/Flask%E5%92%8CDjango%E7%9A%84%E5%AF%86%E6%96%87%E7%94%9F%E6%88%90%E5%88%86%E6%9E%90/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Flask和Django的密文生成分析--厉害的PBKDF2 | Skylor Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Skylor Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/10/16/Flask%E5%92%8CDjango%E7%9A%84%E5%AF%86%E6%96%87%E7%94%9F%E6%88%90%E5%88%86%E6%9E%90/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Skylor Tang">
+      <meta itemprop="description" content="Your advantages today will be replaced by future trends, so keep learning.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Skylor Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Flask和Django的密文生成分析--厉害的PBKDF2
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-10-16 11:21:36" itemprop="dateCreated datePublished" datetime="2020-10-16T11:21:36+08:00">2020-10-16</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-08 20:20:28" itemprop="dateModified" datetime="2021-05-08T20:20:28+08:00">2021-05-08</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/" itemprop="url" rel="index"><span itemprop="name">计算机</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/%E5%BC%80%E5%8F%91%E9%97%AE%E9%A2%98/" itemprop="url" rel="index"><span itemprop="name">开发问题</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/Flask/" itemprop="url" rel="index"><span itemprop="name">Flask</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/Python/" itemprop="url" rel="index"><span itemprop="name">Python</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/Django/" itemprop="url" rel="index"><span itemprop="name">Django</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2020/10/16/Flask%E5%92%8CDjango%E7%9A%84%E5%AF%86%E6%96%87%E7%94%9F%E6%88%90%E5%88%86%E6%9E%90/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2020/10/16/Flask%E5%92%8CDjango%E7%9A%84%E5%AF%86%E6%96%87%E7%94%9F%E6%88%90%E5%88%86%E6%9E%90/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+            <div class="post-description">Flask以及Django内置的密文生成方式均采用PDKDF2（Password-Based Key Derivation Function），是一种基于迭代复杂度保证密码安全的密文生成方式，PBKDF2通过指定伪随机函数（伪随机数生成器是指通过特定算法生成一系列的数字，使得这一系列的数字看起来是随机的，但是实际是确定的如信息摘要算法MD5、SHA-256等）以及随机盐值处理输入值，并进行该过程的有限次迭代生成最终的密文。</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1>概述</h1>
+<p>Flask以及Django内置的密文生成方式均采用PDKDF2（Password-Based Key Derivation Function），是一种基于迭代复杂度保证密码安全的密文生成方式，PBKDF2通过指定伪随机函数（伪随机数生成器是指通过特定算法生成一系列的数字，使得这一系列的数字看起来是随机的，但是实际是确定的如信息摘要算法MD5、SHA-256等）以及随机盐值处理输入值，并进行该过程的有限次迭代生成最终的密文。</p>
+<p>PBKDF2需要以下输入值：<br>
+1.哈希函数，建议使用SHA-256或者更加安全的算法。<br>
+2.用户输入的密码（明文）。<br>
+3.盐，至少8位，应使用安全的随机数（Flask默认长度为8，Django默认长度为12）。<br>
+4.迭代的次数，因为需要消耗cpu，具体视情况而定，不少于100000次（Flask以及Django默认的次数均为150000次）。</p>
+<p>PBKDF2通过将输入值以及随机产生的盐先进行哈希，再将输入值和该产生的哈希值进行哈希，将该过程迭代有限次生成最终的密文，迭代过程大大增加了破解难度。有效防止了通过碰撞以及彩虹表破解密码。</p>
+<h1>Python实现</h1>
+<h2 id="Flask"><a class="header-anchor" href="#Flask">¶</a>Flask</h2>
+<p>Flask内部的密文生成函数为<code>from werkzeug.security import generate_password_hash</code>，<code>generate_password_hash(password, method=&quot;pbkdf2:sha256&quot;, salt_length=8)</code>接受用户输入的密码，默认使用的哈希函数是SHA-256，盐的长度默认是8。</p>
+<h3 id="源码分析"><a class="header-anchor" href="#源码分析">¶</a>源码分析</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">generate_password_hash</span>(<span class="params">password, method=<span class="string">&quot;pbkdf2:sha256&quot;</span>, salt_length=<span class="number">8</span></span>):</span></span><br><span class="line">    salt = gen_salt(salt_length) <span class="keyword">if</span> method != <span class="string">&quot;plain&quot;</span> <span class="keyword">else</span> <span class="string">&quot;&quot;</span></span><br><span class="line">    h, actual_method = _hash_internal(method, salt, password)</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;%s$%s$%s&quot;</span> % (actual_method, salt, h)</span><br></pre></td></tr></table></figure>
+<p><code>gen_salt</code>函数用于生成指定长度的随机盐值：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># werkzeug/security.py</span></span><br><span class="line">SALT_CHARS = <span class="string">&quot;abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">gen_salt</span>(<span class="params">length</span>):</span></span><br><span class="line">    <span class="keyword">if</span> length &lt;= <span class="number">0</span>:</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;Salt length must be positive&quot;</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;&quot;</span>.join(_sys_rng.choice(SALT_CHARS) <span class="keyword">for</span> _ <span class="keyword">in</span> range_type(length))</span><br></pre></td></tr></table></figure>
+<p>起主要作用函数是<code>_hash_internal(method, salt, password)</code>，该函数内部通过分析参数<code>method</code>的值，决定是否生成密文、是否使用PBKDF2以及选用的哈希函数。下面看代码注释：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># werkzeug/security.py</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">_hash_internal</span>(<span class="params">method, salt, password</span>):</span></span><br><span class="line">    <span class="keyword">if</span> method == <span class="string">&quot;plain&quot;</span>:  <span class="comment"># 如果method值为&#x27;plain&#x27;，则使用明文存储，不进行加密</span></span><br><span class="line">        <span class="keyword">return</span> password, method</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">isinstance</span>(password, text_type):  <span class="comment"># 判断password值的类型，哈希函数需要使用bytes类型，此处进行转换</span></span><br><span class="line">        password = password.encode(<span class="string">&quot;utf-8&quot;</span>) </span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> method.startswith(<span class="string">&quot;pbkdf2:&quot;</span>):  <span class="comment"># 判断method值的是否以&#x27;pbkdf2:&#x27;开头，如果是，表示使用PBKDF2，如果不是，如method=&#x27;sha256&#x27;，则会使用hmac生成密文，和PBKDF2的主要区别是少了迭代的步骤。</span></span><br><span class="line">        args = method[<span class="number">7</span>:].split(<span class="string">&quot;:&quot;</span>)</span><br><span class="line">        <span class="keyword">if</span> <span class="built_in">len</span>(args) <span class="keyword">not</span> <span class="keyword">in</span> (<span class="number">1</span>, <span class="number">2</span>):</span><br><span class="line">            <span class="keyword">raise</span> ValueError(<span class="string">&quot;Invalid number of arguments for PBKDF2&quot;</span>)</span><br><span class="line">        method = args.pop(<span class="number">0</span>)</span><br><span class="line">        iterations = args <span class="keyword">and</span> <span class="built_in">int</span>(args[<span class="number">0</span>] <span class="keyword">or</span> <span class="number">0</span>) <span class="keyword">or</span> DEFAULT_PBKDF2_ITERATIONS  <span class="comment"># 获取迭代次数，如果没有传递，则使用默认的150000次。</span></span><br><span class="line">        is_pbkdf2 = <span class="literal">True</span></span><br><span class="line">        actual_method = <span class="string">&quot;pbkdf2:%s:%d&quot;</span> % (method, iterations)  <span class="comment"># 记录实际使用的哈希函数以及进行的迭代次数</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        is_pbkdf2 = <span class="literal">False</span></span><br><span class="line">        actual_method = method</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> is_pbkdf2:  <span class="comment"># PBKDF2的运算分支，必须要提供盐值。</span></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> salt:</span><br><span class="line">            <span class="keyword">raise</span> ValueError(<span class="string">&quot;Salt is required for PBKDF2&quot;</span>)</span><br><span class="line">        rv = pbkdf2_hex(password, salt, iterations, hashfunc=method)  <span class="comment"># rv为PBKDF2运算的值。</span></span><br><span class="line">    <span class="keyword">elif</span> salt:  <span class="comment"># 如果没有使用PBKDF2，但是提供了盐值，则使用hmac生成密文，hmac需要提供password、盐以及使用的哈希算法。</span></span><br><span class="line">        <span class="keyword">if</span> <span class="built_in">isinstance</span>(salt, text_type):</span><br><span class="line">            salt = salt.encode(<span class="string">&quot;utf-8&quot;</span>)</span><br><span class="line">        mac = _create_mac(salt, password, method)</span><br><span class="line">        rv = mac.hexdigest()</span><br><span class="line">    <span class="keyword">else</span>:  <span class="comment"># 如果既不使用PBKDF2，也没有提供盐值，则直接使用哈希函数进行生成。</span></span><br><span class="line">        rv = hashlib.new(method, password).hexdigest()</span><br><span class="line">    <span class="keyword">return</span> rv, actual_method</span><br></pre></td></tr></table></figure>
+<p>从<code>_hash_internal(method, salt, password)</code>的实现可以看到，进行PBKDF2的主要函数是<code>pbkdf2_hex(password, salt, iterations, hashfunc=method)</code>，继续深入，发现最终产生值的函数是使用的Pythonn内置模块hashlib提供的<code>pbkdf2_hmac(hash_name, password, salt, iterations, dklen=None)</code>函数。该函数完成了PBKDF2的运算过程：将密码以及随机产生的盐先进行哈希，再将输入值和该产生的哈希值进行哈希，将该过程迭代有限次生成最终的密文，这里对于代码的实现不做深究（代码的实现很简单，主要是原理的理解）。</p>
+<h3 id="产生值以及验证"><a class="header-anchor" href="#产生值以及验证">¶</a>产生值以及验证</h3>
+<p>通过源码分析可知：<code>generate_password_hash</code>生成的密文组成部分为：使用哈希算法名(15000表示的是迭代的次数)，盐值，SHA-256值，通过$分隔：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pbkdf2:sha256:<span class="number">150000</span>$2b8nQyP1$d6eb56ab9813aa4300809bea2e6b7a22143969fdae6818ce14cbdd158bd8436e</span><br></pre></td></tr></table></figure>
+<p>这就是实际存储在数据库中的用户密码的密文，此时即使Flask也无法知晓用户的实际密码，需要对用户输入的密码进行验证时，只能再次进行一次该过程，动态演算后，将获得的密文和数据库的密文进行比较，判断是否一致。生成的密文之所以需要加上<code>pbkdf2:sha256:150000$2b8nQyP1$</code>就是为了在验证的时候能够使用相同的运算环境，尤其是盐值，因为是动态生成的，每次都不一样，所以必须保存起来。<br>
+Flask提供了对应的验证函数<code>check_password_hash(pwhash, password)</code>，该函数需要传递存储的密文以及待验证的明文密码，验证通过返回<code>True</code>，反之返回<code>False</code>，代码如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">werkzeug/security.py</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">check_password_hash</span>(<span class="params">pwhash, password</span>):</span></span><br><span class="line">    <span class="keyword">if</span> pwhash.count(<span class="string">&quot;$&quot;</span>) &lt; <span class="number">2</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line">    method, salt, hashval = pwhash.split(<span class="string">&quot;$&quot;</span>, <span class="number">2</span>)  <span class="comment"># 解析出method以及盐值</span></span><br><span class="line">    <span class="keyword">return</span> safe_str_cmp(_hash_internal(method, salt, password)[<span class="number">0</span>], hashval)  <span class="comment"># 使用相同的运算环境重新生成密文进行比较</span></span><br></pre></td></tr></table></figure>
+<p>从代码的实现可以看到，内部也是使用的<code>_hash_internal</code>来生成密文的。</p>
+<h3 id="用户认证模型"><a class="header-anchor" href="#用户认证模型">¶</a>用户认证模型</h3>
+<p>Flask中不提供数据库功能，这里使用<code>Flask-SQLAlchemy</code>作为数据库扩展，使用<code>Flask-Login</code>作为用户模型扩展，创建用户模型类：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> werkzeug.security <span class="keyword">import</span> check_password_hash, generate_password_hash</span><br><span class="line"><span class="keyword">from</span> flask_login <span class="keyword">import</span> UserMixin</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">User</span>(<span class="params">db.Model, UserMixin</span>):</span></span><br><span class="line"> </span><br><span class="line">    __tablename__ = <span class="string">&#x27;users&#x27;</span></span><br><span class="line">    <span class="built_in">id</span> = db.Column(db.Integer, primary_key=<span class="literal">True</span>)</span><br><span class="line">    email = db.Column(db.String(<span class="number">64</span>), unique=<span class="literal">True</span>, index=<span class="literal">True</span>)</span><br><span class="line">    username = db.Column(db.String(<span class="number">64</span>), unique=<span class="literal">True</span>, index=<span class="literal">True</span>)</span><br><span class="line">    password_hash = db.Column(db.String(<span class="number">128</span>)) </span><br><span class="line">    <span class="comment"># 此处需要注意，存储generate_password_hash生成的密码，长度需要根据PBKDF2选用的哈希函数以及盐值的长度而定</span></span><br><span class="line"> </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self, email=<span class="literal">None</span>, username=<span class="literal">None</span>, password=<span class="literal">None</span></span>):</span></span><br><span class="line">        self.email = email</span><br><span class="line">        self.username = username</span><br><span class="line">        self.password = password</span><br><span class="line"> </span><br><span class="line"><span class="meta">    @property</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">password</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="keyword">raise</span> AttributeError(<span class="string">&#x27;password is not a readable attribute&#x27;</span>)</span><br><span class="line"> </span><br><span class="line"><span class="meta">    @password.setter</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">password</span>(<span class="params">self, password</span>):</span></span><br><span class="line">        self.password_hash = generate_password_hash(password)</span><br><span class="line"> </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">validate_password</span>(<span class="params">self, password</span>):</span></span><br><span class="line">        <span class="keyword">return</span> check_password_hash(self.password_hash, password)</span><br><span class="line"> </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__repr__</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="keyword">return</span> <span class="string">f&#x27;&lt;User <span class="subst">&#123;self.username&#125;</span>&gt;&#x27;</span></span><br></pre></td></tr></table></figure>
+<h2 id="Django"><a class="header-anchor" href="#Django">¶</a>Django</h2>
+<p>Django内的密文生成功能由<code>from django.contrib.auth.hashers import make_password</code>提供，该方法通过获取Django settings中的<code>PASSWORD_HASHERS</code>中配置的hasher进行密文的生成。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">PASSWORD_HASHERS = [</span><br><span class="line">    <span class="string">&#x27;django.contrib.auth.hashers.PBKDF2PasswordHasher&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;django.contrib.auth.hashers.PBKDF2SHA1PasswordHasher&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;django.contrib.auth.hashers.Argon2PasswordHasher&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;django.contrib.auth.hashers.BCryptSHA256PasswordHasher&#x27;</span>,</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+<p>默认使用<code>django.contrib.auth.hashers.PBKDF2PasswordHasher</code>进行计算，该类的不是实现如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># django/contrib/auth/hashers.py</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">PBKDF2PasswordHasher</span>(<span class="params">BasePasswordHasher</span>):</span></span><br><span class="line"></span><br><span class="line">    algorithm = <span class="string">&quot;pbkdf2_sha256&quot;</span></span><br><span class="line">    iterations = <span class="number">150000</span></span><br><span class="line">    digest = hashlib.sha256</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">encode</span>(<span class="params">self, password, salt, iterations=<span class="literal">None</span></span>):</span></span><br><span class="line">        <span class="keyword">assert</span> password <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">None</span></span><br><span class="line">        <span class="keyword">assert</span> salt <span class="keyword">and</span> <span class="string">&#x27;$&#x27;</span> <span class="keyword">not</span> <span class="keyword">in</span> salt</span><br><span class="line">        iterations = iterations <span class="keyword">or</span> self.iterations</span><br><span class="line">        <span class="built_in">hash</span> = pbkdf2(password, salt, iterations, digest=self.digest)  <span class="comment"># 主要函数pbkdf2()</span></span><br><span class="line">        <span class="built_in">hash</span> = base64.b64encode(<span class="built_in">hash</span>).decode(<span class="string">&#x27;ascii&#x27;</span>).strip()  <span class="comment"># 唯一的区别：django对PBKDF2产生的值使用base64进行了编码</span></span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;%s$%d$%s$%s&quot;</span> % (self.algorithm, iterations, salt, <span class="built_in">hash</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># django/utils/crypto.py</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">pbkdf2</span>(<span class="params">password, salt, iterations, dklen=<span class="number">0</span>, digest=<span class="literal">None</span></span>):</span></span><br><span class="line">    <span class="string">&quot;&quot;&quot;Return the hash of password using pbkdf2.&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">if</span> digest <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">        digest = hashlib.sha256</span><br><span class="line">    dklen = dklen <span class="keyword">or</span> <span class="literal">None</span></span><br><span class="line">    password = force_bytes(password)</span><br><span class="line">    salt = force_bytes(salt)</span><br><span class="line">    <span class="keyword">return</span> hashlib.pbkdf2_hmac(digest().name, password, salt, iterations, dklen)  <span class="comment"># 最终生成函数和flask一样调用的hashlib.pbkdf2_hmac()</span></span><br></pre></td></tr></table></figure>
+<p>从结果来看，django中的默认使用的密文生成方式和Flask类似，默认使用的哈希函数为SHA-256，迭代次数为150000，随机产生的盐值默认长度为12（Flask的默认长度为8），在<code>PBKDF2PasswordHasher</code>的基类<code>BasePasswordHasher</code>中定义。都是通过Pythonn内置模块hashlib提供的<code>pbkdf2_hmac(hash_name, password, salt, iterations, dklen=None)</code>函数完成PBKDF2的运算过程。唯一的不同是Django中对运算的结果进行了base64编码后再返回，这点从最终得到的密文值也可以发现：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pbkdf2_sha256$<span class="number">150000</span>$sYt5dCzmVAXv$bbPcDOWeuIXIQjA/5eoCuI0C1mwvaIevfiUCh2hUolA=</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>SHA-256产生的是64个十六进制数，不可能出现=，而=在base64中常见，用来填补缺少的位数，可以猜测使用了base64编码。关于base64的问题参考<a href="/2020/07/23/Base64-%E7%BC%96%E7%A0%81/">Base64编码</a>。</p>
+</blockquote>
+<p>此外，也提供了对应的<code>check_password(password, encoded, setter=None, preferred='default')</code>用于验证用户密码，作用的原理和Flaske的<code>check_password(pwhash, password)</code>基本相似。</p>
+<h3 id="用户认证"><a class="header-anchor" href="#用户认证">¶</a>用户认证</h3>
+<p>Django中一般不直接调用<code>make_password()</code>函数，其内置的用户模型类<code>AbstractUser</code>的基类<code>AbstractBaseUser</code>提供了两个方法<code>set_password(self, raw_password)</code>和<code>check_password(self, raw_pasword)</code>用于保存和验证用户密码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># user/views.py</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">RegisterView</span>(<span class="params">View</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get</span>(<span class="params">self, request, *args, **kwargs</span>):</span></span><br><span class="line">        register_get_form = RegisterGetForm()</span><br><span class="line">        <span class="keyword">return</span> render(request, <span class="string">&quot;register.html&quot;</span>, &#123;</span><br><span class="line">            <span class="string">&quot;register_get_form&quot;</span>: register_get_form,</span><br><span class="line">        &#125;)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">post</span>(<span class="params">self, request, *args, **kwargs</span>):</span></span><br><span class="line">        register_post_form = RegisterPostForm(request.POST)</span><br><span class="line">        <span class="keyword">if</span> register_post_form.is_valid():</span><br><span class="line">            mobile = register_post_form.cleaned_data[<span class="string">&quot;mobile&quot;</span>]</span><br><span class="line">            password = register_post_form.cleaned_data[<span class="string">&quot;password&quot;</span>]</span><br><span class="line">            user = UserProfile(username=mobile)</span><br><span class="line">            <span class="comment"># 使用set_password的自带加密的</span></span><br><span class="line">            user.set_password(password)</span><br><span class="line">            user.mobile = mobile</span><br><span class="line">            user.save()</span><br><span class="line">            login(request, user)</span><br><span class="line">            <span class="keyword">return</span> HttpResponseRedirect(reverse(<span class="string">&quot;index&quot;</span>))</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            register_get_form = RegisterGetForm()  </span><br><span class="line">            <span class="keyword">return</span> render(request, <span class="string">&quot;register.html&quot;</span>, &#123;</span><br><span class="line">                <span class="string">&quot;register_get_form&quot;</span>: register_get_form, </span><br><span class="line">                <span class="string">&quot;register_post_form&quot;</span>: register_post_form, </span><br><span class="line">            &#125;)</span><br></pre></td></tr></table></figure>
+<p>在创建用户的时候，直接调用用户对象的<code>set_password()</code>方法传递获取的明文密码，即可完成对应密文的获取。</p>
+<p>此外，Django提供了完善的用户认证系统，提供<code>django.contrib.auth.authenticate()</code>方法用于用户的身份验证，默认使用的认证类<code>django.contrib.auth.backends.ModelBackend</code>中就是通过调用<code>user.check_password(password)</code>来验证用户的。<br>
+关于Django详细的认证流程参考<a href="/2020/03/20/Django%E8%87%AA%E5%AE%9A%E4%B9%89%E7%94%A8%E6%88%B7%E8%AE%A4%E8%AF%81%E7%B3%BB%E7%BB%9F/">Django自定义用户认证系统</a>。</p>
+<h1>小结</h1>
+<p>Flask以及Django默认的密文生成方式均采用PDKDF2，该算法通过增加迭代次数的方式增加的被强行破解的难度，此外Flask以及Django在实现的时候都采用的不固定式的随机盐，大大增强了安全性，这已经能够胜任绝大多数的使用场景了。<br>
+如果需要更安全的密码机制，两者都提供了采用Bcrypt生成密文的方法，Django中通过在<code>PASSWORD_HASHERS</code>中设置：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">PASSWORD_HASHERS = [</span><br><span class="line">    <span class="string">&#x27;django.contrib.auth.hashers.BCryptSHA256PasswordHasher&#x27;</span>,   <span class="comment"># 放在第一个位置</span></span><br><span class="line">    <span class="string">&#x27;django.contrib.auth.hashers.BCryptPasswordHasher&#x27;</span>, </span><br><span class="line">    <span class="string">&#x27;django.contrib.auth.hashers.PBKDF2PasswordHasher&#x27;</span>, </span><br><span class="line">    <span class="string">&#x27;django.contrib.auth.hashers.PBKDF2SHA1PasswordHasher&#x27;</span>,</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+<p>Flask中也提供了第三方扩展<code>Flask-Bcrypt</code>来实现，具体使用参考<a target="_blank" rel="noopener" href="https://flask-bcrypt-docs-zh.readthedocs.io/zh/latest/">官方文档</a>。</p>
+<p><font color="red">需要注意的是，安全性越高的算法需要的计算量越大，相应的耗时越长，在使用的时候，注意取舍。</font></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Django-%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB/" rel="tag"># Django 源码解读</a>
+              <a href="/tags/python/" rel="tag"># python</a>
+              <a href="/tags/Flask-%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB/" rel="tag"># Flask 源码解读</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/10/15/%E4%B8%8D%E5%86%8D%E5%AE%89%E5%85%A8%E7%9A%84SHA-1/" rel="prev" title="不再安全的SHA-1">
+      <i class="fa fa-chevron-left"></i> 不再安全的SHA-1
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/03/10/Ajax-%E8%B7%A8%E5%9F%9F%E9%97%AE%E9%A2%98%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/" rel="next" title="Ajax 跨域问题解决方案">
+      Ajax 跨域问题解决方案 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">2.</span> <span class="nav-text">Python实现</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Flask"><span class="nav-number">2.1.</span> <span class="nav-text">Flask</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90"><span class="nav-number">2.1.1.</span> <span class="nav-text">源码分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%A7%E7%94%9F%E5%80%BC%E4%BB%A5%E5%8F%8A%E9%AA%8C%E8%AF%81"><span class="nav-number">2.1.2.</span> <span class="nav-text">产生值以及验证</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%A8%E6%88%B7%E8%AE%A4%E8%AF%81%E6%A8%A1%E5%9E%8B"><span class="nav-number">2.1.3.</span> <span class="nav-text">用户认证模型</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Django"><span class="nav-number">2.2.</span> <span class="nav-text">Django</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%A8%E6%88%B7%E8%AE%A4%E8%AF%81"><span class="nav-number">2.2.1.</span> <span class="nav-text">用户认证</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">3.</span> <span class="nav-text">小结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Skylor Tang"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Skylor Tang</p>
+  <div class="site-description" itemprop="description">Your advantages today will be replaced by future trends, so keep learning.</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">39</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">21</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">32</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      友情链接
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://kalasearch.cn/" title="https:&#x2F;&#x2F;kalasearch.cn&#x2F;" rel="noopener" target="_blank">卡拉搜索</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2019 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Skylor Tang</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'bva4r4SJYiDLdhU1ALkqpbqw-gzGzoHsz',
+      appKey     : 'bWLTGKg8MzPrXsAvC3YDMehj',
+      placeholder: "欢迎留言",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>
