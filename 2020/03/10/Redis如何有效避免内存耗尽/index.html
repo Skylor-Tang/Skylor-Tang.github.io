@@ -22,21 +22,21 @@
     var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"always","padding":18,"offset":12,"onmobile":true},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="UUID 是通用唯一识别码（Universally Unique Identifier）的缩写，是一种软件建构的标准，亦为开放软件基金会组织在分布式计算环境领域的一部分。">
+  <meta name="description" content="redis通过&#96;maxmemory&#96;配置选项来配置redis的存储数据所能使用的最大的内存限制（可以通过通过修改&#96;redis.conf&#96;或者在redis-cli中使用&#96;config set&#96;来进行配置），如果我们要配置的内存上限是100M的Redis缓存，那么我们可以在 redis.conf 配置 &#96;maxmemory 100mb&#96;。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="UUID的python实现">
-<meta property="og:url" content="http://yoursite.com/2020/10/06/UUID%E7%9A%84python%E5%AE%9E%E7%8E%B0/index.html">
+<meta property="og:title" content="Redis如何有效避免内存耗尽">
+<meta property="og:url" content="http://yoursite.com/2020/03/10/Redis%E5%A6%82%E4%BD%95%E6%9C%89%E6%95%88%E9%81%BF%E5%85%8D%E5%86%85%E5%AD%98%E8%80%97%E5%B0%BD/index.html">
 <meta property="og:site_name" content="Skylor Blog">
-<meta property="og:description" content="UUID 是通用唯一识别码（Universally Unique Identifier）的缩写，是一种软件建构的标准，亦为开放软件基金会组织在分布式计算环境领域的一部分。">
+<meta property="og:description" content="redis通过&#96;maxmemory&#96;配置选项来配置redis的存储数据所能使用的最大的内存限制（可以通过通过修改&#96;redis.conf&#96;或者在redis-cli中使用&#96;config set&#96;来进行配置），如果我们要配置的内存上限是100M的Redis缓存，那么我们可以在 redis.conf 配置 &#96;maxmemory 100mb&#96;。">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2020-10-06T09:20:37.000Z">
-<meta property="article:modified_time" content="2021-05-08T00:48:25.863Z">
+<meta property="article:published_time" content="2020-03-10T07:40:20.000Z">
+<meta property="article:modified_time" content="2021-05-10T13:40:04.354Z">
 <meta property="article:author" content="Skylor Tang">
 <meta property="article:tag" content="工具">
-<meta property="article:tag" content="python">
+<meta property="article:tag" content="Redis">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="http://yoursite.com/2020/10/06/UUID%E7%9A%84python%E5%AE%9E%E7%8E%B0/">
+<link rel="canonical" href="http://yoursite.com/2020/03/10/Redis%E5%A6%82%E4%BD%95%E6%9C%89%E6%95%88%E9%81%BF%E5%85%8D%E5%86%85%E5%AD%98%E8%80%97%E5%B0%BD/">
 
 
 <script id="page-configurations">
@@ -49,7 +49,7 @@
   };
 </script>
 
-  <title>UUID的python实现 | Skylor Blog</title>
+  <title>Redis如何有效避免内存耗尽 | Skylor Blog</title>
   
 
 
@@ -197,7 +197,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/10/06/UUID%E7%9A%84python%E5%AE%9E%E7%8E%B0/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/03/10/Redis%E5%A6%82%E4%BD%95%E6%9C%89%E6%95%88%E9%81%BF%E5%85%8D%E5%86%85%E5%AD%98%E8%80%97%E5%B0%BD/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.png">
@@ -210,7 +210,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          UUID的python实现
+          Redis如何有效避免内存耗尽
         </h1>
 
         <div class="post-meta">
@@ -220,14 +220,14 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2020-10-06 17:20:37" itemprop="dateCreated datePublished" datetime="2020-10-06T17:20:37+08:00">2020-10-06</time>
+              <time title="创建时间：2020-03-10 15:40:20" itemprop="dateCreated datePublished" datetime="2020-03-10T15:40:20+08:00">2020-03-10</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-08 08:48:25" itemprop="dateModified" datetime="2021-05-08T08:48:25+08:00">2021-05-08</time>
+                <time title="修改时间：2021-05-10 21:40:04" itemprop="dateModified" datetime="2021-05-10T21:40:04+08:00">2021-05-10</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -239,11 +239,7 @@
                 </span>
                   ，
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/Python/" itemprop="url" rel="index"><span itemprop="name">Python</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/%E7%BD%91%E7%BB%9C%E4%BC%A0%E8%BE%93/" itemprop="url" rel="index"><span itemprop="name">网络传输</span></a>
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/Redis/" itemprop="url" rel="index"><span itemprop="name">Redis</span></a>
                 </span>
             </span>
 
@@ -256,13 +252,13 @@
       </span>
       <span class="post-meta-item-text">Valine：</span>
     
-    <a title="valine" href="/2020/10/06/UUID%E7%9A%84python%E5%AE%9E%E7%8E%B0/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2020/10/06/UUID%E7%9A%84python%E5%AE%9E%E7%8E%B0/" itemprop="commentCount"></span>
+    <a title="valine" href="/2020/03/10/Redis%E5%A6%82%E4%BD%95%E6%9C%89%E6%95%88%E9%81%BF%E5%85%8D%E5%86%85%E5%AD%98%E8%80%97%E5%B0%BD/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2020/03/10/Redis%E5%A6%82%E4%BD%95%E6%9C%89%E6%95%88%E9%81%BF%E5%85%8D%E5%86%85%E5%AD%98%E8%80%97%E5%B0%BD/" itemprop="commentCount"></span>
     </a>
   </span>
   
   
-            <div class="post-description">UUID 是通用唯一识别码（Universally Unique Identifier）的缩写，是一种软件建构的标准，亦为开放软件基金会组织在分布式计算环境领域的一部分。</div>
+            <div class="post-description">redis通过`maxmemory`配置选项来配置redis的存储数据所能使用的最大的内存限制（可以通过通过修改`redis.conf`或者在redis-cli中使用`config set`来进行配置），如果我们要配置的内存上限是100M的Redis缓存，那么我们可以在 redis.conf 配置 `maxmemory 100mb`。</div>
 
         </div>
       </header>
@@ -273,41 +269,50 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h1>概述</h1>
-<p>UUID 是通用唯一识别码（Universally Unique Identifier）的缩写，是一种软件建构的标准，亦为开放软件基金会组织在分布式计算环境领域的一部分。</p>
-<p>UUID是一个128比特的数值，这个数值可以通过一定的算法计算出来。UUID用来识别属性类型，在所有空间和时间上被视为唯一的标识。一般来说，可以保证这个值是真正唯一的任何地方产生的任意一个UUID都不会有相同的值。使用UUID的一个好处是可以为新的服务创建新的标识符。这样一来，客户端在查找一个服务时，只需要在它的服务查找请求中指出与某类服务（或某个特定服务）有关的UUID，如果服务的提供者能将可用的服务与这个UUID相匹配，就返回一个响应。</p>
-<h1>组成</h1>
-<p>UUID由以下几部分的组合：<br>
-（1）基于时间戳，当前日期和时间，UUID的第一个部分与时间有关。<br>
-（2）时钟序列。<br>
-（3）全局唯一的IEEE机器识别号，如果有网卡，从网卡MAC地址获得，没有网卡以其他方式获得。</p>
-<p>UUID是一个128比特的数值，使用16进制表示，就是一个32个16进制数组成的字符串（标准的分配格式是8-4-4-4-12，如<code>'b85fa97e-ad39-11eb-9b9a-acde48001122'</code>）。</p>
-<p>uuid的标准有<code>uuid1</code>,<code>uuid2</code>, <code>uuid3</code>, <code>uuid4</code>，<code>uuid5</code>这五个版本，python中支持除<code>uuid2</code>以外的其他版本。</p>
-<h1>python中使用</h1>
-<p>Python 内置了uuid库，通过<code>import uuid</code> 导入，提供了<code>uuid1</code>，<code>uuid3</code>， <code>uuid4</code>， <code>uuid5</code> 对应的同名函数供使用，函数的返回值类型是<code>UUID</code>。</p>
-<p><code>uuid1(node, clock_seq)</code>:<br>
-使用的变量因子是 时间戳＋时钟序列＋节点信息（Mac地址），最后的12个字符对应的就是MAC地址，因为是MAC地址，同一台机器上产生的uuid1的后12个字符完全一致，但是生成后暴露了MAC地址这就很不好了。node参数用来设置最后12个字符（48个二进制位）的值（传递的是十进制会自动进行转换）。</p>
-<p><code>uuid3(namespace, name)</code>:<br>
-需要传递命名空间和自定义字符串生成UUID，使用MD5哈希产生。</p>
-<p><code>uuid4()</code>:<br>
-基于随机数产生，极小概率产生重复。</p>
-<p><code>uuid5(namespace, name)</code>:<br>
-和uuid3用法相同，但是使用SHA-1哈希生成UUID。由于SHA-1产生的数据大小为20个字节，而uuid只需要16个字节，所以uuid在使用的时候，只截取了SHA-1产生的前16个字节。</p>
-<p>uuid库提供了namespace的可选项如下，可直接通过 <code>uuid.NAMESPACE_DNS</code> 调用：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">NAMESPACE_DNS = UUID(<span class="string">&#x27;6ba7b810-9dad-11d1-80b4-00c04fd430c8&#x27;</span>)</span><br><span class="line">NAMESPACE_URL = UUID(<span class="string">&#x27;6ba7b811-9dad-11d1-80b4-00c04fd430c8&#x27;</span>)</span><br><span class="line">NAMESPACE_OID = UUID(<span class="string">&#x27;6ba7b812-9dad-11d1-80b4-00c04fd430c8&#x27;</span>)</span><br><span class="line">NAMESPACE_X500 = UUID(<span class="string">&#x27;6ba7b814-9dad-11d1-80b4-00c04fd430c8&#x27;</span>)</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>使用uuid3以及uuid5得到的uuid唯一且可复现，使用同样的<code>namespace</code>以及<code>name</code>可以得到同样的值，因为uuid3和uuid5使用的分别是MD5和SHA-1来产生的，传递的key一样，所以得到的uuid值不变。</p>
-</blockquote>
-<p>uuid版本的选择可以根据实际情况进行选择。</p>
-<p>此外UUID类还提供了属性方法，用于得到相应格式的uuid：</p>
-<pre><code>uuid_obj.bytes 得到16字节的字符串
-uuid_obj.fields 得到元组类型
-uuid_obje.hex UUID为32个字符的十六进制字符串，就是去除'-'的uuid。
-uuid_obj.int 得到对应的十进制数。
-通过uuid_obj.version 查看uuid的版本。
-使用str(uuid_obje)可以得到对应的字符串形式，UUID类内部手动实现了'__str__'。
-</code></pre>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> uuid</span><br><span class="line"></span><br><span class="line">uuid3 = uuid.uuid3(namespace=uuid.NAMESPACE_URL, name=<span class="string">&#x27;hello&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(uuid3)</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">type</span>(uuid3))</span><br><span class="line"><span class="built_in">print</span>(uuid3.<span class="built_in">hex</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">type</span>(uuid3.<span class="built_in">hex</span>))</span><br><span class="line"><span class="built_in">print</span>(uuid3.<span class="built_in">bytes</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">type</span>(uuid3.<span class="built_in">bytes</span>))</span><br><span class="line"></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">cf3741de-a2dd-36f7-a791-8736e42c4c2f</span></span><br><span class="line"><span class="string">&lt;class &#x27;uuid.UUID&#x27;&gt;</span></span><br><span class="line"><span class="string">cf3741dea2dd36f7a7918736e42c4c2f</span></span><br><span class="line"><span class="string">&lt;class &#x27;str&#x27;&gt;</span></span><br><span class="line"><span class="string">b&#x27;\xcf7A\xde\xa2\xdd6\xf7\xa7\x91\x876\xe4,L/&#x27;</span></span><br><span class="line"><span class="string">&lt;class &#x27;bytes&#x27;&gt;</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br></pre></td></tr></table></figure>
+        <h1>Redis内存设置</h1>
+<p>redis通过<code>maxmemory</code>配置选项来配置redis的存储数据所能使用的最大的内存限制（可以通过通过修改<code>redis.conf</code>或者在redis-cli中使用<code>config set</code>来进行配置），如果我们要配置的内存上限是100M的Redis缓存，那么我们可以在 redis.conf 配置 <code>maxmemory 100mb</code>。</p>
+<p>配置 <code>maxmemory 0</code> 表示没有内存限制（在 64-bit 系统中，默认是 0 无限制，但是在 32-bit 系统中默认是 3GB）。</p>
+<p>当存储数据达到限制时，Redis 会根据情形选择不同策略，或者返回errors（这样会导致浪费更多的内存），或者清除一些旧数据回收内存来添加新数据。</p>
+<h2 id="回收策略"><a class="header-anchor" href="#回收策略">¶</a>回收策略</h2>
+<p>当内存达到限制时，Redis 具体的回收策略是通过 maxmemory-policy 配置项配置的，可选的配置项如下：</p>
+<p><code>noenviction</code>：<br>
+不清除数据，只是返回错误，这样会导致浪费掉更多的内存，对大多数写命令（DEL 命令和其他的少数命令例外）。<br>
+<code>allkeys-lru</code>：<br>
+从所有的数据集（server.db[i].dict）中挑选最近最少使用的数据淘汰，以供新数据使用。<br>
+<code>volatile-lru</code>：<br>
+从已设置过期时间的数据集（server.db[i].expires）中挑选最近最少使用的数据淘汰，以供新数据使用。<br>
+<code>volatile-lfu</code>：<br>
+根据 LFU 算法删除设置了过期时间的键，直到腾出可用空间。如果没有可删除的键对象，且内存还是不够用时，则报错<br>
+<code>allkeys-lfu</code>：<br>
+根据 LFU 算法删除所有的键，直到腾出可用空间。如果没有可删除的键对象，且内存还是不够用时，则报错<br>
+<code>allkeys-random</code>：<br>
+从所有数据集（server.db[i].dict）中任意选择数据淘汰，以供新数据使用。<br>
+<code>volatile-random</code>：<br>
+从已设置过期时间的数据集（server.db[i].expires）中任意选择数据淘汰，以供新数据使用。<br>
+<code>volatile-ttl</code>：<br>
+从已设置过期时间的数据集（server.db[i].expires）中挑选将要过期的数据淘汰，以供新数据使用。</p>
+<h3 id="回收策略的执行过程"><a class="header-anchor" href="#回收策略的执行过程">¶</a>回收策略的执行过程</h3>
+<p>当客户端执行一条新的命令的时候，该命令需要导致数据库增加数据（如<code>set key value</code>），此时redis就会检查内存的使用情况，如果内存使用超过maxmemory设置的大小，此时就会按照执行的置换策略删除一些key，之后再去执行<code>set key vlaue</code>。</p>
+<p>如果我们持续的写数据会导致内存达到或超出上限 <code>maxmemory</code>，但是置换策略会将内存使用降低到上限以下。但是如果一次需要使用很多的内存（比如一次写入一个很大的set），那么，Redis 的内存使用可能超出最大内存限制一段时间。</p>
+<h1>Redis过期设置</h1>
+<p>要知道，redis在服务器上运行，内存不可能是无限的，在实际使用场景中，很多情况下某些键值对只会在特定的时间内有效，为了防止这种类型的数据一直占有内存，我们可以给键值对设置有效期。</p>
+<p>Redis提供了<code>EXPIRE</code>以及<code>PEXPIRE</code>来设置过期时间：<br>
+<code>expire key ttl</code>: 将key值的过期时间设置为ttl秒。<br>
+<code>pexpire key ttl</code>: 将key值的过期时间设置为ttl毫秒。</p>
+<p>ttl（Time To Live），表示键的生存时间，设置之后，时间会自动减少，当时间耗尽时，Redis就会移除该键。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">当设置成功的时候返回<span class="number">1</span>，失败返回<span class="number">0</span>。</span><br><span class="line"><span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span>:<span class="number">6379</span>&gt; expire name <span class="number">120</span></span><br><span class="line">(integer) <span class="number">1</span></span><br></pre></td></tr></table></figure>
+<p>对于已经设置过生存时间的键重新执行expire或者pexpire会使用新的ttl进行更新。</p>
+<p>除了使用expire或者pexpire对已经创建的键的生存时间进行设置之外，字符串类型的键的设置方式set在使用的时候提供了EX以及PX参数用于设置过期的秒或者毫秒。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span>:<span class="number">6379</span>&gt; <span class="built_in">set</span> name tmj EX <span class="number">23</span></span><br><span class="line">OK</span><br></pre></td></tr></table></figure>
+<p>该方式除了可以减少命令的调用数量并提供程序的执行速度之外，更重要的是保证了操作的原子性，使得设置键以及过期时间同时执行，分开使用，先使用<code>set name tmj</code>创建键，之后再使用<code>expire name 66</code>设置过期时间，这两条命令是独立的，所以在Redis服务器在执行的时候就可以发生set执行了，但是设置过期时间的操作没有进行，此时缓存就不会自动过期，这在生产环境中是可能出现的。注意：set只能用于字符串类型的键的创建。此外过期时间的设置也是对整个键的设置，像集合、列表以及散列类型无法对其中的元素进行自动过期设置。</p>
+<p>此外，除了设置生存时间，redis还提供了expireat以及pexpireat来设置过期时间，让Redis在指定UNIX时间来临之后自动移除给定的键，注意使用的是UNIX时间戳<code>expireat key timestamp</code>。</p>
+<h2 id="过期时间查询"><a class="header-anchor" href="#过期时间查询">¶</a>过期时间查询</h2>
+<p>通过<code>ttl key</code>查看过期剩余时间，单位为秒，pttl key查看过期时间，单位为毫秒。</p>
+<p>过期时间的查询结果有一下几种：<br>
+大于0的正整数：此key存在，且还剩下正整数的时间过期<br>
+-1 ： 此key存在，且没有设置过期时间，即永久不会过期<br>
+-2 ： 此key不存在，或存在但是过期了，总之就是现在不存在了。</p>
+
     </div>
 
     
@@ -317,7 +322,7 @@ uuid_obj.int 得到对应的十进制数。
       <footer class="post-footer">
           <div class="post-tags">
               <a href="/tags/%E5%B7%A5%E5%85%B7/" rel="tag"># 工具</a>
-              <a href="/tags/python/" rel="tag"># python</a>
+              <a href="/tags/Redis/" rel="tag"># Redis</a>
           </div>
 
         
@@ -326,12 +331,12 @@ uuid_obj.int 得到对应的十进制数。
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2020/09/13/Python-%E5%85%83%E7%B1%BB%E7%BC%96%E7%A8%8B%E6%80%9D%E8%80%83/" rel="prev" title="Python 元类编程思考">
-      <i class="fa fa-chevron-left"></i> Python 元类编程思考
+    <a href="/2020/02/15/SqlAlchemy-%E4%BD%BF%E7%94%A8/" rel="prev" title="SqlAlchemy 使用">
+      <i class="fa fa-chevron-left"></i> SqlAlchemy 使用
     </a></div>
       <div class="post-nav-item">
-    <a href="/2020/10/10/%E6%91%98%E8%A6%81%E7%AE%97%E6%B3%95%E7%9A%84python%E5%AE%9E%E7%8E%B0%E5%92%8C%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF/" rel="next" title="信息摘要算法的python实现和使用场景">
-      信息摘要算法的python实现和使用场景 <i class="fa fa-chevron-right"></i>
+    <a href="/2020/03/20/Django%E8%87%AA%E5%AE%9A%E4%B9%89%E7%94%A8%E6%88%B7%E8%AE%A4%E8%AF%81%E7%B3%BB%E7%BB%9F/" rel="next" title="Django自定义用户认证系统">
+      Django自定义用户认证系统 <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
       </footer>
@@ -392,7 +397,7 @@ uuid_obj.int 得到对应的十进制数。
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">2.</span> <span class="nav-text">组成</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">3.</span> <span class="nav-text">python中使用</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text">Redis内存设置</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9E%E6%94%B6%E7%AD%96%E7%95%A5"><span class="nav-number">1.1.</span> <span class="nav-text">回收策略</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%9E%E6%94%B6%E7%AD%96%E7%95%A5%E7%9A%84%E6%89%A7%E8%A1%8C%E8%BF%87%E7%A8%8B"><span class="nav-number">1.1.1.</span> <span class="nav-text">回收策略的执行过程</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">2.</span> <span class="nav-text">Redis过期设置</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%87%E6%9C%9F%E6%97%B6%E9%97%B4%E6%9F%A5%E8%AF%A2"><span class="nav-number">2.1.</span> <span class="nav-text">过期时间查询</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 

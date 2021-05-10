@@ -309,6 +309,71 @@ COMMAND 也提供了一些options，如 <code>--loglevel=info</code> 用来设�
       </tags>
   </entry>
   <entry>
+    <title>Django REST framework的token原理和验证登录</title>
+    <url>/2020/03/24/Django-REST-framework%E7%9A%84token%E7%99%BB%E9%99%86%E5%92%8C%E5%8E%9F%E7%90%86/</url>
+    <content><![CDATA[<h2 id="drf的登陆验证功能"><a class="header-anchor" href="#drf的登陆验证功能">¶</a>drf的登陆验证功能</h2>
+<p>drf自带的登陆功能（drf Api Root中使用），通过定义路径访问 <code>rest_framework.urls</code> 中设置的路由进行访问</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">url(<span class="string">r&#x27;^api-auth/&#x27;</span>, include(<span class="string">&#x27;rest_framework.urls&#x27;</span>, namespace=<span class="string">&#x27;rest_framework&#x27;</span>)),</span><br></pre></td></tr></table></figure>
+<p>从子路径的实现</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">url(<span class="string">r&#x27;^login/$&#x27;</span>, views.LoginView.as_view(template_name=<span class="string">&#x27;rest_framework/login.html&#x27;</span>), name=<span class="string">&#x27;login&#x27;</span>),</span><br><span class="line">url(<span class="string">r&#x27;^logout/$&#x27;</span>, views.LogoutView.as_view(), name=<span class="string">&#x27;logout&#x27;</span>),</span><br></pre></td></tr></table></figure>
+<p>可以发现，内部实现实际上是调用了Django的原生类 <code>LoginView</code> 和 <code>LogoutView</code>。<code>LoginView</code> 中添加了 <code>@method_decorator(csrf_protect)</code> 装饰器，所以在drf的API Root页面使用了<code>csrf_token </code> 标签，该标签会在渲染模版的时候替换为 <code>&lt;input type=&quot;hidden&quot; name=&quot;csrfmiddlewaretoken&quot; value=&quot;服务器随机生成的token值&quot;&gt;</code> ，配合  <code>django.middleware.csrf.CsrfViewMiddleware</code> 中间件防止csrf（跨站请求伪造），但是目前是一个前后端分离的系统，就不需要做csrf的验证（因为前后端分离的系统中，已经产生了跨站的问题，app和网站肯定不是一个站点，已经是跨站了），所以在做drf开发的时候，不需要关系csrf验证的问题。<br>
+综上，直接调用 <code>LoginView</code> 进行登录认证是不适合在前后端分离的系统中使用的。</p>
+<h2 id="前后端分离的验证方式"><a class="header-anchor" href="#前后端分离的验证方式">¶</a>前后端分离的验证方式</h2>
+<p>drf中的<a href="https://www.django-rest-framework.org/api-guide/authentication/">Authentication</a>提供了一种 request 和 用户身份 绑定的机制。<br>
+使用方式：</p>
+<ol>
+<li>设置setting，设置认证方式，作用方式和Django中的中间件类似。</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">REST_FRAMEWORK = &#123;</span><br><span class="line">    <span class="string">&#x27;DEFAULT_AUTHENTICATION_CLASSES&#x27;</span>: [ <span class="comment"># 设置权限验证的类，默认为以下两个类</span></span><br><span class="line">        <span class="string">&#x27;rest_framework.authentication.BasicAuthentication&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;rest_framework.authentication.SessionAuthentication&#x27;</span>,  </span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>rest_framework.authentication.SessionAuthentication</code> 内部的实现很简单，只是从request中取出了user，实际还是依赖django的django.contrib.sessions.middleware.SessionMiddleware和django.contrib.auth.middleware.AuthenticationMiddleware这两个中间件。</p>
+<ol start="2">
+<li>
+<p>添加drf自带的Token认证类 <code>rest_framework.authentication.TokenAuthentication</code>，使用该类时，需要在 INSTALLED_APPS 中进行注册<code>'rest_framework.authtoken'</code>，因为需要使用数据表，生成<code>authtoken_token</code>表（所以在INSTALLED_APPS注册完之后，还需要使用 migrate 命令生成数据表），该表还用三个字段（key、created、user_id），通过 <code>user_id</code> 自动和用户表进行关联，保证一个用户对应着一个token值。<br>
+在创建用户的时候，不会自动生成token的key值，需要手动调用方法进行生成，手动生成的方式有几种：</p>
+<ul>
+<li>
+<p>调用提供的 Token 类生成</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> rest_framework.authtoken.models <span class="keyword">import</span> Token</span><br><span class="line"></span><br><span class="line">token = Token.objects.create(user=...)</span><br><span class="line"><span class="built_in">print</span>(token.key)</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>使用官方提供的url，<code>url(r'^api-token-auth/', views.obtain_auth_token)</code>，发送post请求，会返回相应的token，若没有则生成后返回，并自动和相应的用户进行关联（需要注意的该url请求是post请求，需要传递用户名和密码进行验证）。</p>
+</li>
+</ul>
+</li>
+<li>
+<p>认证<br>
+需要手动在header中传递 <code>Authorization: Token 9944b09199c62bcf9418ad846dd0e4bbdfc6ee4b</code> 。通过<code>DEFAULT_AUTHENTICATION_CLASSES</code> 的作用之后，就会获取到用户，然后将用户存储在request中的user属性中，token值存储在auth属性中。</p>
+</li>
+</ol>
+<h2 id="token的实际应用"><a class="header-anchor" href="#token的实际应用">¶</a>token的实际应用</h2>
+<p>问题：有这样的使用场景，若访问一个公共数据页面，一般的，这种公共页面即使是在用户未登录（没有传递token），或者用户传递的token产生错误的情况下也是可以访问的，该如何解决呢？</p>
+<p>可以通过前端，也可以在后端解决。</p>
+<p>后端的方式：<br>
+其实可以不需要采用在 <a href="http://settings.py">settings.py</a> 中设置全局的 <code>DEFAULT_AUTHENTICATION_CLASSES</code> 的方式，而是在需要进行token验证的view中使用 <code>authentication_classes</code> 属性指定是否需要使用token验证（该属性在基础类APIView中设置了，authentication_classes = api_settings.DEFAULT_AUTHENTICATION_CLASSES）。</p>
+<blockquote>
+<p>drf的配置，多数都可以选择是在settings.py中配置还是在view中进行配置。settings.py中的是全局的配置，view中的设置是局部的，同时设置时，view中的设置优先于全局的设置。</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> rest_framework.authentication <span class="keyword">import</span> TokenAuthentication</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">GoodsListViewSet</span>(<span class="params">mixins.ListModelMixin, viewsets.GenericViewSet</span>):</span></span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    商品列表页， 分页， 搜索， 过滤， 排序</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    ...</span><br><span class="line">    <span class="comment"># 注意是classes，可接受多个值，所以采用元组的数据格式，另外，当元组只有一个数据的时候，需要使用逗号</span></span><br><span class="line">    <span class="comment"># view中的局部设置会覆盖全局的设置</span></span><br><span class="line">    authentication_classes = (TokenAuthentication, ) </span><br><span class="line">    permission_classes = (IsAuthenticated,)  <span class="comment"># 只有设置了IsAuthenticated，才会进行身份验证</span></span><br><span class="line">    ...</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h2 id="问题"><a class="header-anchor" href="#问题">¶</a>问题</h2>
+<ol>
+<li>目前，使用的token验证方式，token值是存储在生成的 <code>authtoken_token</code> 表中，是放在一台服务器上的，若采用分布式的话，还需要做数据的同步操作。</li>
+<li>相比于 django_session 的设置，没有expire_date属性（过期时间），将是永久有效的，这样的话，一旦泄露将造成很大的安全问题。</li>
+<li>和 django_session 存储同样的问题，随着用户的增多，token值会占用服务器大量空间，同时也会加大数据库的查询压力，导致性能下降。</li>
+</ol>
+<p>解决措施：使用JWT用户认证</p>
+]]></content>
+      <categories>
+        <category>计算机</category>
+        <category>开发问题</category>
+        <category>Django REST framework</category>
+      </categories>
+      <tags>
+        <tag>前后端跨域</tag>
+        <tag>Django REST framework</tag>
+        <tag>token原理</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Django REST framework之JWT用户验证</title>
     <url>/2020/04/03/Django%20REST%20framework%E4%B9%8BJWT%E7%94%A8%E6%88%B7%E9%AA%8C%E8%AF%81/</url>
     <content><![CDATA[<p>在之前的 <a href="/2020/03/24/Django-REST-framework%E7%9A%84token%E7%99%BB%E9%99%86%E5%92%8C%E5%8E%9F%E7%90%86/" title="Django REST framework的token原理和验证登录">Django REST framework的token原理和验证登录</a> 中，使用了drf自带的Token认证类<code>rest_framework.authentication.TokenAuthentication</code> 实现了Token认证，但是drf自带的Token认证有以下几个问题：</p>
@@ -436,71 +501,6 @@ JSONWebTokenAuthentication 继承自 BaseJSONWebTokenAuthentication，该父类�
         <tag>token原理</tag>
         <tag>JWT用户验证</tag>
         <tag>前后端分离</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Django REST framework的token原理和验证登录</title>
-    <url>/2020/03/24/Django-REST-framework%E7%9A%84token%E7%99%BB%E9%99%86%E5%92%8C%E5%8E%9F%E7%90%86/</url>
-    <content><![CDATA[<h2 id="drf的登陆验证功能"><a class="header-anchor" href="#drf的登陆验证功能">¶</a>drf的登陆验证功能</h2>
-<p>drf自带的登陆功能（drf Api Root中使用），通过定义路径访问 <code>rest_framework.urls</code> 中设置的路由进行访问</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">url(<span class="string">r&#x27;^api-auth/&#x27;</span>, include(<span class="string">&#x27;rest_framework.urls&#x27;</span>, namespace=<span class="string">&#x27;rest_framework&#x27;</span>)),</span><br></pre></td></tr></table></figure>
-<p>从子路径的实现</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">url(<span class="string">r&#x27;^login/$&#x27;</span>, views.LoginView.as_view(template_name=<span class="string">&#x27;rest_framework/login.html&#x27;</span>), name=<span class="string">&#x27;login&#x27;</span>),</span><br><span class="line">url(<span class="string">r&#x27;^logout/$&#x27;</span>, views.LogoutView.as_view(), name=<span class="string">&#x27;logout&#x27;</span>),</span><br></pre></td></tr></table></figure>
-<p>可以发现，内部实现实际上是调用了Django的原生类 <code>LoginView</code> 和 <code>LogoutView</code>。<code>LoginView</code> 中添加了 <code>@method_decorator(csrf_protect)</code> 装饰器，所以在drf的API Root页面使用了<code>csrf_token </code> 标签，该标签会在渲染模版的时候替换为 <code>&lt;input type=&quot;hidden&quot; name=&quot;csrfmiddlewaretoken&quot; value=&quot;服务器随机生成的token值&quot;&gt;</code> ，配合  <code>django.middleware.csrf.CsrfViewMiddleware</code> 中间件防止csrf（跨站请求伪造），但是目前是一个前后端分离的系统，就不需要做csrf的验证（因为前后端分离的系统中，已经产生了跨站的问题，app和网站肯定不是一个站点，已经是跨站了），所以在做drf开发的时候，不需要关系csrf验证的问题。<br>
-综上，直接调用 <code>LoginView</code> 进行登录认证是不适合在前后端分离的系统中使用的。</p>
-<h2 id="前后端分离的验证方式"><a class="header-anchor" href="#前后端分离的验证方式">¶</a>前后端分离的验证方式</h2>
-<p>drf中的<a href="https://www.django-rest-framework.org/api-guide/authentication/">Authentication</a>提供了一种 request 和 用户身份 绑定的机制。<br>
-使用方式：</p>
-<ol>
-<li>设置setting，设置认证方式，作用方式和Django中的中间件类似。</li>
-</ol>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">REST_FRAMEWORK = &#123;</span><br><span class="line">    <span class="string">&#x27;DEFAULT_AUTHENTICATION_CLASSES&#x27;</span>: [ <span class="comment"># 设置权限验证的类，默认为以下两个类</span></span><br><span class="line">        <span class="string">&#x27;rest_framework.authentication.BasicAuthentication&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;rest_framework.authentication.SessionAuthentication&#x27;</span>,  </span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><code>rest_framework.authentication.SessionAuthentication</code> 内部的实现很简单，只是从request中取出了user，实际还是依赖django的django.contrib.sessions.middleware.SessionMiddleware和django.contrib.auth.middleware.AuthenticationMiddleware这两个中间件。</p>
-<ol start="2">
-<li>
-<p>添加drf自带的Token认证类 <code>rest_framework.authentication.TokenAuthentication</code>，使用该类时，需要在 INSTALLED_APPS 中进行注册<code>'rest_framework.authtoken'</code>，因为需要使用数据表，生成<code>authtoken_token</code>表（所以在INSTALLED_APPS注册完之后，还需要使用 migrate 命令生成数据表），该表还用三个字段（key、created、user_id），通过 <code>user_id</code> 自动和用户表进行关联，保证一个用户对应着一个token值。<br>
-在创建用户的时候，不会自动生成token的key值，需要手动调用方法进行生成，手动生成的方式有几种：</p>
-<ul>
-<li>
-<p>调用提供的 Token 类生成</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> rest_framework.authtoken.models <span class="keyword">import</span> Token</span><br><span class="line"></span><br><span class="line">token = Token.objects.create(user=...)</span><br><span class="line"><span class="built_in">print</span>(token.key)</span><br></pre></td></tr></table></figure>
-</li>
-<li>
-<p>使用官方提供的url，<code>url(r'^api-token-auth/', views.obtain_auth_token)</code>，发送post请求，会返回相应的token，若没有则生成后返回，并自动和相应的用户进行关联（需要注意的该url请求是post请求，需要传递用户名和密码进行验证）。</p>
-</li>
-</ul>
-</li>
-<li>
-<p>认证<br>
-需要手动在header中传递 <code>Authorization: Token 9944b09199c62bcf9418ad846dd0e4bbdfc6ee4b</code> 。通过<code>DEFAULT_AUTHENTICATION_CLASSES</code> 的作用之后，就会获取到用户，然后将用户存储在request中的user属性中，token值存储在auth属性中。</p>
-</li>
-</ol>
-<h2 id="token的实际应用"><a class="header-anchor" href="#token的实际应用">¶</a>token的实际应用</h2>
-<p>问题：有这样的使用场景，若访问一个公共数据页面，一般的，这种公共页面即使是在用户未登录（没有传递token），或者用户传递的token产生错误的情况下也是可以访问的，该如何解决呢？</p>
-<p>可以通过前端，也可以在后端解决。</p>
-<p>后端的方式：<br>
-其实可以不需要采用在 <a href="http://settings.py">settings.py</a> 中设置全局的 <code>DEFAULT_AUTHENTICATION_CLASSES</code> 的方式，而是在需要进行token验证的view中使用 <code>authentication_classes</code> 属性指定是否需要使用token验证（该属性在基础类APIView中设置了，authentication_classes = api_settings.DEFAULT_AUTHENTICATION_CLASSES）。</p>
-<blockquote>
-<p>drf的配置，多数都可以选择是在settings.py中配置还是在view中进行配置。settings.py中的是全局的配置，view中的设置是局部的，同时设置时，view中的设置优先于全局的设置。</p>
-</blockquote>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> rest_framework.authentication <span class="keyword">import</span> TokenAuthentication</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">GoodsListViewSet</span>(<span class="params">mixins.ListModelMixin, viewsets.GenericViewSet</span>):</span></span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    商品列表页， 分页， 搜索， 过滤， 排序</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    ...</span><br><span class="line">    <span class="comment"># 注意是classes，可接受多个值，所以采用元组的数据格式，另外，当元组只有一个数据的时候，需要使用逗号</span></span><br><span class="line">    <span class="comment"># view中的局部设置会覆盖全局的设置</span></span><br><span class="line">    authentication_classes = (TokenAuthentication, ) </span><br><span class="line">    permission_classes = (IsAuthenticated,)  <span class="comment"># 只有设置了IsAuthenticated，才会进行身份验证</span></span><br><span class="line">    ...</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<h2 id="问题"><a class="header-anchor" href="#问题">¶</a>问题</h2>
-<ol>
-<li>目前，使用的token验证方式，token值是存储在生成的 <code>authtoken_token</code> 表中，是放在一台服务器上的，若采用分布式的话，还需要做数据的同步操作。</li>
-<li>相比于 django_session 的设置，没有expire_date属性（过期时间），将是永久有效的，这样的话，一旦泄露将造成很大的安全问题。</li>
-<li>和 django_session 存储同样的问题，随着用户的增多，token值会占用服务器大量空间，同时也会加大数据库的查询压力，导致性能下降。</li>
-</ol>
-<p>解决措施：使用JWT用户认证</p>
-]]></content>
-      <categories>
-        <category>计算机</category>
-        <category>开发问题</category>
-        <category>Django REST framework</category>
-      </categories>
-      <tags>
-        <tag>前后端跨域</tag>
-        <tag>Django REST framework</tag>
-        <tag>token原理</tag>
       </tags>
   </entry>
   <entry>
@@ -1997,6 +1997,62 @@ TCP的创建和销毁是非常消耗资源的，遇到使用高峰，就会遇�
       </tags>
   </entry>
   <entry>
+    <title>Redis如何有效避免内存耗尽</title>
+    <url>/2020/03/10/Redis%E5%A6%82%E4%BD%95%E6%9C%89%E6%95%88%E9%81%BF%E5%85%8D%E5%86%85%E5%AD%98%E8%80%97%E5%B0%BD/</url>
+    <content><![CDATA[<h1>Redis内存设置</h1>
+<p>redis通过<code>maxmemory</code>配置选项来配置redis的存储数据所能使用的最大的内存限制（可以通过通过修改<code>redis.conf</code>或者在redis-cli中使用<code>config set</code>来进行配置），如果我们要配置的内存上限是100M的Redis缓存，那么我们可以在 redis.conf 配置 <code>maxmemory 100mb</code>。</p>
+<p>配置 <code>maxmemory 0</code> 表示没有内存限制（在 64-bit 系统中，默认是 0 无限制，但是在 32-bit 系统中默认是 3GB）。</p>
+<p>当存储数据达到限制时，Redis 会根据情形选择不同策略，或者返回errors（这样会导致浪费更多的内存），或者清除一些旧数据回收内存来添加新数据。</p>
+<h2 id="回收策略"><a class="header-anchor" href="#回收策略">¶</a>回收策略</h2>
+<p>当内存达到限制时，Redis 具体的回收策略是通过 maxmemory-policy 配置项配置的，可选的配置项如下：</p>
+<p><code>noenviction</code>：<br>
+不清除数据，只是返回错误，这样会导致浪费掉更多的内存，对大多数写命令（DEL 命令和其他的少数命令例外）。<br>
+<code>allkeys-lru</code>：<br>
+从所有的数据集（server.db[i].dict）中挑选最近最少使用的数据淘汰，以供新数据使用。<br>
+<code>volatile-lru</code>：<br>
+从已设置过期时间的数据集（server.db[i].expires）中挑选最近最少使用的数据淘汰，以供新数据使用。<br>
+<code>volatile-lfu</code>：<br>
+根据 LFU 算法删除设置了过期时间的键，直到腾出可用空间。如果没有可删除的键对象，且内存还是不够用时，则报错<br>
+<code>allkeys-lfu</code>：<br>
+根据 LFU 算法删除所有的键，直到腾出可用空间。如果没有可删除的键对象，且内存还是不够用时，则报错<br>
+<code>allkeys-random</code>：<br>
+从所有数据集（server.db[i].dict）中任意选择数据淘汰，以供新数据使用。<br>
+<code>volatile-random</code>：<br>
+从已设置过期时间的数据集（server.db[i].expires）中任意选择数据淘汰，以供新数据使用。<br>
+<code>volatile-ttl</code>：<br>
+从已设置过期时间的数据集（server.db[i].expires）中挑选将要过期的数据淘汰，以供新数据使用。</p>
+<h3 id="回收策略的执行过程"><a class="header-anchor" href="#回收策略的执行过程">¶</a>回收策略的执行过程</h3>
+<p>当客户端执行一条新的命令的时候，该命令需要导致数据库增加数据（如<code>set key value</code>），此时redis就会检查内存的使用情况，如果内存使用超过maxmemory设置的大小，此时就会按照执行的置换策略删除一些key，之后再去执行<code>set key vlaue</code>。</p>
+<p>如果我们持续的写数据会导致内存达到或超出上限 <code>maxmemory</code>，但是置换策略会将内存使用降低到上限以下。但是如果一次需要使用很多的内存（比如一次写入一个很大的set），那么，Redis 的内存使用可能超出最大内存限制一段时间。</p>
+<h1>Redis过期设置</h1>
+<p>要知道，redis在服务器上运行，内存不可能是无限的，在实际使用场景中，很多情况下某些键值对只会在特定的时间内有效，为了防止这种类型的数据一直占有内存，我们可以给键值对设置有效期。</p>
+<p>Redis提供了<code>EXPIRE</code>以及<code>PEXPIRE</code>来设置过期时间：<br>
+<code>expire key ttl</code>: 将key值的过期时间设置为ttl秒。<br>
+<code>pexpire key ttl</code>: 将key值的过期时间设置为ttl毫秒。</p>
+<p>ttl（Time To Live），表示键的生存时间，设置之后，时间会自动减少，当时间耗尽时，Redis就会移除该键。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">当设置成功的时候返回<span class="number">1</span>，失败返回<span class="number">0</span>。</span><br><span class="line"><span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span>:<span class="number">6379</span>&gt; expire name <span class="number">120</span></span><br><span class="line">(integer) <span class="number">1</span></span><br></pre></td></tr></table></figure>
+<p>对于已经设置过生存时间的键重新执行expire或者pexpire会使用新的ttl进行更新。</p>
+<p>除了使用expire或者pexpire对已经创建的键的生存时间进行设置之外，字符串类型的键的设置方式set在使用的时候提供了EX以及PX参数用于设置过期的秒或者毫秒。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span>:<span class="number">6379</span>&gt; <span class="built_in">set</span> name tmj EX <span class="number">23</span></span><br><span class="line">OK</span><br></pre></td></tr></table></figure>
+<p>该方式除了可以减少命令的调用数量并提供程序的执行速度之外，更重要的是保证了操作的原子性，使得设置键以及过期时间同时执行，分开使用，先使用<code>set name tmj</code>创建键，之后再使用<code>expire name 66</code>设置过期时间，这两条命令是独立的，所以在Redis服务器在执行的时候就可以发生set执行了，但是设置过期时间的操作没有进行，此时缓存就不会自动过期，这在生产环境中是可能出现的。注意：set只能用于字符串类型的键的创建。此外过期时间的设置也是对整个键的设置，像集合、列表以及散列类型无法对其中的元素进行自动过期设置。</p>
+<p>此外，除了设置生存时间，redis还提供了expireat以及pexpireat来设置过期时间，让Redis在指定UNIX时间来临之后自动移除给定的键，注意使用的是UNIX时间戳<code>expireat key timestamp</code>。</p>
+<h2 id="过期时间查询"><a class="header-anchor" href="#过期时间查询">¶</a>过期时间查询</h2>
+<p>通过<code>ttl key</code>查看过期剩余时间，单位为秒，pttl key查看过期时间，单位为毫秒。</p>
+<p>过期时间的查询结果有一下几种：<br>
+大于0的正整数：此key存在，且还剩下正整数的时间过期<br>
+-1 ： 此key存在，且没有设置过期时间，即永久不会过期<br>
+-2 ： 此key不存在，或存在但是过期了，总之就是现在不存在了。</p>
+]]></content>
+      <categories>
+        <category>计算机</category>
+        <category>Redis</category>
+      </categories>
+      <tags>
+        <tag>工具</tag>
+        <tag>Redis</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>SqlAlchemy 使用</title>
     <url>/2020/02/15/SqlAlchemy-%E4%BD%BF%E7%94%A8/</url>
     <content><![CDATA[<h2 id="安装"><a class="header-anchor" href="#安装">¶</a>安装</h2>
@@ -2444,6 +2500,25 @@ uuid_obj.int 得到对应的十进制数。
       </tags>
   </entry>
   <entry>
+    <title>hexo基础命令</title>
+    <url>/2019/06/14/hello-world/</url>
+    <content><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
+<h2 id="Quick-Start"><a class="header-anchor" href="#Quick-Start">¶</a>Quick Start</h2>
+<h3 id="Create-a-new-post"><a class="header-anchor" href="#Create-a-new-post">¶</a>Create a new post</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/writing.html">Writing</a></p>
+<h3 id="Run-server"><a class="header-anchor" href="#Run-server">¶</a>Run server</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/server.html">Server</a></p>
+<h3 id="Generate-static-files"><a class="header-anchor" href="#Generate-static-files">¶</a>Generate static files</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/generating.html">Generating</a></p>
+<h3 id="Deploy-to-remote-sites"><a class="header-anchor" href="#Deploy-to-remote-sites">¶</a>Deploy to remote sites</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
+]]></content>
+  </entry>
+  <entry>
     <title>pipenv 使用</title>
     <url>/2019/11/01/pipenv%E4%BD%BF%E7%94%A8/</url>
     <content><![CDATA[<h3 id="优势"><a class="header-anchor" href="#优势">¶</a>优势</h3>
@@ -2532,25 +2607,6 @@ uuid_obj.int 得到对应的十进制数。
         <tag>工具</tag>
         <tag>python</tag>
       </tags>
-  </entry>
-  <entry>
-    <title>hexo基础命令</title>
-    <url>/2019/06/14/hello-world/</url>
-    <content><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
-<h2 id="Quick-Start"><a class="header-anchor" href="#Quick-Start">¶</a>Quick Start</h2>
-<h3 id="Create-a-new-post"><a class="header-anchor" href="#Create-a-new-post">¶</a>Create a new post</h3>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/writing.html">Writing</a></p>
-<h3 id="Run-server"><a class="header-anchor" href="#Run-server">¶</a>Run server</h3>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/server.html">Server</a></p>
-<h3 id="Generate-static-files"><a class="header-anchor" href="#Generate-static-files">¶</a>Generate static files</h3>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/generating.html">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a class="header-anchor" href="#Deploy-to-remote-sites">¶</a>Deploy to remote sites</h3>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
-]]></content>
   </entry>
   <entry>
     <title>Redis 使用之安装篇</title>
