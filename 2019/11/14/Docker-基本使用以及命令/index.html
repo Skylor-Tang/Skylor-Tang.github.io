@@ -33,7 +33,7 @@
 <meta property="og:image" content="https://i.loli.net/2019/11/29/K9tEiTJuX5lnRdO.jpg">
 <meta property="og:image" content="https://i.loli.net/2019/11/29/LsfpxybV6eXDHO5.jpg">
 <meta property="article:published_time" content="2019-11-14T06:45:11.000Z">
-<meta property="article:modified_time" content="2021-04-01T11:24:49.726Z">
+<meta property="article:modified_time" content="2021-06-07T08:16:14.412Z">
 <meta property="article:author" content="Skylor Tang">
 <meta property="article:tag" content="docker">
 <meta name="twitter:card" content="summary">
@@ -230,7 +230,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-04-01 19:24:49" itemprop="dateModified" datetime="2021-04-01T19:24:49+08:00">2021-04-01</time>
+                <time title="修改时间：2021-06-07 16:16:14" itemprop="dateModified" datetime="2021-06-07T16:16:14+08:00">2021-06-07</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -662,6 +662,7 @@ Docker是一个Client-Server结构的系统，Docker守护进程运行在主机�
 <li>容器停止退出后，主机修改后数据是否同步：任然同步，内容是一致的</li>
 <li>（带权限的）命令：<code>docker run -it -v /宿主机绝对路径目录:/容器内目录:ro  镜像名</code>，其中的<code>:ro</code>的意思为readonly只读，使用此命令后，使用<code>docker inspect 容器ID</code>查看<code>VolumesRW</code>值为false，意思不是可读可写，而是变成了只读，即容器内的目录只能读，而不能写。（类似于外置活动硬盘进行了写保护）</li>
 </ul>
+<p><font color="red">注意：容器卷的对象都是目录</font></p>
 </li>
 <li>
 <p>DockerFile添加</p>
@@ -897,7 +898,7 @@ Docker是一个Client-Server结构的系统，Docker守护进程运行在主机�
 <li>
 <p>redis镜像：</p>
 <ul>
-<li>run命令：<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -p 6379:6379 -v /hostdatavolume/redis3.2/data:/data -v /hostdatavolume/redis3.2/conf/redis.conf:/usr/local/etc/redis/redis.conf -d redis:3.2 redis-server /usr/local/etc/redis/redis.conf --appendonly yes</span><br></pre></td></tr></table></figure>
+<li>run命令：<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -p 6379:6379 -v /hostdatavolume/redis5.0.7/data:/data -v /hostdatavolume/redis5.0.7/conf:/usr/local/etc/redis -d redis:5.0.7 redis-server /usr/local/etc/redis/redis.conf --appendonly yes</span><br></pre></td></tr></table></figure>
 <code>redis-server /usr/local/etc/redis/redis.conf --appendonly yes--appendonly yes</code>是redis用于配置数据持久化的</li>
 </ul>
 </li>
